@@ -8,3 +8,5 @@ Work In Progress
 ## Documents
 
 - [License](License.md)
+- [Release Notes](ReleaseNotes.md)
+- [Versioning](Versioning.md)
