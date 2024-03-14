@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-  PROJECT:   Mouri's Internal NT API Collections (MINT)
-  FILE:      Chuyu.Mint.props
-  PURPOSE:   MSBuild props file for MINT
+  PROJECT:   Mouri Internal Library Essentials
+  FILE:      Mile.Windows.Internal.props
+  PURPOSE:   MSBuild props file for Mile.Windows.Internal
 
   LICENSE:   The MIT License
 

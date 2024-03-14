@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-  PROJECT:   Mouri's Internal NT API Collections (MINT)
-  FILE:      Chuyu.Mint.nuspec
-  PURPOSE:   NuGet package definition for MINT
+  PROJECT:   Mouri Internal Library Essentials
+  FILE:      Mile.Windows.Internal.nuspec
+  PURPOSE:   NuGet package definition for Mile.Windows.Internal
 
   LICENSE:   The MIT License
 
@@ -10,22 +10,21 @@
 -->
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Chuyu.Mint</id>
-    <version>2024.1.0</version>
-    <description>Contains the definitions for the Windows Internal UserMode API from ntdll.dll, samlib.dll and winsta.dll</description>
+    <id>Mile.Windows.Internal</id>
+    <version>1.0.0.0</version>
+    <description>The definition of Windows Internal User Mode API from ntdll.dll, samlib.dll, and winsta.dll</description>
     <authors>Kenji Mouri</authors>
-    <owners>初雨团队</owners>
-    <projectUrl>https://github.com/Chuyu-Team/MINT</projectUrl>
+    <projectUrl>https://github.com/ProjectMile/Mile.Windows.Internal</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="file">License.md</license>
     <readme>ReadMe.md</readme>
-    <repository type="git" url="https://github.com/Chuyu-Team/MINT.git" />
+    <repository type="git" url="https://github.com/ProjectMile/Mile.Windows.Internal.git" />
   </metadata>
   <files>
   
     <file src="..\Mile.Internal\**\*.*" target="Source\Native"/>
 
-    <file src="Chuyu.Mint.props" target="build\native"/>
+    <file src="Mile.Windows.Internal.props" target="build\native"/>
 
     <file src="..\ReadMe.md" target="."/>
     <file src="..\License.md" target="."/>
