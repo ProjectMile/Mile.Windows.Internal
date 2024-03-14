@@ -1,6 +1,6 @@
 ﻿/*
- * PROJECT:   Mouri's Internal NT API Collections (MINT)
- * FILE:      Mint.h
+ * PROJECT:   Mouri Internal Library Essentials
+ * FILE:      Mile.Internal.h
  * PURPOSE:   Definition for the Windows Internal API
  *
  * LICENSE:   The MIT License
@@ -8,8 +8,8 @@
  * MAINTAINER: MouriNaruto (Kenji.Mouri@outlook.com)
  */
 
-#ifndef _MINT_
-#define _MINT_
+#ifndef MILE_WINDOWS_INTERNAL
+#define MILE_WINDOWS_INTERNAL
 
 #ifdef __cplusplus
 #ifdef MINT_USE_SEPARATE_NAMESPACE
@@ -122,4 +122,4 @@ extern "C" {
 #endif // MINT_USE_SEPARATE_NAMESPACE
 #endif // __cplusplus
 
-#endif // !_MINT_
+#endif // !MILE_WINDOWS_INTERNAL
