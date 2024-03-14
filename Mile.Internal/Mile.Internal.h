@@ -17,7 +17,7 @@ namespace MINT {
 #endif // MINT_USE_SEPARATE_NAMESPACE
 #endif // __cplusplus
 
-#include "Mint.Implementation/phnt_windows.h"
+#include "Mile.Internal.Implementation/phnt_windows.h"
 
 #include <SDKDDKVer.h>
 
@@ -82,7 +82,7 @@ namespace MINT {
 #endif
 #endif // !PHNT_VERSION
 
-#include "Mint.Implementation/phnt.h"
+#include "Mile.Internal.Implementation/phnt.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,11 +90,11 @@ extern "C" {
 
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 
-#include "Mint.Implementation/ntgdi.h"
-#include "Mint.Implementation/ntsmss.h"
-#include "Mint.Implementation/subprocesstag.h"
-#include "Mint.Implementation/usermgr.h"
-#include "Mint.Implementation/winsta.h"
+#include "Mile.Internal.Implementation/ntgdi.h"
+#include "Mile.Internal.Implementation/ntsmss.h"
+#include "Mile.Internal.Implementation/subprocesstag.h"
+#include "Mile.Internal.Implementation/usermgr.h"
+#include "Mile.Internal.Implementation/winsta.h"
 
 #endif // (PHNT_MODE != PHNT_MODE_KERNEL)
 

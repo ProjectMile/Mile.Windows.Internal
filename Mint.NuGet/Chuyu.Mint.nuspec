@@ -23,7 +23,7 @@
   </metadata>
   <files>
   
-    <file src="..\Mint\**\*.*" target="Source\Native"/>
+    <file src="..\Mile.Internal\**\*.*" target="Source\Native"/>
 
     <file src="Chuyu.Mint.props" target="build\native"/>
 

@@ -18,7 +18,7 @@ namespace Mint.ZwGen
         static void Main(string[] args)
         {
             DirectoryInfo Folder = new DirectoryInfo(
-                RepositoryRoot + @"\Mint\Mint.Implementation");
+                RepositoryRoot + @"\Mile.Internal\Mile.Internal.Implementation");
 
             foreach (FileInfo FileItem in Folder.GetFiles())
             {
@@ -60,7 +60,7 @@ namespace Mint.ZwGen
 
                 FileUtilities.SaveTextToFileAsUtf8Bom(FileItem.FullName, Content);
             }
-            
+
             Console.WriteLine("Mint.ZwGen task has been completed.");
             Console.ReadKey();
         }
