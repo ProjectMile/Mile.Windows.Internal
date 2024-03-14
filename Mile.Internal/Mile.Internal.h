@@ -11,12 +11,6 @@
 #ifndef MILE_WINDOWS_INTERNAL
 #define MILE_WINDOWS_INTERNAL
 
-#ifdef __cplusplus
-#ifdef MINT_USE_SEPARATE_NAMESPACE
-namespace MINT {
-#endif // MINT_USE_SEPARATE_NAMESPACE
-#endif // __cplusplus
-
 #include "Mile.Internal.Implementation/phnt_windows.h"
 
 #include <SDKDDKVer.h>
@@ -115,11 +109,5 @@ extern "C" {
 #pragma warning(pop)
 #endif // (_MSC_VER >= 1200)
 #endif // _MSC_VER
-
-#ifdef __cplusplus
-#ifdef MINT_USE_SEPARATE_NAMESPACE
-}
-#endif // MINT_USE_SEPARATE_NAMESPACE
-#endif // __cplusplus
 
 #endif // !MILE_WINDOWS_INTERNAL
