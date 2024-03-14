@@ -12,7 +12,7 @@
   <metadata>
     <id>Mile.Windows.Internal</id>
     <version>1.0.0.0</version>
-    <description>The definition of Windows Internal User Mode API from ntdll.dll, samlib.dll, and winsta.dll</description>
+    <description>The definition of Windows Internal API</description>
     <authors>Kenji Mouri</authors>
     <projectUrl>https://github.com/ProjectMile/Mile.Windows.Internal</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
