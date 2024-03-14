@@ -11,7 +11,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Mile.Windows.Internal</id>
-    <version>1.0.0.0</version>
+    <version>1.0.2818.0</version>
     <description>The definition of Windows Internal API</description>
     <authors>Kenji Mouri</authors>
     <projectUrl>https://github.com/ProjectMile/Mile.Windows.Internal</projectUrl>
@@ -22,13 +22,13 @@
   </metadata>
   <files>
   
-    <file src="..\Mile.Internal\**\*.*" target="Source\Native"/>
+    <file src="..\Mile.Internal\**\*.*" target="Source\Native" />
 
-    <file src="Mile.Windows.Internal.props" target="build\native"/>
+    <file src="Mile.Windows.Internal.props" target="build\native" />
 
-    <file src="..\ReadMe.md" target="."/>
-    <file src="..\License.md" target="."/>
-    <file src="..\ReleaseNotes.md" target="."/>
+    <file src="..\ReadMe.md" target="." />
+    <file src="..\License.md" target="." />
+    <file src="..\ReleaseNotes.md" target="." />
 
   </files>
 </package>
