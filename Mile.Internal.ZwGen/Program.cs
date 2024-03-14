@@ -1,7 +1,7 @@
 ﻿using Mile.Project.Helpers;
 using System.Text.RegularExpressions;
 
-namespace Mint.ZwGen
+namespace Mile.Internal.ZwGen
 {
     internal class Program
     {
@@ -61,7 +61,7 @@ namespace Mint.ZwGen
                 FileUtilities.SaveTextToFileAsUtf8Bom(FileItem.FullName, Content);
             }
 
-            Console.WriteLine("Mint.ZwGen task has been completed.");
+            Console.WriteLine("Mile.Internal.ZwGen task has been completed.");
             Console.ReadKey();
         }
     }
