@@ -89,6 +89,7 @@ extern "C" {
 #include "Mile.Internal.Implementation/subprocesstag.h"
 #include "Mile.Internal.Implementation/usermgr.h"
 #include "Mile.Internal.Implementation/winsta.h"
+#include "Mile.Internal.Implementation/ntwmi.h"
 
 #endif // (PHNT_MODE != PHNT_MODE_KERNEL)
 
