@@ -11,7 +11,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Mile.Windows.Internal</id>
-    <version>1.0.2818.0</version>
+    <version>1.0.2838.0</version>
     <description>The definition of Windows Internal API</description>
     <authors>Kenji Mouri</authors>
     <projectUrl>https://github.com/ProjectMile/Mile.Windows.Internal</projectUrl>
