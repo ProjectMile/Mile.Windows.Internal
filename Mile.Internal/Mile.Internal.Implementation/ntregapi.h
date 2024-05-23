@@ -631,7 +631,7 @@ NTAPI
 NtQueryKey(
     _In_ HANDLE KeyHandle,
     _In_ KEY_INFORMATION_CLASS KeyInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -642,7 +642,7 @@ NTAPI
 ZwQueryKey(
     _In_ HANDLE KeyHandle,
     _In_ KEY_INFORMATION_CLASS KeyInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -674,7 +674,7 @@ NtQueryValueKey(
     _In_ HANDLE KeyHandle,
     _In_ PUNICODE_STRING ValueName,
     _In_ KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyValueInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyValueInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -686,7 +686,7 @@ ZwQueryValueKey(
     _In_ HANDLE KeyHandle,
     _In_ PUNICODE_STRING ValueName,
     _In_ KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyValueInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyValueInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -746,7 +746,7 @@ NtEnumerateKey(
     _In_ HANDLE KeyHandle,
     _In_ ULONG Index,
     _In_ KEY_INFORMATION_CLASS KeyInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -758,7 +758,7 @@ ZwEnumerateKey(
     _In_ HANDLE KeyHandle,
     _In_ ULONG Index,
     _In_ KEY_INFORMATION_CLASS KeyInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -770,7 +770,7 @@ NtEnumerateValueKey(
     _In_ HANDLE KeyHandle,
     _In_ ULONG Index,
     _In_ KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyValueInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyValueInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );
@@ -782,7 +782,7 @@ ZwEnumerateValueKey(
     _In_ HANDLE KeyHandle,
     _In_ ULONG Index,
     _In_ KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
-    _Out_writes_bytes_opt_(Length) PVOID KeyValueInformation,
+    _Out_writes_bytes_to_opt_(Length, *ResultLength) PVOID KeyValueInformation,
     _In_ ULONG Length,
     _Out_ PULONG ResultLength
     );

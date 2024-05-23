@@ -865,6 +865,50 @@ ZwGetCachedSigningLevel(
 
 #endif
 
+#if (PHNT_VERSION >= PHNT_REDSTONE)
+
+// rev
+typedef struct _SE_FILE_CACHE_CLAIM_INFORMATION
+{
+    ULONG Size;
+    PVOID Claim;
+} SE_FILE_CACHE_CLAIM_INFORMATION, *PSE_FILE_CACHE_CLAIM_INFORMATION;
+
+// rev
+typedef struct _SE_SET_FILE_CACHE_INFORMATION
+{
+    ULONG Size;
+    UNICODE_STRING CatalogDirectoryPath;
+    SE_FILE_CACHE_CLAIM_INFORMATION OriginClaimInfo;
+} SE_SET_FILE_CACHE_INFORMATION, *PSE_SET_FILE_CACHE_INFORMATION;
+
+// rev
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtSetCachedSigningLevel2(
+    _In_ ULONG Flags,
+    _In_ SE_SIGNING_LEVEL InputSigningLevel,
+    _In_reads_(SourceFileCount) PHANDLE SourceFiles,
+    _In_ ULONG SourceFileCount,
+    _In_opt_ HANDLE TargetFile,
+    _In_opt_ SE_SET_FILE_CACHE_INFORMATION* CacheInformation
+    );
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwSetCachedSigningLevel2(
+    _In_ ULONG Flags,
+    _In_ SE_SIGNING_LEVEL InputSigningLevel,
+    _In_reads_(SourceFileCount) PHANDLE SourceFiles,
+    _In_ ULONG SourceFileCount,
+    _In_opt_ HANDLE TargetFile,
+    _In_opt_ SE_SET_FILE_CACHE_INFORMATION* CacheInformation
+    );
+
+#endif
+
 #if (PHNT_VERSION >= PHNT_REDSTONE2)
 
 // rev

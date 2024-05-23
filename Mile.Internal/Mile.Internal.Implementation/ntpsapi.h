@@ -215,7 +215,7 @@ typedef enum _PROCESSINFOCLASS
     ProcessCreateStateChange, // since WIN11
     ProcessApplyStateChange,
     ProcessEnableOptionalXStateFeatures, // s: ULONG64 // optional XState feature bitmask
-    ProcessAltPrefetchParam, // since 22H1
+    ProcessAltPrefetchParam, // qs: OVERRIDE_PREFETCH_PARAMETER // App Launch Prefetch (ALPF) // since 22H1
     ProcessAssignCpuPartitions,
     ProcessPriorityClassEx, // s: PROCESS_PRIORITY_CLASS_EX
     ProcessMembershipInformation, // q: PROCESS_MEMBERSHIP_INFORMATION
@@ -2926,7 +2926,7 @@ typedef struct _SERVERSILO_INIT_INFORMATION
 {
     HANDLE DeleteEvent;
     BOOLEAN IsDownlevelContainer;
-} SERVERSILO_INIT_INFORMATION, * PSERVERSILO_INIT_INFORMATION;
+} SERVERSILO_INIT_INFORMATION, *PSERVERSILO_INIT_INFORMATION;
 
 // private
 typedef struct _JOBOBJECT_ENERGY_TRACKING_STATE

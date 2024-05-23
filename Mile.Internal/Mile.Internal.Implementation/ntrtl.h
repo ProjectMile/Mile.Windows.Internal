@@ -1257,7 +1257,7 @@ RtlWakeAddressSingle(
 
 // end_rev
 
-#if (PHNT_VERSION >= PHNT_WIN11_22H2)
+#if (PHNT_VERSION >= PHNT_WIN11_22H2 && PHNT_VERSION < PHNT_WIN11_24H2)
 FORCEINLINE
 VOID
 RtlCopyVolatileMemory(
@@ -1299,7 +1299,7 @@ RtlInitEmptyAnsiString(
 #ifndef PHNT_NO_INLINE_INIT_STRING
 FORCEINLINE VOID RtlInitString(
     _Out_ PSTRING DestinationString,
-    _In_opt_ PCSTR SourceString
+    _In_opt_z_ PCSTR SourceString
     )
 {
     if (SourceString)
@@ -1315,7 +1315,7 @@ VOID
 NTAPI
 RtlInitString(
     _Out_ PSTRING DestinationString,
-    _In_opt_ PCSTR SourceString
+    _In_opt_z_ PCSTR SourceString
     );
 #endif
 
@@ -1332,7 +1332,7 @@ RtlInitStringEx(
 #ifndef PHNT_NO_INLINE_INIT_STRING
 FORCEINLINE VOID RtlInitAnsiString(
     _Out_ PANSI_STRING DestinationString,
-    _In_opt_ PCSTR SourceString
+    _In_opt_z_ PCSTR SourceString
     )
 {
     if (SourceString)
@@ -1348,7 +1348,7 @@ VOID
 NTAPI
 RtlInitAnsiString(
     _Out_ PANSI_STRING DestinationString,
-    _In_opt_ PCSTR SourceString
+    _In_opt_z_ PCSTR SourceString
     );
 #endif
 
@@ -1458,8 +1458,8 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlAppendAsciizToString(
-    _In_ PSTRING Destination,
-    _In_opt_ PCSTR Source
+    _Inout_ PSTRING Destination,
+    _In_opt_z_ PCSTR Source
     );
 
 NTSYSAPI
@@ -1566,7 +1566,7 @@ BOOLEAN
 NTAPI
 RtlCreateUnicodeStringFromAsciiz(
     _Out_ PUNICODE_STRING DestinationString,
-    _In_ PCSTR SourceString
+    _In_z_ PCSTR SourceString
     );
 
 NTSYSAPI
@@ -1718,7 +1718,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlAppendUnicodeStringToString(
-    _In_ PUNICODE_STRING Destination,
+    _Inout_ PUNICODE_STRING Destination,
     _In_ PCUNICODE_STRING Source
     );
 
@@ -1726,8 +1726,8 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlAppendUnicodeToString(
-    _In_ PUNICODE_STRING Destination,
-    _In_opt_ PCWSTR Source
+    _Inout_ PUNICODE_STRING Destination,
+    _In_opt_z_ PCWSTR Source
     );
 
 NTSYSAPI
@@ -3744,7 +3744,7 @@ PVOID
 NTAPI
 RtlFindExportedRoutineByName(
     _In_ PVOID BaseOfImage,
-    _In_ PCSTR RoutineName
+    _In_z_ PCSTR RoutineName
     );
 
 // rev
@@ -4378,6 +4378,25 @@ RtlReplaceSystemDirectoryInPath(
     _In_ USHORT Machine, // IMAGE_FILE_MACHINE_I386
     _In_ USHORT TargetMachine, // IMAGE_FILE_MACHINE_TARGET_HOST
     _In_ BOOLEAN IncludePathSeperator
+    );
+#endif
+
+#if (PHNT_VERSION >= PHNT_REDSTONE)
+// rev from Wow64DetermineEnvironment
+NTSYSAPI
+USHORT
+NTAPI
+RtlWow64GetCurrentMachine(
+    VOID
+    );
+
+// rev from Wow64DetermineEnvironment
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlWow64IsWowGuestMachineSupported(
+    _In_ USHORT NativeMachine,
+    _Out_ PBOOLEAN IsWowGuestMachineSupported
     );
 #endif
 
@@ -5972,7 +5991,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlCharToInteger(
-    _In_ PCSTR String,
+    _In_z_ PCSTR String,
     _In_opt_ ULONG Base,
     _Out_ PULONG Value
     );
@@ -9124,7 +9143,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlIsApiSetImplemented(
-    _In_ PCSTR ApiSetName
+    _In_z_ PCSTR ApiSetName
     );
 #endif
 

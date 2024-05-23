@@ -642,7 +642,7 @@ PerfIsGroupOnInGroupMask(
 //
 //
 //
-// NOTE: In LongHorn we desided to expose some of the flags outside of group 0.
+// NOTE: In LongHorn we decided to expose some of the flags outside of group 0.
 //       We did that by adding the following flags which are treated as aliases:
 //
 //          EVENT_TRACE_FLAG_CSWITCH
@@ -1114,7 +1114,7 @@ PerfIsGroupOnInGroupMask(
 #define WMI_LOG_TYPE_UDP_FAIL                       (EVENT_TRACE_GROUP_UDPIP | EVENT_TRACE_TYPE_CONNFAIL)
 
 //
-// Netowrk events with IPV6
+// Network events with IPV6
 //
 #define WMI_LOG_TYPE_TCPIP_SEND_IPV6                (EVENT_TRACE_GROUP_TCPIP | 0x1A)
 #define WMI_LOG_TYPE_TCPIP_RECEIVE_IPV6             (EVENT_TRACE_GROUP_TCPIP | 0x1B)
@@ -2159,7 +2159,7 @@ typedef struct _ETW_DISKIO_READWRITE_V3
     PVOID IrpAddress;
     ULONGLONG HighResResponseTime;
     ULONG IssuingThreadId;
-} ETW_DISKIO_READWRITE_V3, PETW_DISKIO_READWRITE_V3;
+} ETW_DISKIO_READWRITE_V3, *PETW_DISKIO_READWRITE_V3;
 
 typedef struct _ETW_DISKIO_FLUSH_BUFFERS_V2
 {
@@ -2866,7 +2866,7 @@ typedef struct _HEAP_SUBSEGMENT_ACTIVATED
     SYSTEM_TRACE_HEADER Header;
     PVOID HeapHandle;
     PVOID SubSegment;
-} HEAP_SUBSEGMENT_ACTIVATED, *PHEAP_AFFINITY_SLOT_ACTIVATED;
+} HEAP_SUBSEGMENT_ACTIVATED, *PHEAP_SUBSEGMENT_ACTIVATED;
 #include <poppack.h>
 
 #include <pshpack1.h>
@@ -2961,7 +2961,7 @@ typedef struct _STACK_WALK_EVENT_DATA
     ULONG       ProcessId;
     ULONG       ThreadId;
     PVOID       Addresses[1];          //Address of captured Stack address
-} STACK_WALK_EVENT_DATA, * PSTACK_WALK_EVENT_DATA;
+} STACK_WALK_EVENT_DATA, *PSTACK_WALK_EVENT_DATA;
 
 typedef struct _LOAD_DLL_EVENT_DATA
 {
@@ -3358,11 +3358,11 @@ DEFINE_GUID( /* 3BEEF58A-6E0F-445D-B2A4-37AB737BD47E */
 //    );
 
 DEFINE_GUID( /* 3d6fa8d4-fe05-11d0-9dda-00c04fd7ba7c */
-	DiskIoGuid,
-	0x3d6fa8d4,
-	0xfe05,
-	0x11d0,
-	0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
+    DiskIoGuid,
+    0x3d6fa8d4,
+    0xfe05,
+    0x11d0,
+    0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
     );
 
 DEFINE_GUID( /* B3E675D7-2554-4f18-830B-2762732560DE */
@@ -3478,11 +3478,11 @@ DEFINE_GUID( /* a9152f00-3f58-4bee-92a1-70c7d079d5dd */
     );
 
 DEFINE_GUID( /* 3d6fa8d0-fe05-11d0-9dda-00c04fd7ba7c */
-	ProcessGuid,
-	0x3d6fa8d0,
-	0xfe05,
-	0x11d0,
-	0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
+    ProcessGuid,
+    0x3d6fa8d0,
+    0xfe05,
+    0x11d0,
+    0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
     );
 
 DEFINE_GUID( /* E43445E0-0903-48c3-B878-FF0FCCEBDD04 */
@@ -3620,11 +3620,11 @@ DEFINE_GUID( /* 00000000-0000-0000-0000-000000000000 */
 //    );
 
 DEFINE_GUID( /* 90cbdc39-4a3e-11d1-84f4-0000f80464e3 */
-	FileIoGuid,
-	0x90cbdc39,
-	0x4a3e,
-	0x11d1,
-	0x84, 0xf4, 0x00, 0x00, 0xf8, 0x04, 0x64, 0xe3
+    FileIoGuid,
+    0x90cbdc39,
+    0x4a3e,
+    0x11d1,
+    0x84, 0xf4, 0x00, 0x00, 0xf8, 0x04, 0x64, 0xe3
     );
 
 DEFINE_GUID( /* 2cb15d1d-5fc1-11d2-abe1-00a0c911f518 */
@@ -3644,35 +3644,35 @@ DEFINE_GUID( /* 3d6fa8d3-fe05-11d0-9dda-00c04fd7ba7c */
     );
 
 DEFINE_GUID( /* AE53722E-C863-11d2-8659-00C04FA321A1 */
-	RegistryGuid,
-	0xae53722e,
-	0xc863,
-	0x11d2,
-	0x86, 0x59, 0x0, 0xc0, 0x4f, 0xa3, 0x21, 0xa1
+    RegistryGuid,
+    0xae53722e,
+    0xc863,
+    0x11d2,
+    0x86, 0x59, 0x0, 0xc0, 0x4f, 0xa3, 0x21, 0xa1
     );
 
 DEFINE_GUID( /* 9a280ac0-c8e0-11d1-84e2-00c04fb998a2 */
-	TcpIpGuid,
-	0x9a280ac0,
-	0xc8e0,
-	0x11d1,
-	0x84, 0xe2, 0x00, 0xc0, 0x4f, 0xb9, 0x98, 0xa2
+    TcpIpGuid,
+    0x9a280ac0,
+    0xc8e0,
+    0x11d1,
+    0x84, 0xe2, 0x00, 0xc0, 0x4f, 0xb9, 0x98, 0xa2
     );
 
 DEFINE_GUID( /* 3d6fa8d1-fe05-11d0-9dda-00c04fd7ba7c */
-	ThreadGuid,
-	0x3d6fa8d1,
-	0xfe05,
-	0x11d0,
-	0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
+    ThreadGuid,
+    0x3d6fa8d1,
+    0xfe05,
+    0x11d0,
+    0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
     );
 
 DEFINE_GUID( /* bf3a50c5-a9c9-4988-a005-2df0b7c80f80 */
-	UdpIpGuid,
-	0xbf3a50c5,
-	0xa9c9,
-	0x4988,
-	0xa0, 0x05, 0x2d, 0xf0, 0xb7, 0xc8, 0x0f, 0x80
+    UdpIpGuid,
+    0xbf3a50c5,
+    0xa9c9,
+    0x4988,
+    0xa0, 0x05, 0x2d, 0xf0, 0xb7, 0xc8, 0x0f, 0x80
     );
 
 //
@@ -4175,7 +4175,7 @@ typedef struct _PERFINFO_PPM_IDLE_STATE_CHANGE
 //
 // OVERRIDE_ENABLED: The idle transition had force-idle override enabled.
 //
-// MEASURING_EXIT_LATENCY: Exit latency measurment is engaged during the idle
+// MEASURING_EXIT_LATENCY: Exit latency measurement is engaged during the idle
 // transition.
 //
 // WAKE_REQUESTED: Idle transition was accompanied with a request to wake
@@ -4280,7 +4280,7 @@ typedef struct _PERFINFO_PPM_THERMAL_CONSTRAINT{
 } PERFINFO_PPM_THERMAL_CONSTRAINT, *PPERFINFO_PPM_THERMAL_CONSTRAINT;
 
 //
-// File Name realted hooks
+// File Name related hooks
 //
 
 typedef struct _PERFINFO_FILEOBJECT_INFORMATION
@@ -4745,7 +4745,7 @@ typedef struct _PERFINFO_CC_EXTRA_WB_THREAD_INFO
     SIZE_T TotalDirtyPages;
     SIZE_T DirtyPageThreshold;
     SIZE_T AvailablePages;
-} PERFINFO_CC_EXTRA_WB_THREAD_INFO,*PPERFINFO_CC_EXTRA_WB_THREAD_INFO;
+} PERFINFO_CC_EXTRA_WB_THREAD_INFO, *PPERFINFO_CC_EXTRA_WB_THREAD_INFO;
 
 //
 // Image backed by pagefile event.
@@ -4958,7 +4958,7 @@ typedef struct _PERFINFO_CONTIGUOUS_PAGE_GENERATE
 {
     ULONGLONG ThreadId;
     ULONGLONG NumberOfBytes;
-} PERFINFO_CONTIGUOUS_PAGE_GENERATE, PERFINFO_CONTIGUOUS_PAGE_GENERATE;
+} PERFINFO_CONTIGUOUS_PAGE_GENERATE, *PPERFINFO_CONTIGUOUS_PAGE_GENERATE;
 
 //
 // Debugger (debug event) events
@@ -5201,7 +5201,7 @@ typedef struct _PERFINFO_PROCESS_PERFCTR64
 } PERFINFO_PROCESS_PERFCTR64, *PPERFINFO_PROCESS_PERFCTR64;
 
 //
-// Proces In Swap structure.
+// Process In Swap structure.
 //
 
 typedef struct _PERFINFO_PROCESS_INSWAP
@@ -5542,7 +5542,7 @@ typedef struct _ETW_NOTIFICATION_HEADER
     ULONGLONG             Reserved2;
     ULONG                 TargetPID;
     ULONG                 SourcePID;
-    GUID                  DestinationGuid;  // Desctination GUID
+    GUID                  DestinationGuid;  // Destination GUID
     GUID                  SourceGuid;       // Source GUID
 } ETW_NOTIFICATION_HEADER, *PETW_NOTIFICATION_HEADER;
 
@@ -5819,7 +5819,7 @@ typedef struct _ETW_TRACE_PROVIDER_INSTANCE_INFO
     ULONG EnableCount;
     ULONG Pid;
     ULONG Flags;
-} ETW_TRACE_PROVIDER_INSTANCE_INFO, * PETW_TRACE_PROVIDER_INSTANCE_INFO;
+} ETW_TRACE_PROVIDER_INSTANCE_INFO, *PETW_TRACE_PROVIDER_INSTANCE_INFO;
 
 // public TRACE_GUID_INFO
 typedef struct _ETW_TRACE_GUID_INFO
@@ -5827,7 +5827,7 @@ typedef struct _ETW_TRACE_GUID_INFO
     ULONG InstanceCount;
     ULONG Reserved;
     //ETW_TRACE_PROVIDER_INSTANCE_INFO Instances[1];
-} ETW_TRACE_GUID_INFO, * PETW_TRACE_GUID_INFO;
+} ETW_TRACE_GUID_INFO, *PETW_TRACE_GUID_INFO;
 
 // rev
 typedef enum _ETWTRACECONTROLCODE
