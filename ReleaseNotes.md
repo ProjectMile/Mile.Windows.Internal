@@ -3,6 +3,7 @@
 **Mile.Windows.Internal 1.0.2889.0**
 
 - Update PHNT from System Informer to https://github.com/winsiderss/systeminformer/tree/a2cff0e04b38fabe0a37d62b48f06983a4ca9364.
+- Fix compile issue with Windows 11 Build 26100 SDK.
 
 **Mile.Windows.Internal 1.0.2838.0**
 
