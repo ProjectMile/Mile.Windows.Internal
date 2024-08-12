@@ -1175,6 +1175,7 @@ NTSTATUS
 NTAPI
 NtCreateIRTimer(
     _Out_ PHANDLE TimerHandle,
+    _In_ PVOID Reserved,
     _In_ ACCESS_MASK DesiredAccess
     );
 
@@ -1183,6 +1184,7 @@ NTSTATUS
 NTAPI
 ZwCreateIRTimer(
     _Out_ PHANDLE TimerHandle,
+    _In_ PVOID Reserved,
     _In_ ACCESS_MASK DesiredAccess
     );
 
@@ -1204,15 +1206,6 @@ ZwSetIRTimer(
 
 #endif
 
-typedef struct _T2_SET_PARAMETERS_V0
-{
-    ULONG Version;
-    ULONG Reserved;
-    LONGLONG NoWakeTolerance;
-} T2_SET_PARAMETERS, *PT2_SET_PARAMETERS;
-
-typedef PVOID PT2_CANCEL_PARAMETERS;
-
 #if (PHNT_VERSION >= PHNT_THRESHOLD)
 
 NTSYSCALLAPI
@@ -1222,7 +1215,7 @@ NtCreateTimer2(
     _Out_ PHANDLE TimerHandle,
     _In_opt_ PVOID Reserved1,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_ ULONG Attributes,
+    _In_ ULONG Attributes, // TIMER_TYPE
     _In_ ACCESS_MASK DesiredAccess
     );
 
@@ -1233,9 +1226,22 @@ ZwCreateTimer2(
     _Out_ PHANDLE TimerHandle,
     _In_opt_ PVOID Reserved1,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_ ULONG Attributes,
+    _In_ ULONG Attributes, // TIMER_TYPE
     _In_ ACCESS_MASK DesiredAccess
     );
+
+#endif
+
+typedef struct _T2_SET_PARAMETERS_V0
+{
+    ULONG Version;
+    ULONG Reserved;
+    LONGLONG NoWakeTolerance;
+} T2_SET_PARAMETERS, *PT2_SET_PARAMETERS;
+
+typedef PVOID PT2_CANCEL_PARAMETERS;
+
+#if (PHNT_VERSION >= PHNT_THRESHOLD)
 
 NTSYSCALLAPI
 NTSTATUS
@@ -2339,7 +2345,7 @@ typedef enum _SYSTEM_INFORMATION_CLASS
     SystemSessionBigPoolInformation, // q: SYSTEM_SESSION_POOLTAG_INFORMATION // since WIN8
     SystemBootGraphicsInformation, // q; s: SYSTEM_BOOT_GRAPHICS_INFORMATION (kernel-mode only)
     SystemScrubPhysicalMemoryInformation, // q; s: MEMORY_SCRUB_INFORMATION
-    SystemBadPageInformation,
+    SystemBadPageInformation, // SYSTEM_BAD_PAGE_INFORMATION
     SystemProcessorProfileControlArea, // q; s: SYSTEM_PROCESSOR_PROFILE_CONTROL_AREA
     SystemCombinePhysicalMemoryInformation, // s: MEMORY_COMBINE_INFORMATION, MEMORY_COMBINE_INFORMATION_EX, MEMORY_COMBINE_INFORMATION_EX2 // 130
     SystemEntropyInterruptTimingInformation, // q; s: SYSTEM_ENTROPY_TIMING_INFORMATION
@@ -2421,9 +2427,9 @@ typedef enum _SYSTEM_INFORMATION_CLASS
     SystemFlags2Information, // q: SYSTEM_FLAGS_INFORMATION
     SystemSecurityModelInformation, // SYSTEM_SECURITY_MODEL_INFORMATION // since 19H1
     SystemCodeIntegritySyntheticCacheInformation,
-    SystemFeatureConfigurationInformation, // SYSTEM_FEATURE_CONFIGURATION_INFORMATION // since 20H1 // 210
-    SystemFeatureConfigurationSectionInformation, // SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION
-    SystemFeatureUsageSubscriptionInformation, // SYSTEM_FEATURE_USAGE_SUBSCRIPTION_DETAILS
+    SystemFeatureConfigurationInformation, // q: in: SYSTEM_FEATURE_CONFIGURATION_QUERY, out: SYSTEM_FEATURE_CONFIGURATION_INFORMATION; s: SYSTEM_FEATURE_CONFIGURATION_UPDATE // NtQuerySystemInformationEx // since 20H1 // 210
+    SystemFeatureConfigurationSectionInformation, // q: in: SYSTEM_FEATURE_CONFIGURATION_SECTIONS_REQUEST, out: SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION // NtQuerySystemInformationEx
+    SystemFeatureUsageSubscriptionInformation, // q: SYSTEM_FEATURE_USAGE_SUBSCRIPTION_DETAILS; s: SYSTEM_FEATURE_USAGE_SUBSCRIPTION_UPDATE
     SystemSecureSpeculationControlInformation, // SECURE_SPECULATION_CONTROL_INFORMATION
     SystemSpacesBootInformation, // since 20H2
     SystemFwRamdiskInformation, // SYSTEM_FIRMWARE_RAMDISK_INFORMATION
@@ -2450,6 +2456,15 @@ typedef enum _SYSTEM_INFORMATION_CLASS
     SystemPointerAuthInformation, // SYSTEM_POINTER_AUTH_INFORMATION
     SystemSecureKernelDebuggerInformation,
     SystemOriginalImageFeatureInformation, // q: in: SYSTEM_ORIGINAL_IMAGE_FEATURE_INFORMATION_INPUT, out: SYSTEM_ORIGINAL_IMAGE_FEATURE_INFORMATION_OUTPUT // NtQuerySystemInformationEx
+    SystemMemoryNumaInformation, // SYSTEM_MEMORY_NUMA_INFORMATION_INPUT, SYSTEM_MEMORY_NUMA_INFORMATION_OUTPUT
+    SystemMemoryNumaPerformanceInformation, // SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_INPUTSYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_INPUT, SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_OUTPUT // since 24H2 // 240
+    SystemCodeIntegritySignedPoliciesFullInformation,
+    SystemSecureSecretsInformation,
+    SystemTrustedAppsRuntimeInformation, // SYSTEM_TRUSTEDAPPS_RUNTIME_INFORMATION
+    SystemBadPageInformationEx, // SYSTEM_BAD_PAGE_INFORMATION
+    SystemResourceDeadlockTimeout, // ULONG
+    SystemBreakOnContextUnwindFailureInformation, // ULONG (requires SeDebugPrivilege)
+    SystemOslRamdiskInformation, // SYSTEM_OSL_RAMDISK_INFORMATION
     MaxSystemInfoClass
 } SYSTEM_INFORMATION_CLASS;
 
@@ -2476,6 +2491,26 @@ typedef struct _SYSTEM_PROCESSOR_INFORMATION
     USHORT MaximumProcessors;
     ULONG ProcessorFeatureBits;
 } SYSTEM_PROCESSOR_INFORMATION, *PSYSTEM_PROCESSOR_INFORMATION;
+
+// ProcessorFeatureBits // ksamd64
+#define KF_RDTSC 0x0000000000000002
+#define KF_CR4 0x0000000000000004
+#define KF_GLOBAL_PAGE 0x0000000000000010
+#define KF_LARGE_PAGE 0x0000000000000020
+#define KF_CMPXCHG8B 0x0000000000000080
+#define KF_FAST_SYSCALL 0x0000000000001000
+#define KF_BRANCH 0x0000000000020000
+#define KF_XSTATE 0x0000000000800000
+#define KF_RDTSCP 0x0000000400000000
+#define KF_CET_SS 0x0000400000000000
+#define KF_XFD 0x0080000000000000
+#define KF_XSAVEOPT_BIT 0x0F
+#define KF_XSTATE_BIT 0x17
+#define KF_RDWRFSGSBASE_BIT 0x1C
+#define KF_XSAVES_BIT 0x26
+#define KF_FPU_LEAKAGE_BIT 0x29
+#define KF_CAT_BIT 0x2C
+#define KF_XFD_BIT 0x37
 
 typedef struct _SYSTEM_PERFORMANCE_INFORMATION
 {
@@ -3405,6 +3440,9 @@ typedef struct _SYSTEM_BOOT_ENVIRONMENT_INFORMATION
             ULONGLONG DbgSystemHiveReplace : 1;
             ULONGLONG DbgMeasuredLaunchSmmProtections : 1;
             ULONGLONG DbgMeasuredLaunchSmmLevel : 7; // 20H1
+            ULONGLONG DbgBugCheckRecovery : 1; // 24H2
+            ULONGLONG DbgFASR : 1;
+            ULONGLONG DbgUseCachedBcd : 1;
         };
     };
 } SYSTEM_BOOT_ENVIRONMENT_INFORMATION, *PSYSTEM_BOOT_ENVIRONMENT_INFORMATION;
@@ -3958,8 +3996,6 @@ typedef struct _SM_REGISTRATION_REQUEST
     SM_REGISTRATION_INFO RegInfo;
 } SM_REGISTRATION_REQUEST, *PSM_REGISTRATION_REQUEST;
 
-typedef struct _RTL_BITMAP *PRTL_BITMAP;
-
 #define SYSTEM_STORE_RESIZE_INFORMATION_VERSION 6
 
 typedef struct _SM_STORE_RESIZE_REQUEST
@@ -4219,8 +4255,21 @@ typedef struct _SYSTEM_BOOT_GRAPHICS_INFORMATION
 typedef struct _MEMORY_SCRUB_INFORMATION
 {
     HANDLE Handle;
-    ULONG PagesScrubbed;
+    ULONG_PTR PagesScrubbed;
 } MEMORY_SCRUB_INFORMATION, *PMEMORY_SCRUB_INFORMATION;
+
+// private
+typedef union _SYSTEM_BAD_PAGE_INFORMATION
+{
+#ifdef _WIN64
+    ULONG_PTR PhysicalPageNumber : 52;
+#else
+    ULONG PhysicalPageNumber : 20;
+#endif
+    ULONG_PTR Reserved : 10;
+    ULONG_PTR Pending : 1;
+    ULONG_PTR Poisoned : 1;
+} SYSTEM_BAD_PAGE_INFORMATION, *PSYSTEM_BAD_PAGE_INFORMATION;
 
 // private
 typedef struct _PEBS_DS_SAVE_AREA32
@@ -4730,7 +4779,12 @@ typedef struct _SYSTEM_ISOLATED_USER_MODE_INFORMATION
     BOOLEAN SpareFlags : 2;
     BOOLEAN TrustletRunning : 1;
     BOOLEAN HvciDisableAllowed : 1;
-    BOOLEAN SpareFlags2 : 6;
+    BOOLEAN HardwareEnforcedVbs : 1;
+    BOOLEAN NoSecrets : 1;
+    BOOLEAN EncryptionKeyPersistent : 1;
+    BOOLEAN HardwareEnforcedHvpt : 1;
+    BOOLEAN HardwareHvptAvailable : 1;
+    BOOLEAN SpareFlags2 : 1;
     BOOLEAN Spare0[6];
     ULONGLONG Spare1;
 } SYSTEM_ISOLATED_USER_MODE_INFORMATION, *PSYSTEM_ISOLATED_USER_MODE_INFORMATION;
@@ -4970,10 +5024,18 @@ typedef struct _SYSTEM_CODEINTEGRITYVERIFICATION_INFORMATION
     PVOID Image;
 } SYSTEM_CODEINTEGRITYVERIFICATION_INFORMATION, *PSYSTEM_CODEINTEGRITYVERIFICATION_INFORMATION;
 
+// rev
+typedef struct _SYSTEM_HYPERVISOR_USER_SHARED_DATA
+{
+    ULONGLONG TimeUpdateLock; // QpcSystemTimeIncrement?
+    volatile ULONGLONG QpcMultiplier;
+    volatile ULONGLONG QpcBias; // HvlGetQpcBias
+} SYSTEM_HYPERVISOR_USER_SHARED_DATA, *PSYSTEM_HYPERVISOR_USER_SHARED_DATA;
+
 // private
 typedef struct _SYSTEM_HYPERVISOR_SHARED_PAGE_INFORMATION
 {
-    PVOID HypervisorSharedUserVa;
+    PSYSTEM_HYPERVISOR_USER_SHARED_DATA HypervisorSharedUserVa;
 } SYSTEM_HYPERVISOR_SHARED_PAGE_INFORMATION, *PSYSTEM_HYPERVISOR_SHARED_PAGE_INFORMATION;
 
 // private
@@ -5023,19 +5085,27 @@ typedef struct _SYSTEM_SPECULATION_CONTROL_INFORMATION
     } SpeculationControlFlags;
     union
     {
-        ULONG Flags; // Since KB4074629 (2023)
+        ULONG Flags; // since 23H2
         struct
         {
-            ULONG Reserved1 : 5;
+            ULONG SbdrSsdpHardwareProtected : 1;
+            ULONG FbsdpHardwareProtected : 1;
+            ULONG PsdpHardwareProtected : 1;
+            ULONG FbClearEnabled : 1;
+            ULONG FbClearReported : 1;
             ULONG BhbEnabled : 1;
             ULONG BhbDisabledSystemPolicy : 1;
             ULONG BhbDisabledNoHardwareSupport : 1;
-            ULONG Reserved2 : 3;
+            ULONG BranchConfusionStatus : 2;
+            ULONG BranchConfusionReported : 1;
             ULONG RdclHardwareProtectedReported : 1;
             ULONG RdclHardwareProtected : 1;
             ULONG Reserved3 : 4;
             ULONG Reserved4 : 3;
-            ULONG Reserved : 12;
+            ULONG DivideByZeroReported : 1;
+            ULONG DivideByZeroStatus : 1;
+            ULONG Reserved5 : 3;
+            ULONG Reserved : 7;
         };
     } SpeculationControlFlags2;
 } SYSTEM_SPECULATION_CONTROL_INFORMATION, *PSYSTEM_SPECULATION_CONTROL_INFORMATION;
@@ -5067,51 +5137,12 @@ typedef struct _SYSTEM_SECURITY_MODEL_INFORMATION
         ULONG SecurityModelFlags;
         struct
         {
-            ULONG SModeAdminlessEnabled : 1;
+            ULONG ReservedFlag : 1; // SModeAdminlessEnabled
             ULONG AllowDeviceOwnerProtectionDowngrade : 1;
             ULONG Reserved : 30;
         };
     };
 } SYSTEM_SECURITY_MODEL_INFORMATION, *PSYSTEM_SECURITY_MODEL_INFORMATION;
-
-typedef struct _RTL_FEATURE_CONFIGURATION *PRTL_FEATURE_CONFIGURATION; // from ntrtl.h
-
-// private
-typedef struct _SYSTEM_FEATURE_CONFIGURATION_INFORMATION
-{
-    ULONGLONG ChangeStamp;
-    PRTL_FEATURE_CONFIGURATION Configuration;
-} SYSTEM_FEATURE_CONFIGURATION_INFORMATION, *PSYSTEM_FEATURE_CONFIGURATION_INFORMATION;
-
-// private
-typedef struct _SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION_ENTRY
-{
-    ULONGLONG ChangeStamp;
-    PVOID Section;
-    ULONGLONG Size;
-} SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION_ENTRY, *PSYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION_ENTRY;
-
-// private
-typedef struct _SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION
-{
-    ULONGLONG OverallChangeStamp;
-    SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION_ENTRY Descriptors[3];
-} SYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION, *PSYSTEM_FEATURE_CONFIGURATION_SECTIONS_INFORMATION;
-
-// private
-typedef struct _RTL_FEATURE_USAGE_SUBSCRIPTION_TARGET
-{
-    ULONG Data[2];
-} RTL_FEATURE_USAGE_SUBSCRIPTION_TARGET, *PRTL_FEATURE_USAGE_SUBSCRIPTION_TARGET;
-
-// private
-typedef struct _SYSTEM_FEATURE_USAGE_SUBSCRIPTION_DETAILS
-{
-    ULONG FeatureId;
-    USHORT ReportingKind;
-    USHORT ReportingOptions;
-    RTL_FEATURE_USAGE_SUBSCRIPTION_TARGET ReportingTarget;
-} SYSTEM_FEATURE_USAGE_SUBSCRIPTION_DETAILS, *PSYSTEM_FEATURE_USAGE_SUBSCRIPTION_DETAILS;
 
 // private
 typedef union _SECURE_SPECULATION_CONTROL_INFORMATION
@@ -5132,7 +5163,9 @@ typedef union _SECURE_SPECULATION_CONTROL_INFORMATION
     ULONG BpbUserToKernel : 1;
     ULONG ReturnSpeculate : 1;
     ULONG BranchConfusionSafe : 1;
-    ULONG Reserved : 16;
+    ULONG SsbsEnabledAlways : 1; // 24H2
+    ULONG SsbsEnabledKernel : 1;
+    ULONG Reserved : 14;
 } SECURE_SPECULATION_CONTROL_INFORMATION, *PSECURE_SPECULATION_CONTROL_INFORMATION;
 
 // private
@@ -5283,7 +5316,8 @@ typedef struct _SYSTEM_POINTER_AUTH_INFORMATION
             USHORT AddressAuthQarma : 1;
             USHORT GenericAuthSupported : 1;
             USHORT GenericAuthQarma : 1;
-            USHORT SupportedReserved : 12;
+            USHORT AddressAuthFaulting : 1;
+            USHORT SupportedReserved : 11;
         };
     };
     union
@@ -5314,6 +5348,113 @@ typedef struct _SYSTEM_ORIGINAL_IMAGE_FEATURE_INFORMATION_OUTPUT
     ULONG Version;
     BOOLEAN FeatureIsEnabled;
 } SYSTEM_ORIGINAL_IMAGE_FEATURE_INFORMATION_OUTPUT, *PSYSTEM_ORIGINAL_IMAGE_FEATURE_INFORMATION_OUTPUT;
+
+// private
+typedef struct _SYSTEM_MEMORY_NUMA_INFORMATION_INPUT
+{
+    ULONG Version;
+    ULONG TargetNodeNumber;
+    ULONG Flags;
+} SYSTEM_MEMORY_NUMA_INFORMATION_INPUT, *PSYSTEM_MEMORY_NUMA_INFORMATION_INPUT;
+
+// private
+typedef struct _SYSTEM_MEMORY_NUMA_INFORMATION_OUTPUT
+{
+    ULONG Version;
+    ULONG Size;
+    ULONG InitiatorNode;
+    union
+    {
+        ULONG Flags;
+        struct
+        {
+            ULONG IsAttached : 1;
+            ULONG Reserved : 31;
+        };
+    };
+} SYSTEM_MEMORY_NUMA_INFORMATION_OUTPUT, *PSYSTEM_MEMORY_NUMA_INFORMATION_OUTPUT;
+
+// private
+typedef enum _SYSTEM_MEMORY_NUMA_PERFORMANCE_QUERY_DATA_TYPES
+{
+    SystemMemoryNumaPerformanceQuery_ReadLatency,
+    SystemMemoryNumaPerformanceQuery_ReadBandwidth,
+    SystemMemoryNumaPerformanceQuery_WriteLatency,
+    SystemMemoryNumaPerformanceQuery_WriteBandwidth,
+    SystemMemoryNumaPerformanceQuery_Latency,
+    SystemMemoryNumaPerformanceQuery_Bandwidth,
+    SystemMemoryNumaPerformanceQuery_AllDataTypes,
+    SystemMemoryNumaPerformanceQuery_MaxDataType
+} SYSTEM_MEMORY_NUMA_PERFORMANCE_QUERY_DATA_TYPES;
+
+// private
+typedef struct _SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_INPUT
+{
+    ULONG Version;
+    ULONG TargetNodeNumber;
+    SYSTEM_MEMORY_NUMA_PERFORMANCE_QUERY_DATA_TYPES QueryDataType;
+    ULONG Flags;
+} SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_INPUT, *PSYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_INPUT;
+
+// private
+typedef struct _SYSTEM_MEMORY_NUMA_PERFORMANCE_ENTRY
+{
+    ULONG InitiatorNodeNumber;
+    ULONG TargetNodeNumber;
+    SYSTEM_MEMORY_NUMA_PERFORMANCE_QUERY_DATA_TYPES DataType;
+    union
+    {
+        BOOLEAN Flags;
+        struct
+        {
+            BOOLEAN MinTransferSizeToAchieveValues : 1;
+            BOOLEAN NonSequentialTransfers : 1;
+            BOOLEAN Reserved : 6;
+        };
+    };
+    ULONG_PTR MinTransferSizeInBytes;
+    ULONG_PTR EntryValue;
+} SYSTEM_MEMORY_NUMA_PERFORMANCE_ENTRY, *PSYSTEM_MEMORY_NUMA_PERFORMANCE_ENTRY;
+
+// private
+typedef struct _SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_OUTPUT
+{
+    ULONG Version;
+    ULONG Size;
+    ULONG EntryCount;
+    SYSTEM_MEMORY_NUMA_PERFORMANCE_ENTRY PerformanceEntries[1];
+} SYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_OUTPUT, *PSYSTEM_MEMORY_NUMA_PERFORMANCE_INFORMATION_OUTPUT;
+
+// private
+typedef struct _SYSTEM_OSL_RAMDISK_ENTRY
+{
+    ULONG BlockSize;
+    ULONG_PTR BaseAddress;
+    SIZE_T Size;
+} SYSTEM_OSL_RAMDISK_ENTRY, *PSYSTEM_OSL_RAMDISK_ENTRY;
+
+// private
+typedef struct _SYSTEM_TRUSTEDAPPS_RUNTIME_INFORMATION
+{
+    union
+    {
+        ULONGLONG Flags;
+        struct
+        {
+            ULONGLONG Supported : 1;
+            ULONGLONG Spare : 63;
+        };
+    };
+    PVOID RemoteBreakingRoutine;
+} SYSTEM_TRUSTEDAPPS_RUNTIME_INFORMATION, *PSYSTEM_TRUSTEDAPPS_RUNTIME_INFORMATION;
+
+// private
+typedef struct _SYSTEM_OSL_RAMDISK_INFORMATION
+{
+    ULONG Version;
+    ULONG Count;
+    SYSTEM_OSL_RAMDISK_ENTRY Entries[1];
+} SYSTEM_OSL_RAMDISK_INFORMATION, *PSYSTEM_OSL_RAMDISK_INFORMATION;
 
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 
@@ -5816,6 +5957,7 @@ typedef struct _KUSER_SHARED_DATA
     //
 
     ULONG TimeZoneId;
+
     ULONG LargePageMinimum;
 
     //
@@ -5989,7 +6131,10 @@ typedef struct _KUSER_SHARED_DATA
 
     //
     // Number of physical pages in the system. This can dynamically change as
-    // physical memory can be added or removed from a running system.
+    // physical memory can be added or removed from a running system.  This
+    // cell is too small to hold the non-truncated value on very large memory
+    // machines so code that needs the full value should access
+    // FullNumberOfPhysicalPages instead.
     //
 
     ULONG NumberOfPhysicalPages;
@@ -6061,7 +6206,9 @@ typedef struct _KUSER_SHARED_DATA
             ULONG DbgMultiSessionSku        : 1;
             ULONG DbgMultiUsersInSessionSku : 1;
             ULONG DbgStateSeparationEnabled : 1;
-            ULONG SpareBits                 : 21;
+            ULONG DbgSplitTokenEnabled      : 1;
+            ULONG DbgShadowAdminEnabled     : 1;
+            ULONG SpareBits                 : 19;
         } DUMMYSTRUCTNAME2;
     } DUMMYUNIONNAME2;
 
@@ -6075,6 +6222,7 @@ typedef struct _KUSER_SHARED_DATA
     //
 
     ULONGLONG TestRetInstruction;
+
     LONGLONG QpcFrequency;
 
     //
@@ -6091,10 +6239,18 @@ typedef struct _KUSER_SHARED_DATA
     ULONG Reserved2;
 
     //
+    // Full 64 bit version of the number of physical pages in the system.
+    // This can dynamically change as physical memory can be added or removed
+    // from a running system.
+    //
+
+    ULONGLONG FullNumberOfPhysicalPages;
+
+    //
     // Reserved, available for reuse.
     //
 
-    ULONGLONG SystemCallPad[2];
+    ULONGLONG SystemCallPad[1];
 
     //
     // The 64-bit tick count.
@@ -6257,18 +6413,18 @@ typedef struct _KUSER_SHARED_DATA
         struct
         {
             //
-            // A boolean indicating whether performance counter queries
-            // can read the counter directly (bypassing the system call).
+            // A bitfield indicating whether performance counter queries can
+            // read the counter directly (bypassing the system call) and flags.
             //
 
             volatile UCHAR QpcBypassEnabled;
 
             //
-            // Shift applied to the raw counter value to derive the
-            // QPC count.
+            // Reserved, leave as zero for backward compatibility. Was shift
+            // applied to the raw counter value to derive QPC count.
             //
 
-            UCHAR QpcShift;
+            UCHAR QpcReserved;
         };
     };
 
@@ -6276,7 +6432,7 @@ typedef struct _KUSER_SHARED_DATA
     LARGE_INTEGER TimeZoneBiasEffectiveEnd;
 
     //
-    // Extended processor state configuration
+    // Extended processor state configuration (AMD64 and x86).
     //
 
     XSTATE_CONFIGURATION XState;
@@ -6286,6 +6442,16 @@ typedef struct _KUSER_SHARED_DATA
 
     ULONG64 UserPointerAuthMask;
 
+    //
+    // Extended processor state configuration (ARM64). The reserved space for
+    // other architectures is not available for reuse.
+    //
+
+#if defined(_ARM64_)
+    XSTATE_CONFIGURATION XStateArm64;
+#else
+    ULONG Reserved10[210];
+#endif
 } KUSER_SHARED_DATA, *PKUSER_SHARED_DATA;
 
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TickCountLowDeprecated) == 0x0);
@@ -6337,7 +6503,7 @@ C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TestRetInstruction) == 0x2f8);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, QpcFrequency) == 0x300);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, SystemCall) == 0x308);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved2) == 0x30c);
-C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, SystemCallPad) == 0x310);
+C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, SystemCallPad) == 0x318); // previously 0x310
 #if defined(_MSC_EXTENSIONS)
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TickCount) == 0x320);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TickCountQuad) == 0x320);
@@ -6365,7 +6531,7 @@ C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, ActiveGroupCount) == 0x3c4);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved9) == 0x3c5);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, QpcData) == 0x3c6);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, QpcBypassEnabled) == 0x3c6);
-C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, QpcShift) == 0x3c7);
+C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, QpcReserved) == 0x3c7);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TimeZoneBiasEffectiveStart) == 0x3c8);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, TimeZoneBiasEffectiveEnd) == 0x3d0);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, XState) == 0x3d8);
@@ -6378,8 +6544,13 @@ C_ASSERT(sizeof(KUSER_SHARED_DATA) == 0x728);
 #else
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, FeatureConfigurationChangeStamp) == 0x720);
 C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, UserPointerAuthMask) == 0x730);
+#if defined(_ARM64_)
+C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, XStateArm64) == 0x738);
+#else
+C_ASSERT(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved10) == 0x738);
+#endif
 #if !defined(WINDOWS_IGNORE_PACKING_MISMATCH)
-C_ASSERT(sizeof(KUSER_SHARED_DATA) == 0x738);
+C_ASSERT(sizeof(KUSER_SHARED_DATA) == 0xa80);
 #endif
 #endif
 

@@ -625,6 +625,9 @@ typedef struct _PS_MITIGATION_AUDIT_OPTIONS_MAP
     ULONG_PTR Map[3]; // 2 < 20H1
 } PS_MITIGATION_AUDIT_OPTIONS_MAP, *PPS_MITIGATION_AUDIT_OPTIONS_MAP;
 
+#define PS_SYSTEM_DLL_INIT_BLOCK_V1 0x0F0
+#define PS_SYSTEM_DLL_INIT_BLOCK_V2 0x128
+
 // private
 typedef struct _PS_SYSTEM_DLL_INIT_BLOCK
 {
@@ -648,18 +651,23 @@ typedef struct _PS_SYSTEM_DLL_INIT_BLOCK
     ULONG_PTR Wow64CfgBitMap;
     ULONG_PTR Wow64CfgBitMapSize;
     PS_MITIGATION_AUDIT_OPTIONS_MAP MitigationAuditOptionsMap; // REDSTONE3
+    ULONG_PTR ScpCfgCheckFunction; // since 24H2
+    ULONG_PTR ScpCfgCheckESFunction;
+    ULONG_PTR ScpCfgDispatchFunction;
+    ULONG_PTR ScpCfgDispatchESFunction;
+    ULONG_PTR ScpArm64EcCallCheck;
+    ULONG_PTR ScpArm64EcCfgCheckFunction;
+    ULONG_PTR ScpArm64EcCfgCheckESFunction;
 } PS_SYSTEM_DLL_INIT_BLOCK, *PPS_SYSTEM_DLL_INIT_BLOCK;
 
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
 // rev
+#if (PHNT_VERSION >= PHNT_THRESHOLD)
 NTSYSAPI PS_SYSTEM_DLL_INIT_BLOCK LdrSystemDllInitBlock;
 #endif
 
 // Load as data table
 
 #if (PHNT_VERSION >= PHNT_VISTA)
-
-typedef struct _ACTIVATION_CONTEXT *PACTIVATION_CONTEXT;
 
 // private
 NTSYSAPI
@@ -865,7 +873,23 @@ typedef struct _RTL_PROCESS_MODULES
 typedef struct _RTL_PROCESS_MODULE_INFORMATION_EX
 {
     USHORT NextOffset;
-    RTL_PROCESS_MODULE_INFORMATION BaseInfo;
+    union
+    {
+        RTL_PROCESS_MODULE_INFORMATION BaseInfo;
+        struct
+        {
+            PVOID Section;
+            PVOID MappedBase;
+            PVOID ImageBase;
+            ULONG ImageSize;
+            ULONG Flags;
+            USHORT LoadOrderIndex;
+            USHORT InitOrderIndex;
+            USHORT LoadCount;
+            USHORT OffsetToFileName;
+            UCHAR FullPathName[256];
+        };
+    };
     ULONG ImageChecksum;
     ULONG TimeDateStamp;
     PVOID DefaultBase;
