@@ -1,5 +1,9 @@
 ﻿# Mile.Windows.Internal Release Notes
 
+**Mile.Windows.Internal 1.0.2970.0**
+
+- Update PHNT from System Informer to https://github.com/winsiderss/systeminformer/tree/abb21b9c326680c31fa05651dd22fba5f82b8efe.
+
 **Mile.Windows.Internal 1.0.2889.0**
 
 - Update PHNT from System Informer to https://github.com/winsiderss/systeminformer/tree/a2cff0e04b38fabe0a37d62b48f06983a4ca9364.
