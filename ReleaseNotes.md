@@ -1,5 +1,9 @@
 ﻿# Mile.Windows.Internal Release Notes
 
+**Mile.Windows.Internal 1.0.2971.0**
+
+- Comment out RtlCopyVolatileMemory for resolving the compilation issue.
+
 **Mile.Windows.Internal 1.0.2970.0**
 
 - Update PHNT from System Informer to https://github.com/winsiderss/systeminformer/tree/abb21b9c326680c31fa05651dd22fba5f82b8efe.
