@@ -4,9 +4,9 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Target Name="Packaging">
     <MSBuild
-      Projects="$(MSBuildThisFileDirectory)Mile.Project.Windows\Mile.Project.NuGetPackaging.proj"
+      Projects="$(MSBuildThisFileDirectory)Mile.Internal.NuGet\Mile.Windows.Internal.proj"
       Targets="Restore;Build"
       StopOnFirstFailure="True"
-      Properties="PreferredToolArchitecture=x64;NuspecFile=$(MSBuildThisFileDirectory)Mile.Internal.NuGet\Mile.Windows.Internal.nuspec" />
+      Properties="PreferredToolArchitecture=x64" />
   </Target>
 </Project>
