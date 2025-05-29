@@ -7,7 +7,6 @@
 #ifndef _NTTMAPI_H
 #define _NTTMAPI_H
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -15,7 +14,7 @@ NtCreateTransactionManager(
     _Out_ PHANDLE TmHandle,
     _In_ ACCESS_MASK DesiredAccess,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PUNICODE_STRING LogFileName,
+    _In_opt_ PCUNICODE_STRING LogFileName,
     _In_opt_ ULONG CreateOptions,
     _In_opt_ ULONG CommitStrength
     );
@@ -27,13 +26,11 @@ ZwCreateTransactionManager(
     _Out_ PHANDLE TmHandle,
     _In_ ACCESS_MASK DesiredAccess,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PUNICODE_STRING LogFileName,
+    _In_opt_ PCUNICODE_STRING LogFileName,
     _In_opt_ ULONG CreateOptions,
     _In_opt_ ULONG CommitStrength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -41,7 +38,7 @@ NtOpenTransactionManager(
     _Out_ PHANDLE TmHandle,
     _In_ ACCESS_MASK DesiredAccess,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PUNICODE_STRING LogFileName,
+    _In_opt_ PCUNICODE_STRING LogFileName,
     _In_opt_ LPGUID TmIdentity,
     _In_opt_ ULONG OpenOptions
     );
@@ -53,18 +50,16 @@ ZwOpenTransactionManager(
     _Out_ PHANDLE TmHandle,
     _In_ ACCESS_MASK DesiredAccess,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PUNICODE_STRING LogFileName,
+    _In_opt_ PCUNICODE_STRING LogFileName,
     _In_opt_ LPGUID TmIdentity,
     _In_opt_ ULONG OpenOptions
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtRenameTransactionManager(
-    _In_ PUNICODE_STRING LogFileName,
+    _In_ PCUNICODE_STRING LogFileName,
     _In_ LPGUID ExistingTransactionManagerGuid
     );
 
@@ -72,12 +67,10 @@ NTSYSCALLAPI
 NTSTATUS
 NTAPI
 ZwRenameTransactionManager(
-    _In_ PUNICODE_STRING LogFileName,
+    _In_ PCUNICODE_STRING LogFileName,
     _In_ LPGUID ExistingTransactionManagerGuid
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -93,9 +86,7 @@ ZwRollforwardTransactionManager(
     _In_ HANDLE TransactionManagerHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -109,9 +100,7 @@ NTAPI
 ZwRecoverTransactionManager(
     _In_ HANDLE TransactionManagerHandle
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -133,9 +122,7 @@ ZwQueryInformationTransactionManager(
     _In_ ULONG TransactionManagerInformationLength,
     _Out_opt_ PULONG ReturnLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -155,9 +142,7 @@ ZwSetInformationTransactionManager(
     _In_reads_bytes_(TransactionManagerInformationLength) PVOID TransactionManagerInformation,
     _In_ ULONG TransactionManagerInformationLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -179,9 +164,7 @@ ZwEnumerateTransactionObject(
     _In_ ULONG ObjectCursorLength,
     _Out_ PULONG ReturnLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -195,7 +178,7 @@ NtCreateTransaction(
     _In_opt_ ULONG IsolationLevel,
     _In_opt_ ULONG IsolationFlags,
     _In_opt_ PLARGE_INTEGER Timeout,
-    _In_opt_ PUNICODE_STRING Description
+    _In_opt_ PCUNICODE_STRING Description
     );
 
 NTSYSCALLAPI
@@ -211,11 +194,9 @@ ZwCreateTransaction(
     _In_opt_ ULONG IsolationLevel,
     _In_opt_ ULONG IsolationFlags,
     _In_opt_ PLARGE_INTEGER Timeout,
-    _In_opt_ PUNICODE_STRING Description
+    _In_opt_ PCUNICODE_STRING Description
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -237,9 +218,7 @@ ZwOpenTransaction(
     _In_ LPGUID Uow,
     _In_opt_ HANDLE TmHandle
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -261,9 +240,7 @@ ZwQueryInformationTransaction(
     _In_ ULONG TransactionInformationLength,
     _Out_opt_ PULONG ReturnLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -283,9 +260,7 @@ ZwSetInformationTransaction(
     _In_reads_bytes_(TransactionInformationLength) PVOID TransactionInformation,
     _In_ ULONG TransactionInformationLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -301,9 +276,7 @@ ZwCommitTransaction(
     _In_ HANDLE TransactionHandle,
     _In_ BOOLEAN Wait
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -319,9 +292,7 @@ ZwRollbackTransaction(
     _In_ HANDLE TransactionHandle,
     _In_ BOOLEAN Wait
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -349,9 +320,7 @@ ZwCreateEnlistment(
     _In_ NOTIFICATION_MASK NotificationMask,
     _In_opt_ PVOID EnlistmentKey
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -373,9 +342,7 @@ ZwOpenEnlistment(
     _In_ LPGUID EnlistmentGuid,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -397,9 +364,7 @@ ZwQueryInformationEnlistment(
     _In_ ULONG EnlistmentInformationLength,
     _Out_opt_ PULONG ReturnLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -419,9 +384,7 @@ ZwSetInformationEnlistment(
     _In_reads_bytes_(EnlistmentInformationLength) PVOID EnlistmentInformation,
     _In_ ULONG EnlistmentInformationLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -437,9 +400,7 @@ ZwRecoverEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PVOID EnlistmentKey
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -455,9 +416,7 @@ ZwPrePrepareEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -473,9 +432,7 @@ ZwPrepareEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -491,9 +448,7 @@ ZwCommitEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -509,9 +464,7 @@ ZwRollbackEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -527,9 +480,7 @@ ZwPrePrepareComplete(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -545,9 +496,7 @@ ZwPrepareComplete(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -563,9 +512,7 @@ ZwCommitComplete(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -581,9 +528,7 @@ ZwReadOnlyEnlistment(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -599,9 +544,7 @@ ZwRollbackComplete(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -617,9 +560,7 @@ ZwSinglePhaseReject(
     _In_ HANDLE EnlistmentHandle,
     _In_opt_ PLARGE_INTEGER TmVirtualClock
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -630,7 +571,7 @@ NtCreateResourceManager(
     _In_ LPGUID RmGuid,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
     _In_opt_ ULONG CreateOptions,
-    _In_opt_ PUNICODE_STRING Description
+    _In_opt_ PCUNICODE_STRING Description
     );
 
 NTSYSCALLAPI
@@ -643,11 +584,9 @@ ZwCreateResourceManager(
     _In_ LPGUID RmGuid,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
     _In_opt_ ULONG CreateOptions,
-    _In_opt_ PUNICODE_STRING Description
+    _In_opt_ PCUNICODE_STRING Description
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -669,9 +608,7 @@ ZwOpenResourceManager(
     _In_opt_ LPGUID ResourceManagerGuid,
     _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -685,9 +622,7 @@ NTAPI
 ZwRecoverResourceManager(
     _In_ HANDLE ResourceManagerHandle
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -713,9 +648,7 @@ ZwGetNotificationResourceManager(
     _In_ ULONG Asynchronous,
     _In_opt_ ULONG_PTR AsynchronousContext
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -737,9 +670,7 @@ ZwQueryInformationResourceManager(
     _In_ ULONG ResourceManagerInformationLength,
     _Out_opt_ PULONG ReturnLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -759,9 +690,7 @@ ZwSetInformationResourceManager(
     _In_reads_bytes_(ResourceManagerInformationLength) PVOID ResourceManagerInformation,
     _In_ ULONG ResourceManagerInformationLength
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -783,9 +712,7 @@ ZwRegisterProtocolAddressInformation(
     _In_ PVOID ProtocolInformation,
     _In_opt_ ULONG CreateOptions
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -805,9 +732,7 @@ ZwPropagationComplete(
     _In_ ULONG BufferLength,
     _In_ PVOID Buffer
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -825,10 +750,7 @@ ZwPropagationFailed(
     _In_ ULONG RequestCookie,
     _In_ NTSTATUS PropStatus
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
-// private
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -844,10 +766,7 @@ ZwFreezeTransactions(
     _In_ PLARGE_INTEGER FreezeTimeout,
     _In_ PLARGE_INTEGER ThawTimeout
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
-// private
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -861,6 +780,5 @@ NTAPI
 ZwThawTransactions(
     VOID
     );
-#endif
 
-#endif
+#endif // _NTTMAPI_H

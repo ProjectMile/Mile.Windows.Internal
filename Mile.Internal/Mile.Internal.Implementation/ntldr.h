@@ -7,28 +7,32 @@
 #ifndef _NTLDR_H
 #define _NTLDR_H
 
-// DLLs
+typedef struct _ACTIVATION_CONTEXT *PACTIVATION_CONTEXT;
+typedef struct _LDRP_LOAD_CONTEXT *PLDRP_LOAD_CONTEXT;
 
-typedef BOOLEAN (NTAPI *PLDR_INIT_ROUTINE)(
+//
+// DLLs
+//
+
+typedef _Function_class_(LDR_INIT_ROUTINE)
+BOOLEAN NTAPI LDR_INIT_ROUTINE(
     _In_ PVOID DllHandle,
     _In_ ULONG Reason,
     _In_opt_ PVOID Context
     );
+typedef LDR_INIT_ROUTINE* PLDR_INIT_ROUTINE;
 
-// symbols
 typedef struct _LDR_SERVICE_TAG_RECORD
 {
     struct _LDR_SERVICE_TAG_RECORD *Next;
     ULONG ServiceTag;
 } LDR_SERVICE_TAG_RECORD, *PLDR_SERVICE_TAG_RECORD;
 
-// symbols
 typedef struct _LDRP_CSLIST
 {
     PSINGLE_LIST_ENTRY Tail;
 } LDRP_CSLIST, *PLDRP_CSLIST;
 
-// symbols
 typedef enum _LDR_DDAG_STATE
 {
     LdrModulesMerged = -5,
@@ -48,7 +52,6 @@ typedef enum _LDR_DDAG_STATE
     LdrModulesReadyToRun = 9
 } LDR_DDAG_STATE;
 
-// symbols
 typedef struct _LDR_DDAG_NODE
 {
     LIST_ENTRY Modules;
@@ -76,7 +79,6 @@ typedef struct _LDR_DEPENDENCY_RECORD
     PLDR_DDAG_NODE IncomingDependencyNode;
 } LDR_DEPENDENCY_RECORD, *PLDR_DEPENDENCY_RECORD;
 
-// symbols
 typedef enum _LDR_DLL_LOAD_REASON
 {
     LoadReasonStaticDependency,
@@ -101,9 +103,6 @@ typedef enum _LDR_HOT_PATCH_STATE
     LdrHotPatchFailedToPatch,
     LdrHotPatchStateMax,
 } LDR_HOT_PATCH_STATE, *PLDR_HOT_PATCH_STATE;
-
-typedef struct _ACTIVATION_CONTEXT *PACTIVATION_CONTEXT;
-typedef struct _LDRP_LOAD_CONTEXT *PLDRP_LOAD_CONTEXT;
 
 // LDR_DATA_TABLE_ENTRY->Flags
 #define LDRP_PACKAGED_BINARY 0x00000001
@@ -199,7 +198,7 @@ typedef struct _LDR_DATA_TABLE_ENTRY
     PVOID SwitchBackContext;
     RTL_BALANCED_NODE BaseAddressIndexNode;
     RTL_BALANCED_NODE MappingInfoIndexNode;
-    ULONG_PTR OriginalBase;
+    PVOID OriginalBase;
     LARGE_INTEGER LoadTime;
     ULONG BaseNameHashValue;
     LDR_DLL_LOAD_REASON LoadReason; // since WIN8
@@ -226,9 +225,9 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrLoadDll(
-    _In_opt_ PWSTR DllPath,
+    _In_opt_ PCWSTR DllPath,
     _In_opt_ PULONG DllCharacteristics,
-    _In_ PUNICODE_STRING DllName,
+    _In_ PCUNICODE_STRING DllName,
     _Out_ PVOID *DllHandle
     );
 
@@ -243,9 +242,9 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrGetDllHandle(
-    _In_opt_ PWSTR DllPath,
+    _In_opt_ PCWSTR DllPath,
     _In_opt_ PULONG DllCharacteristics,
-    _In_ PUNICODE_STRING DllName,
+    _In_ PCUNICODE_STRING DllName,
     _Out_ PVOID *DllHandle
     );
 
@@ -257,13 +256,12 @@ NTSTATUS
 NTAPI
 LdrGetDllHandleEx(
     _In_ ULONG Flags,
-    _In_opt_ PWSTR DllPath,
+    _In_opt_ PCWSTR DllPath,
     _In_opt_ PULONG DllCharacteristics,
-    _In_ PUNICODE_STRING DllName,
+    _In_ PCUNICODE_STRING DllName,
     _Out_ PVOID *DllHandle
     );
 
-#if (PHNT_VERSION >= PHNT_WIN7)
 // rev
 NTSYSAPI
 NTSTATUS
@@ -272,21 +270,18 @@ LdrGetDllHandleByMapping(
     _In_ PVOID BaseAddress,
     _Out_ PVOID *DllHandle
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_WIN7)
 // rev
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrGetDllHandleByName(
-    _In_opt_ PUNICODE_STRING BaseDllName,
-    _In_opt_ PUNICODE_STRING FullDllName,
+    _In_opt_ PCUNICODE_STRING BaseDllName,
+    _In_opt_ PCUNICODE_STRING FullDllName,
     _Out_ PVOID *DllHandle
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_WIN8)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
 // rev
 NTSYSAPI
 NTSTATUS
@@ -320,7 +315,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrSetDllDirectory(
-    _In_ PUNICODE_STRING DllDirectory
+    _In_ PCUNICODE_STRING DllDirectory
     );
 #endif
 
@@ -339,7 +334,7 @@ NTSTATUS
 NTAPI
 LdrGetProcedureAddress(
     _In_ PVOID DllHandle,
-    _In_opt_ PANSI_STRING ProcedureName,
+    _In_opt_ PCANSI_STRING ProcedureName,
     _In_opt_ ULONG ProcedureNumber,
     _Out_ PVOID *ProcedureAddress
     );
@@ -347,19 +342,17 @@ LdrGetProcedureAddress(
 // rev
 #define LDR_GET_PROCEDURE_ADDRESS_DONT_RECORD_FORWARDER 0x00000001
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 // private
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrGetProcedureAddressEx(
     _In_ PVOID DllHandle,
-    _In_opt_ PANSI_STRING ProcedureName,
+    _In_opt_ PCANSI_STRING ProcedureName,
     _In_opt_ ULONG ProcedureNumber,
     _Out_ PVOID *ProcedureAddress,
     _In_ ULONG Flags
     );
-#endif
 
 NTSYSAPI
 NTSTATUS
@@ -370,14 +363,14 @@ LdrGetKnownDllSectionHandle(
     _Out_ PHANDLE Section
     );
 
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
 // rev
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrGetProcedureAddressForCaller(
     _In_ PVOID DllHandle,
-    _In_opt_ PANSI_STRING ProcedureName,
+    _In_opt_ PCANSI_STRING ProcedureName,
     _In_opt_ ULONG ProcedureNumber,
     _Out_ PVOID *ProcedureAddress,
     _In_ ULONG Flags,
@@ -416,7 +409,7 @@ NTSTATUS
 NTAPI
 LdrRelocateImage(
     _In_ PVOID NewBase,
-    _In_opt_ PSTR LoaderName,
+    _In_opt_ PCSTR LoaderName,
     _In_ NTSTATUS Success,
     _In_ NTSTATUS Conflict,
     _In_ NTSTATUS Invalid
@@ -428,7 +421,7 @@ NTAPI
 LdrRelocateImageWithBias(
     _In_ PVOID NewBase,
     _In_opt_ LONGLONG Bias,
-    _In_opt_ PSTR LoaderName,
+    _In_opt_ PCSTR LoaderName,
     _In_ NTSTATUS Success,
     _In_ NTSTATUS Conflict,
     _In_ NTSTATUS Invalid
@@ -444,7 +437,7 @@ LdrProcessRelocationBlock(
     _In_ LONG_PTR Diff
     );
 
-#if (PHNT_VERSION >= PHNT_WIN8)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
 NTSYSAPI
 PIMAGE_BASE_RELOCATION
 NTAPI
@@ -466,10 +459,12 @@ LdrVerifyMappedImageMatchesChecksum(
     _In_ ULONG FileLength
     );
 
-typedef VOID (NTAPI *PLDR_IMPORT_MODULE_CALLBACK)(
+typedef _Function_class_(LDR_IMPORT_MODULE_CALLBACK)
+VOID NTAPI LDR_IMPORT_MODULE_CALLBACK(
     _In_ PVOID Parameter,
-    _In_ PSTR ModuleName
+    _In_ PCSTR ModuleName
     );
+typedef LDR_IMPORT_MODULE_CALLBACK* PLDR_IMPORT_MODULE_CALLBACK;
 
 NTSYSAPI
 NTSTATUS
@@ -508,7 +503,6 @@ typedef struct _LDR_VERIFY_IMAGE_INFO
     USHORT ImageCharacteristics;
 } LDR_VERIFY_IMAGE_INFO, *PLDR_VERIFY_IMAGE_INFO;
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 // private
 NTSYSAPI
 NTSTATUS
@@ -517,9 +511,7 @@ LdrVerifyImageMatchesChecksumEx(
     _In_ HANDLE ImageFileHandle,
     _Inout_ PLDR_VERIFY_IMAGE_INFO VerifyInfo
     );
-#endif
 
-#if (PHNT_VERSION >= PHNT_VISTA)
 // private
 NTSYSAPI
 NTSTATUS
@@ -529,7 +521,6 @@ LdrQueryModuleServiceTags(
     _Out_writes_(*BufferSize) PULONG ServiceTagBuffer,
     _Inout_ PULONG BufferSize
     );
-#endif
 
 // begin_msdn:"DLL Load Notification"
 
@@ -560,14 +551,26 @@ typedef union _LDR_DLL_NOTIFICATION_DATA
     LDR_DLL_UNLOADED_NOTIFICATION_DATA Unloaded;
 } LDR_DLL_NOTIFICATION_DATA, *PLDR_DLL_NOTIFICATION_DATA;
 
-typedef VOID (NTAPI *PLDR_DLL_NOTIFICATION_FUNCTION)(
+typedef const LDR_DLL_NOTIFICATION_DATA *PCLDR_DLL_NOTIFICATION_DATA;
+
+typedef _Function_class_(LDR_DLL_NOTIFICATION_FUNCTION)
+VOID NTAPI LDR_DLL_NOTIFICATION_FUNCTION(
     _In_ ULONG NotificationReason,
-    _In_ PLDR_DLL_NOTIFICATION_DATA NotificationData,
+    _In_ PCLDR_DLL_NOTIFICATION_DATA NotificationData,
     _In_opt_ PVOID Context
     );
+typedef LDR_DLL_NOTIFICATION_FUNCTION* PLDR_DLL_NOTIFICATION_FUNCTION;
 
-#if (PHNT_VERSION >= PHNT_VISTA)
-
+/**
+ * Registers for notification when a DLL is first loaded. This notification occurs before dynamic linking takes place.
+ *
+ * @param Flags This parameter must be zero.
+ * @param NotificationFunction A pointer to an LdrDllNotification notification callback function to call when the DLL is loaded.
+ * @param Context A pointer to context data for the callback function.
+ * @param Cookie A pointer to a variable to receive an identifier for the callback function. This identifier is used to unregister the notification callback function.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/devnotes/ldrregisterdllnotification
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -578,14 +581,19 @@ LdrRegisterDllNotification(
     _Out_ PVOID *Cookie
     );
 
+/**
+ * Cancels DLL load notification previously registered by calling the LdrRegisterDllNotification function.
+ *
+ * @param Cookie A pointer to the callback identifier received from the LdrRegisterDllNotification call that registered for notification.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/devnotes/ldrunregisterdllnotification
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrUnregisterDllNotification(
     _In_ PVOID Cookie
     );
-
-#endif
 
 // end_msdn
 
@@ -594,10 +602,9 @@ NTSYSAPI
 PUNICODE_STRING
 NTAPI
 LdrStandardizeSystemPath(
-    _In_ PUNICODE_STRING SystemPath
+    _In_ PCUNICODE_STRING SystemPath
     );
 
-#if (PHNT_VERSION >= PHNT_WINBLUE)
 typedef struct _LDR_FAILURE_DATA
 {
     NTSTATUS Status;
@@ -605,6 +612,7 @@ typedef struct _LDR_FAILURE_DATA
     WCHAR AdditionalInfo[0x20];
 } LDR_FAILURE_DATA, *PLDR_FAILURE_DATA;
 
+#if (PHNT_VERSION >= PHNT_WINDOWS_8_1)
 NTSYSAPI
 PLDR_FAILURE_DATA
 NTAPI
@@ -613,28 +621,71 @@ LdrGetFailureData(
     );
 #endif
 
-// private
-typedef struct _PS_MITIGATION_OPTIONS_MAP
+// WIN8 to REDSTONE
+typedef struct _PS_MITIGATION_OPTIONS_MAP_V1
 {
-    ULONG_PTR Map[3]; // 2 < 20H1
-} PS_MITIGATION_OPTIONS_MAP, *PPS_MITIGATION_OPTIONS_MAP;
+    ULONG64 Map[1];
+} PS_MITIGATION_OPTIONS_MAP_V1, *PPS_MITIGATION_OPTIONS_MAP_V1;
 
-// private
-typedef struct _PS_MITIGATION_AUDIT_OPTIONS_MAP
+// private // REDSTONE2 to 19H2
+typedef struct _PS_MITIGATION_OPTIONS_MAP_V2
 {
-    ULONG_PTR Map[3]; // 2 < 20H1
-} PS_MITIGATION_AUDIT_OPTIONS_MAP, *PPS_MITIGATION_AUDIT_OPTIONS_MAP;
+    ULONG64 Map[2];
+} PS_MITIGATION_OPTIONS_MAP_V2, *PPS_MITIGATION_OPTIONS_MAP_V2;
 
-#define PS_SYSTEM_DLL_INIT_BLOCK_V1 0x0F0
-#define PS_SYSTEM_DLL_INIT_BLOCK_V2 0x128
+// private // since 20H1
+typedef struct _PS_MITIGATION_OPTIONS_MAP_V3
+{
+    ULONG64 Map[3];
+} PS_MITIGATION_OPTIONS_MAP_V3, *PPS_MITIGATION_OPTIONS_MAP_V3;
 
-// private
-typedef struct _PS_SYSTEM_DLL_INIT_BLOCK
+typedef PS_MITIGATION_OPTIONS_MAP_V3
+    PS_MITIGATION_OPTIONS_MAP, *PPS_MITIGATION_OPTIONS_MAP;
+
+// private // REDSTONE3 to 19H2
+typedef struct _PS_MITIGATION_AUDIT_OPTIONS_MAP_V2
+{
+    ULONG64 Map[2];
+} PS_MITIGATION_AUDIT_OPTIONS_MAP_V2, *PPS_MITIGATION_AUDIT_OPTIONS_MAP_V2;
+
+// private // since 20H1
+typedef struct _PS_MITIGATION_AUDIT_OPTIONS_MAP_V3
+{
+    ULONG64 Map[3];
+} PS_MITIGATION_AUDIT_OPTIONS_MAP_V3, *PPS_MITIGATION_AUDIT_OPTIONS_MAP_V3,
+    PS_MITIGATION_AUDIT_OPTIONS_MAP, *PPS_MITIGATION_AUDIT_OPTIONS_MAP;
+
+// private // WIN8 to REDSTONE
+typedef struct _PS_SYSTEM_DLL_INIT_BLOCK_V1
 {
     ULONG Size;
-    ULONG_PTR SystemDllWowRelocation;
-    ULONG_PTR SystemDllNativeRelocation;
-    ULONG_PTR Wow64SharedInformation[16]; // use WOW64_SHARED_INFORMATION as index
+    ULONG SystemDllWowRelocation;
+    ULONG64 SystemDllNativeRelocation;
+    ULONG Wow64SharedInformation[16]; // use WOW64_SHARED_INFORMATION as index
+    ULONG RngData;
+    union
+    {
+        ULONG Flags;
+        struct
+        {
+            ULONG CfgOverride : 1; // since REDSTONE
+            ULONG Reserved : 31;
+        };
+    };
+    ULONG64 MitigationOptions;
+    ULONG64 CfgBitMap; // since WINBLUE
+    ULONG64 CfgBitMapSize;
+    ULONG64 Wow64CfgBitMap; // since THRESHOLD
+    ULONG64 Wow64CfgBitMapSize;
+} PS_SYSTEM_DLL_INIT_BLOCK_V1, *PPS_SYSTEM_DLL_INIT_BLOCK_V1;
+
+// RS2 - 19H2
+typedef struct _PS_SYSTEM_DLL_INIT_BLOCK_V2
+{
+    ULONG Size;
+    ULONG64 SystemDllWowRelocation;
+    ULONG64 SystemDllNativeRelocation;
+    ULONG64 Wow64SharedInformation[16]; // use WOW64_SHARED_INFORMATION as index
     ULONG RngData;
     union
     {
@@ -645,29 +696,86 @@ typedef struct _PS_SYSTEM_DLL_INIT_BLOCK
             ULONG Reserved : 31;
         };
     };
-    PS_MITIGATION_OPTIONS_MAP MitigationOptionsMap;
-    ULONG_PTR CfgBitMap;
-    ULONG_PTR CfgBitMapSize;
-    ULONG_PTR Wow64CfgBitMap;
-    ULONG_PTR Wow64CfgBitMapSize;
-    PS_MITIGATION_AUDIT_OPTIONS_MAP MitigationAuditOptionsMap; // REDSTONE3
-    ULONG_PTR ScpCfgCheckFunction; // since 24H2
-    ULONG_PTR ScpCfgCheckESFunction;
-    ULONG_PTR ScpCfgDispatchFunction;
-    ULONG_PTR ScpCfgDispatchESFunction;
-    ULONG_PTR ScpArm64EcCallCheck;
-    ULONG_PTR ScpArm64EcCfgCheckFunction;
-    ULONG_PTR ScpArm64EcCfgCheckESFunction;
-} PS_SYSTEM_DLL_INIT_BLOCK, *PPS_SYSTEM_DLL_INIT_BLOCK;
+    PS_MITIGATION_OPTIONS_MAP_V2 MitigationOptionsMap;
+    ULONG64 CfgBitMap;
+    ULONG64 CfgBitMapSize;
+    ULONG64 Wow64CfgBitMap;
+    ULONG64 Wow64CfgBitMapSize;
+    PS_MITIGATION_AUDIT_OPTIONS_MAP_V2 MitigationAuditOptionsMap; // since REDSTONE3
+} PS_SYSTEM_DLL_INIT_BLOCK_V2, *PPS_SYSTEM_DLL_INIT_BLOCK_V2;
 
-// rev
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
+// private // since 20H1
+typedef struct _PS_SYSTEM_DLL_INIT_BLOCK_V3
+{
+    ULONG Size;
+    ULONG64 SystemDllWowRelocation; // effectively since WIN8
+    ULONG64 SystemDllNativeRelocation;
+    ULONG64 Wow64SharedInformation[16]; // use WOW64_SHARED_INFORMATION as index
+    ULONG RngData;
+    union
+    {
+        ULONG Flags;
+        struct
+        {
+            ULONG CfgOverride : 1; // effectively since REDSTONE
+            ULONG Reserved : 31;
+        };
+    };
+    PS_MITIGATION_OPTIONS_MAP_V3 MitigationOptionsMap;
+    ULONG64 CfgBitMap; // effectively since WINBLUE
+    ULONG64 CfgBitMapSize;
+    ULONG64 Wow64CfgBitMap; // effectively since THRESHOLD
+    ULONG64 Wow64CfgBitMapSize;
+    PS_MITIGATION_AUDIT_OPTIONS_MAP_V3 MitigationAuditOptionsMap; // effectively since REDSTONE3
+    ULONG64 ScpCfgCheckFunction; // since 24H2
+    ULONG64 ScpCfgCheckESFunction;
+    ULONG64 ScpCfgDispatchFunction;
+    ULONG64 ScpCfgDispatchESFunction;
+    ULONG64 ScpArm64EcCallCheck;
+    ULONG64 ScpArm64EcCfgCheckFunction;
+    ULONG64 ScpArm64EcCfgCheckESFunction;
+} PS_SYSTEM_DLL_INIT_BLOCK_V3, *PPS_SYSTEM_DLL_INIT_BLOCK_V3,
+    PS_SYSTEM_DLL_INIT_BLOCK, *PPS_SYSTEM_DLL_INIT_BLOCK;
+
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
+// private
 NTSYSAPI PS_SYSTEM_DLL_INIT_BLOCK LdrSystemDllInitBlock;
 #endif
 
-// Load as data table
+// rev see also MEMORY_IMAGE_EXTENSION_INFORMATION
+typedef struct _RTL_SCPCFG_NTDLL_EXPORTS
+{
+    PVOID ScpCfgHeader_Nop;
+    PVOID ScpCfgEnd_Nop;
+    PVOID ScpCfgHeader;
+    PVOID ScpCfgEnd;
+    PVOID ScpCfgHeader_ES;
+    PVOID ScpCfgEnd_ES;
+    PVOID ScpCfgHeader_Fptr;
+    PVOID ScpCfgEnd_Fptr;
+    PVOID LdrpGuardDispatchIcallNoESFptr;
+    PVOID __guard_dispatch_icall_fptr;
+    PVOID LdrpGuardCheckIcallNoESFptr;
+    PVOID __guard_check_icall_fptr;
+    PVOID LdrpHandleInvalidUserCallTarget;
+    struct
+    {
+        PVOID NtOpenFile;
+        PVOID NtCreateSection;
+        PVOID NtQueryAttributesFile;
+        PVOID NtOpenSection;
+        PVOID NtMapViewOfSection;
+    } LdrpCriticalLoaderFunctions;
+} RTL_SCPCFG_NTDLL_EXPORTS, *PRTL_SCPCFG_NTDLL_EXPORTS;
 
-#if (PHNT_VERSION >= PHNT_VISTA)
+// rev
+#if (PHNT_VERSION >= PHNT_WINDOWS_11_24H2)
+NTSYSAPI RTL_SCPCFG_NTDLL_EXPORTS RtlpScpCfgNtdllExports;
+#endif
+
+//
+// Load as data table
+//
 
 // private
 NTSYSAPI
@@ -675,7 +783,7 @@ NTSTATUS
 NTAPI
 LdrAddLoadAsDataTable(
     _In_ PVOID Module,
-    _In_ PWSTR FilePath,
+    _In_ PCWSTR FilePath,
     _In_ SIZE_T Size,
     _In_ HANDLE Handle,
     _In_opt_ PACTIVATION_CONTEXT ActCtx
@@ -701,8 +809,6 @@ LdrGetFileNameFromLoadAsDataTable(
     _Out_ PVOID *pFileNamePrt
     );
 
-#endif
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -710,8 +816,20 @@ LdrDisableThreadCalloutsForDll(
     _In_ PVOID DllImageBase
     );
 
+//
 // Resources
+//
 
+/**
+ * The LdrAccessResource function returns a pointer to the first byte of the specified resource in memory.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param ResourceDataEntry The resource information block.
+ * @param ResourceBuffer The pointer to the specified resource in memory.
+ * @param ResourceLength The size, in bytes, of the specified resource.
+ * @return NTSTATUS Successful or errant status.
+ * @sa https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadresource
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -734,6 +852,16 @@ typedef struct _LDR_RESOURCE_INFO
 #define RESOURCE_LANGUAGE_LEVEL 2
 #define RESOURCE_DATA_LEVEL 3
 
+/**
+ * The LdrFindResource_U function determines the location of a resource in a DLL.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param ResourceInfo The type and name of the resource.
+ * @param Level The level of resource information.
+ * @param ResourceDataEntry The resource information block.
+ * @return NTSTATUS Successful or errant status.
+ * @sa https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-findresourceexw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -765,6 +893,138 @@ LdrFindResourceDirectory_U(
     _Out_ PIMAGE_RESOURCE_DIRECTORY *ResourceDirectory
     );
 
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
+/**
+ * The LdrResFindResource function finds a resource in a DLL.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param Type The type of the resource.
+ * @param Name The name of the resource.
+ * @param Language The language of the resource.
+ * @param ResourceBuffer An optional pointer to receive the resource buffer.
+ * @param ResourceLength An optional pointer to receive the resource length.
+ * @param CultureName An optional buffer to receive the culture name.
+ * @param CultureNameLength An optional pointer to receive the length of the culture name.
+ * @param Flags Flags for the resource search.
+ * @return NTSTATUS Successful or errant status.
+ */
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrResFindResource(
+    _In_ PVOID DllHandle,
+    _In_ ULONG_PTR Type,
+    _In_ ULONG_PTR Name,
+    _In_ ULONG_PTR Language,
+    _Out_opt_ PVOID* ResourceBuffer,
+    _Out_opt_ PULONG ResourceLength,
+    _Out_writes_bytes_opt_(CultureNameLength) PVOID CultureName, // WCHAR buffer[6]
+    _Out_opt_ PULONG CultureNameLength,
+    _In_ ULONG Flags
+    );
+
+/**
+ * The LdrResFindResourceDirectory function finds a resource directory in a DLL.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param Type The type of the resource.
+ * @param Name The name of the resource.
+ * @param ResourceDirectory An optional pointer to receive the resource directory.
+ * @param CultureName An optional buffer to receive the culture name.
+ * @param CultureNameLength An optional pointer to receive the length of the culture name.
+ * @param Flags Flags for the resource search.
+ * @return NTSTATUS Successful or errant status.
+ */
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrResFindResourceDirectory(
+    _In_ PVOID DllHandle,
+    _In_ ULONG_PTR Type,
+    _In_ ULONG_PTR Name,
+    _Out_opt_ PIMAGE_RESOURCE_DIRECTORY* ResourceDirectory,
+    _Out_writes_bytes_opt_(CultureNameLength) PVOID CultureName, // WCHAR buffer[6]
+    _Out_opt_ PULONG CultureNameLength,
+    _In_ ULONG Flags
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrpResGetResourceDirectory(
+    _In_ PVOID DllHandle,
+    _In_ SIZE_T Size,
+    _In_ ULONG Flags,
+    _Out_opt_ PIMAGE_RESOURCE_DIRECTORY* ResourceDirectory,
+    _Out_ PIMAGE_NT_HEADERS* OutHeaders
+    );
+
+/**
+* The LdrResSearchResource function searches for a resource in a DLL.
+*
+* @param DllHandle A handle to the DLL.
+* @param ResourceInfo A pointer to the resource information.
+* @param Level The level of the resource.
+* @param Flags Flags for the resource search.
+* @param ResourceBuffer An optional pointer to receive the resource buffer.
+* @param ResourceLength An optional pointer to receive the resource length.
+* @param CultureName An optional buffer to receive the culture name.
+* @param CultureNameLength An optional pointer to receive the length of the culture name.
+* @return NTSTATUS Successful or errant status.
+*/
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrResSearchResource(
+    _In_ PVOID DllHandle,
+    _In_ PLDR_RESOURCE_INFO ResourceInfo,
+    _In_ ULONG Level,
+    _In_ ULONG Flags,
+    _Out_opt_ PVOID* ResourceBuffer,
+    _Out_opt_ PSIZE_T ResourceLength,
+    _Out_writes_bytes_opt_(CultureNameLength) PVOID CultureName, // WCHAR buffer[6]
+    _Out_opt_ PULONG CultureNameLength
+    );
+
+/**
+ * The LdrResGetRCConfig function retrieves the RC configuration for a DLL.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param Length The length of the configuration buffer.
+ * @param Config A buffer to receive the configuration.
+ * @param Flags Flags for the operation.
+ * @param AlternateResource Indicates if an alternate resource should be loaded.
+ * @return NTSTATUS Successful or errant status.
+ */
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrResGetRCConfig(
+    _In_ PVOID DllHandle,
+    _In_opt_ SIZE_T Length,
+    _Out_writes_bytes_opt_(Length) PVOID Config,
+    _In_ ULONG Flags,
+    _In_ BOOLEAN AlternateResource // LdrLoadAlternateResourceModule
+    );
+
+/**
+ * The LdrResRelease function releases a resource in a DLL.
+ *
+ * @param DllHandle A handle to the DLL.
+ * @param CultureNameOrId An optional culture name or ID.
+ * @param Flags Flags for the operation.
+ * @return NTSTATUS Successful or errant status.
+ */
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrResRelease(
+    _In_ PVOID DllHandle,
+    _In_opt_ ULONG_PTR CultureNameOrId, // MAKEINTRESOURCE
+    _In_ ULONG Flags
+    );
+#endif // (PHNT_VERSION >= PHNT_WINDOWS_8)
+
 // private
 typedef struct _LDR_ENUM_RESOURCE_ENTRY
 {
@@ -786,6 +1046,19 @@ typedef struct _LDR_ENUM_RESOURCE_ENTRY
 #define NAME_FROM_RESOURCE_ENTRY(RootDirectory, Entry) \
     ((Entry)->NameIsString ? (ULONG_PTR)((ULONG_PTR)(RootDirectory) + (ULONG_PTR)((Entry)->NameOffset)) : (Entry)->Id)
 
+FORCEINLINE
+ULONG_PTR
+NTAPI
+LdrNameOrIdFromResourceEntry(
+    _In_ PIMAGE_RESOURCE_DIRECTORY ResourceDirectory,
+    _In_ PIMAGE_RESOURCE_DIRECTORY_ENTRY Entry)
+{
+    if (Entry->NameIsString)
+        return (ULONG_PTR)((ULONG_PTR)ResourceDirectory + (ULONG_PTR)Entry->NameOffset);
+    else
+        return (ULONG_PTR)Entry->Id;
+}
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -806,13 +1079,22 @@ LdrFindEntryForAddress(
     );
 
 // rev
+/**
+ * Returns a handle to the language-specific dynamic-link library (DLL) resource module associated with a DLL that is already loaded for the calling process.
+ *
+ * \param DllHandle A handle to the DLL module to search for a MUI resource. If the language-specific DLL for the MUI is available, loads the specified module into the address space of the calling process and returns a handle to the module.
+ * \param BaseAddress The base address of the mapped view.
+ * \param Size The size of the mapped view.
+ * \param Flags Reserved
+ * \return Successful or errant status.
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrLoadAlternateResourceModule(
     _In_ PVOID DllHandle,
-    _Out_ PVOID *ResourceDllBase,
-    _Out_opt_ ULONG_PTR *ResourceOffset,
+    _Out_ PVOID *BaseAddress,
+    _Out_opt_ SIZE_T *Size,
     _In_ ULONG Flags
     );
 
@@ -823,12 +1105,18 @@ NTAPI
 LdrLoadAlternateResourceModuleEx(
     _In_ PVOID DllHandle,
     _In_ LANGID LanguageId,
-    _Out_ PVOID *ResourceDllBase,
-    _Out_opt_ ULONG_PTR *ResourceOffset,
+    _Out_ PVOID *BaseAddress,
+    _Out_opt_ SIZE_T *Size,
     _In_ ULONG Flags
     );
 
 // rev
+/**
+ * Frees the language-specific dynamic-link library (DLL) resource module previously loaded by LdrLoadAlternateResourceModule function.
+ *
+ * @param DllHandle The base address of the mapped view.
+ * @return Successful or errant status.
+ */
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -847,7 +1135,9 @@ LdrUnloadAlternateResourceModuleEx(
 
 #endif // (PHNT_MODE != PHNT_MODE_KERNEL)
 
+//
 // Module information
+//
 
 typedef struct _RTL_PROCESS_MODULE_INFORMATION
 {
@@ -903,14 +1193,16 @@ NTAPI
 LdrQueryProcessModuleInformation(
     _In_opt_ PRTL_PROCESS_MODULES ModuleInformation,
     _In_opt_ ULONG Size,
-    _Out_ PULONG ReturnedSize
+    _Out_opt_ PULONG ReturnedSize
     );
 
-typedef VOID (NTAPI *PLDR_ENUM_CALLBACK)(
+typedef _Function_class_(LDR_ENUM_CALLBACK)
+VOID NTAPI LDR_ENUM_CALLBACK(
     _In_ PLDR_DATA_TABLE_ENTRY ModuleInformation,
     _In_ PVOID Parameter,
-    _Out_ BOOLEAN *Stop
+    _Out_ PBOOLEAN Stop
     );
+typedef LDR_ENUM_CALLBACK* PLDR_ENUM_CALLBACK;
 
 NTSYSAPI
 NTSTATUS
@@ -925,7 +1217,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrOpenImageFileOptionsKey(
-    _In_ PUNICODE_STRING SubKey,
+    _In_ PCUNICODE_STRING SubKey,
     _In_ BOOLEAN Wow64,
     _Out_ PHANDLE NewKeyHandle
     );
@@ -946,7 +1238,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrQueryImageFileExecutionOptions(
-    _In_ PUNICODE_STRING SubKey,
+    _In_ PCUNICODE_STRING SubKey,
     _In_ PCWSTR ValueName,
     _In_ ULONG ValueSize,
     _Out_ PVOID Buffer,
@@ -958,7 +1250,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 LdrQueryImageFileExecutionOptionsEx(
-    _In_ PUNICODE_STRING SubKey,
+    _In_ PCUNICODE_STRING SubKey,
     _In_ PCWSTR ValueName,
     _In_ ULONG Type,
     _Out_ PVOID Buffer,
@@ -992,19 +1284,33 @@ typedef struct _DELAYLOAD_INFO
 } DELAYLOAD_INFO, *PDELAYLOAD_INFO;
 
 // private
-typedef PVOID (NTAPI *PDELAYLOAD_FAILURE_DLL_CALLBACK)(
+typedef _Function_class_(DELAYLOAD_FAILURE_DLL_CALLBACK)
+PVOID NTAPI DELAYLOAD_FAILURE_DLL_CALLBACK(
     _In_ ULONG NotificationReason,
     _In_ PDELAYLOAD_INFO DelayloadInfo
     );
+typedef DELAYLOAD_FAILURE_DLL_CALLBACK* PDELAYLOAD_FAILURE_DLL_CALLBACK;
 
 // rev
-typedef PVOID (NTAPI *PDELAYLOAD_FAILURE_SYSTEM_ROUTINE)(
+typedef _Function_class_(DELAYLOAD_FAILURE_SYSTEM_ROUTINE)
+PVOID NTAPI DELAYLOAD_FAILURE_SYSTEM_ROUTINE(
     _In_ PCSTR DllName,
     _In_ PCSTR ProcedureName
     );
+typedef DELAYLOAD_FAILURE_SYSTEM_ROUTINE* PDELAYLOAD_FAILURE_SYSTEM_ROUTINE;
 
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
 // rev from QueryOptionalDelayLoadedAPI
+/**
+ * Determines whether the specified function in a delay-loaded DLL is available on the system.
+ *
+ * @param ParentModuleBase A handle to the calling module. (NtCurrentImageBase)
+ * @param DllName The file name of the delay-loaded DLL that exports the specified function. This parameter is case-insensitive.
+ * @param ProcedureName The address of a delay-load failure callback function for the specified DLL and process.
+ * @param Flags Reserved; must be 0.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi2/nf-libloaderapi2-queryoptionaldelayloadedapi
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1016,8 +1322,20 @@ LdrQueryOptionalDelayLoadedAPI(
     );
 #endif
 
-#if (PHNT_VERSION >= PHNT_WIN8)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
 // rev from ResolveDelayLoadedAPI
+/**
+ * Locates the target function of the specified import and replaces the function pointer in the import thunk with the target of the function implementation.
+ *
+ * @param ParentModuleBase The address of the base of the module importing a delay-loaded function. (NtCurrentImageBase)
+ * @param DelayloadDescriptor The address of the image delay import directory for the module to be loaded.
+ * @param FailureDllHook The address of a delay-load failure callback function for the specified DLL and process.
+ * @param FailureSystemHook The address of a delay-load failure callback function for the specified DLL and process.
+ * @param ThunkAddress The thunk data for the target function. Used to find the specific name table entry of the function.
+ * @param Flags Reserved; must be 0.
+ * @return The address of the import, or the failure stub for it.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/devnotes/resolvedelayloadedapi
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -1031,6 +1349,15 @@ LdrResolveDelayLoadedAPI(
     );
 
 // rev from ResolveDelayLoadsFromDll
+/**
+ * Forwards the work in resolving delay-loaded imports from the parent binary to a target binary.
+ *
+ * @param [in] ParentModuleBase The base address of the module that delay loads another binary.
+ * @param [in] TargetDllName The name of the target DLL.
+ * @param [in] Flags Reserved; must be 0.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/devnotes/resolvedelayloadsfromdll
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1041,6 +1368,13 @@ LdrResolveDelayLoadsFromDll(
     );
 
 // rev from SetDefaultDllDirectories
+/**
+ * Specifies a default set of directories to search when the calling process loads a DLL.
+ *
+ * @param [in] DirectoryFlags The directories to search.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-setdefaultdlldirectories
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1049,15 +1383,30 @@ LdrSetDefaultDllDirectories(
     );
 
 // rev from AddDllDirectory
+/**
+ * Adds a directory to the process DLL search path.
+ *
+ * @param [in] NewDirectory An absolute path to the directory to add to the search path. For example, to add the directory Dir2 to the process DLL search path, specify \Dir2.
+ * @param [out] Cookie An opaque pointer that can be passed to RemoveDllDirectory to remove the DLL from the process DLL search path.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-adddlldirectory
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrAddDllDirectory(
-    _In_ PUNICODE_STRING NewDirectory,
+    _In_ PCUNICODE_STRING NewDirectory,
     _Out_ PDLL_DIRECTORY_COOKIE Cookie
     );
 
 // rev from RemoveDllDirectory
+/**
+ * Removes a directory that was added to the process DLL search path by using LdrAddDllDirectory.
+ *
+ * @param [in] Cookie The cookie returned by LdrAddDllDirectory when the directory was added to the search path.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-removedlldirectory
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1067,6 +1416,7 @@ LdrRemoveDllDirectory(
 #endif
 
 // rev
+_Analysis_noreturn_
 DECLSPEC_NORETURN
 NTSYSAPI
 VOID
@@ -1076,6 +1426,7 @@ LdrShutdownProcess(
     );
 
 // rev
+_Analysis_noreturn_
 DECLSPEC_NORETURN
 NTSYSAPI
 VOID
@@ -1084,7 +1435,7 @@ LdrShutdownThread(
     VOID
     );
 
-#if (PHNT_VERSION >= PHNT_WINBLUE)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8_1)
 // rev
 NTSYSAPI
 NTSTATUS
@@ -1092,17 +1443,24 @@ NTAPI
 LdrSetImplicitPathOptions(
     _In_ ULONG ImplicitPathOptions
     );
+#endif
 
-// rev
+#if (PHNT_VERSION >= PHNT_WINDOWS_10RS3)
+// private
+/**
+ * The LdrControlFlowGuardEnforced function checks if Control Flow Guard is enforced.
+ *
+ * @return TRUE if Control Flow Guard is enforced, FALSE otherwise.
+ */
 NTSYSAPI
-BOOLEAN
+ULONG
 NTAPI
 LdrControlFlowGuardEnforced(
     VOID
     );
 #endif
 
-#if (PHNT_VERSION >= PHNT_19H1)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10_19H1)
 // rev
 NTSYSAPI
 BOOLEAN
@@ -1112,17 +1470,15 @@ LdrIsModuleSxsRedirected(
     );
 #endif
 
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
 // rev
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrUpdatePackageSearchPath(
-    _In_ PWSTR SearchPath
+    _In_ PCWSTR SearchPath
     );
 #endif
-
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
 
 // rev
 #define ENCLAVE_STATE_CREATED         0x00000000ul // LdrpCreateSoftwareEnclave initial state
@@ -1146,7 +1502,25 @@ typedef struct _LDR_SOFTWARE_ENCLAVE
     PLDR_DATA_TABLE_ENTRY BCryptPrimitivesModule;
 } LDR_SOFTWARE_ENCLAVE, *PLDR_SOFTWARE_ENCLAVE;
 
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
+
 // rev from CreateEnclave
+/**
+ * Creates a new uninitialized enclave. An enclave is an isolated region of code and data within the address space for an application. Only code that runs within the enclave can access data within the same enclave.
+ *
+ * @param ProcessHandle A handle to the process for which you want to create an enclave.
+ * @param BaseAddress The preferred base address of the enclave. Specify NULL to have the operating system assign the base address.
+ * @param Reserved Reserved.
+ * @param Size The size of the enclave that you want to create, including the size of the code that you will load into the enclave, in bytes.
+ * @param InitialCommitment The amount of memory to commit for the enclave, in bytes. This parameter is not used for virtualization-based security (VBS) enclaves.
+ * @param EnclaveType The architecture type of the enclave that you want to create. To verify that an enclave type is supported, call IsEnclaveTypeSupported.
+ * @param EnclaveInformation A pointer to the architecture-specific information to use to create the enclave.
+ * @param EnclaveInformationLength The length of the structure that the EnclaveInformation parameter points to, in bytes.
+ * For the ENCLAVE_TYPE_SGX and ENCLAVE_TYPE_SGX2 enclave types, this value must be 4096. For the ENCLAVE_TYPE_VBS enclave type, this value must be sizeof(ENCLAVE_CREATE_INFO_VBS), which is 36 bytes.
+ * @param EnclaveError An optional pointer to a variable that receives an enclave error code that is architecture-specific.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-createenclave
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1163,6 +1537,18 @@ LdrCreateEnclave(
     );
 
 // rev from InitializeEnclave
+/**
+ * Initializes an enclave that you created and loaded with data.
+ *
+ * @param ProcessHandle A handle to the process for which the enclave was created.
+ * @param BaseAddress Any address within the enclave.
+ * @param EnclaveInformation A pointer to the architecture-specific information to use to initialize the enclave.
+ * @param EnclaveInformationLength The length of the structure that the EnclaveInformation parameter points to, in bytes.
+ * For the ENCLAVE_TYPE_SGX and ENCLAVE_TYPE_SGX2 enclave types, this value must be 4096. For the ENCLAVE_TYPE_VBS enclave type, this value must be sizeof(ENCLAVE_CREATE_INFO_VBS), which is 36 bytes.
+ * @param EnclaveError An optional pointer to a variable that receives an enclave error code that is architecture-specific.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-initializeenclave
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1175,6 +1561,13 @@ LdrInitializeEnclave(
     );
 
 // rev from DeleteEnclave
+/**
+ * Deletes the specified enclave.
+ *
+ * @param BaseAddress The base address of the enclave that you want to delete.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-deleteenclave
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1183,6 +1576,15 @@ LdrDeleteEnclave(
     );
 
 // rev from CallEnclave
+/**
+ * Calls a function within an enclave. LdrCallEnclave can also be called within an enclave to call a function outside of the enclave.
+ *
+ * @param Routine The address of the function that you want to call.
+ * @param Flags The flags to modify the call function.
+ * @param RoutineParamReturn The parameter than you want to pass to the function.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-callenclave
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1193,16 +1595,83 @@ LdrCallEnclave(
     );
 
 // rev from LoadEnclaveImage
+/**
+ * Loads an image and all of its imports into an enclave.
+ *
+ * @param BaseAddress The base address of the image into which to load the image.
+ * @param DllPath A NULL-terminated string that contains the path of the image to load.
+ * @param DllName A NULL-terminated string that contains the name of the image to load.
+ * @return NTSTATUS Successful or errant status.
+ * @remarks https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-loadenclaveimagew
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
 LdrLoadEnclaveModule(
     _In_ PVOID BaseAddress,
-    _In_opt_ PWSTR DllPath,
-    _In_ PUNICODE_STRING DllName
+    _In_opt_ PCWSTR DllPath,
+    _In_ PCUNICODE_STRING DllName
     );
 
+#endif // (PHNT_VERSION >= PHNT_WINDOWS_10)
+
+/**
+ * This function forcefully terminates the calling program if it is invoked inside a loader callout. Otherwise, it has no effect.
+ *
+ * @remarks This routine does not catch all potential deadlock cases; it is possible for a thread inside a loader callout
+ * to acquire a lock while some thread outside a loader callout holds the same lock and makes a call into the loader.
+ * In other words, there can be a lock order inversion between the loader lock and a client lock.
+ * https://learn.microsoft.com/en-us/windows/win32/devnotes/ldrfastfailinloadercallout
+ */
+NTSYSAPI
+VOID
+NTAPI
+LdrFastFailInLoaderCallout(
+    VOID
+    );
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+LdrFlushAlternateResourceModules(
+    VOID
+    );
+
+// rev
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrDllRedirectionCallback(
+    _In_ ULONG Flags,
+    _In_ PCWSTR DllName,
+    _In_opt_ PCWSTR DllPath,
+    _Inout_opt_ PULONG DllCharacteristics,
+    _In_ PVOID CallbackData,
+    _Out_ PCWSTR *EffectiveDllPath
+    );
+
+// rev
+NTSYSAPI
+VOID
+NTAPI
+LdrSetDllManifestProber(
+    _In_ PVOID Routine
+    );
+
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
+NTSYSAPI BOOLEAN LdrpChildNtdll; // DATA export
 #endif
+
+// rev
+NTSYSAPI
+VOID
+NTAPI
+LdrpResGetMappingSize(
+    _In_ PVOID BaseAddress,
+    _Out_ PSIZE_T Size,
+    _In_ ULONG Flags,
+    _In_ BOOLEAN GetFileSizeFromLoadAsDataTable
+    );
 
 #endif // (PHNT_MODE != PHNT_MODE_KERNEL)
 

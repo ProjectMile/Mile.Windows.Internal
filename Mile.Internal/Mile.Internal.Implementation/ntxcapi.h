@@ -15,6 +15,7 @@ RtlDispatchException(
     _In_ PCONTEXT ContextRecord
     );
 
+_Analysis_noreturn_
 NTSYSAPI
 DECLSPEC_NORETURN
 VOID
@@ -23,6 +24,13 @@ RtlRaiseStatus(
     _In_ NTSTATUS Status
     );
 
+/**
+ * Raises an exception in the calling thread.
+ *
+ * @param ExceptionRecord A pointer to an EXCEPTION_RECORD structure that contains the exception information. You must specify the ExceptionAddress and ExceptionCode members.
+ * @return This function does not return a value.
+ * @see https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raiseexception
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -30,7 +38,7 @@ RtlRaiseException(
     _In_ PEXCEPTION_RECORD ExceptionRecord
     );
 
-#if (PHNT_VERSION >= PHNT_20H1)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10_20H1)
 // rev
 NTSYSAPI
 VOID
@@ -40,6 +48,7 @@ RtlRaiseExceptionForReturnAddressHijack(
     );
 
 // rev
+_Analysis_noreturn_
 NTSYSAPI
 DECLSPEC_NORETURN
 VOID
@@ -48,7 +57,7 @@ RtlRaiseNoncontinuableException(
     _In_ PEXCEPTION_RECORD ExceptionRecord,
     _In_ PCONTEXT ContextRecord
     );
-#endif
+#endif // PHNT_VERSION >= PHNT_WINDOWS_10_20H1
 
 NTSYSCALLAPI
 NTSTATUS
@@ -66,7 +75,7 @@ ZwContinue(
     _In_ BOOLEAN TestAlert
     );
 
-#if (PHNT_VERSION >= PHNT_THRESHOLD)
+#if (PHNT_VERSION >= PHNT_WINDOWS_10)
 typedef enum _KCONTINUE_TYPE
 {
     KCONTINUE_UNWIND,
@@ -111,7 +120,7 @@ ZwContinueEx(
 //{
 //    return NtContinueEx(ContextRecord, (PCONTINUE_ARGUMENT)TestAlert);
 //}
-#endif
+#endif // PHNT_VERSION >= PHNT_WINDOWS_10
 
 NTSYSCALLAPI
 NTSTATUS
@@ -131,7 +140,8 @@ ZwRaiseException(
     _In_ BOOLEAN FirstChance
     );
 
-NTSYSCALLAPI
+_Analysis_noreturn_
+NTSYSAPI
 DECLSPEC_NORETURN
 VOID
 NTAPI
@@ -139,7 +149,7 @@ RtlAssert(
     _In_ PVOID VoidFailedAssertion,
     _In_ PVOID VoidFileName,
     _In_ ULONG LineNumber,
-    _In_opt_ PSTR MutableMessage
+    _In_opt_ PCSTR MutableMessage
     );
 
 #define RTL_ASSERT(exp) \

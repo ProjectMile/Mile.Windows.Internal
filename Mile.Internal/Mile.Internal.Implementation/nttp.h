@@ -12,21 +12,23 @@
 typedef struct _TP_ALPC TP_ALPC, *PTP_ALPC;
 
 // private
-typedef VOID (NTAPI *PTP_ALPC_CALLBACK)(
+typedef _Function_class_(TP_ALPC_CALLBACK)
+VOID NTAPI TP_ALPC_CALLBACK(
     _Inout_ PTP_CALLBACK_INSTANCE Instance,
     _Inout_opt_ PVOID Context,
     _In_ PTP_ALPC Alpc
     );
+typedef TP_ALPC_CALLBACK *PTP_ALPC_CALLBACK;
 
 // rev
-typedef VOID (NTAPI *PTP_ALPC_CALLBACK_EX)(
+typedef _Function_class_(TP_ALPC_CALLBACK_EX)
+VOID NTAPI TP_ALPC_CALLBACK_EX(
     _Inout_ PTP_CALLBACK_INSTANCE Instance,
     _Inout_opt_ PVOID Context,
     _In_ PTP_ALPC Alpc,
     _In_ PVOID ApcContext
     );
-
-#if (PHNT_VERSION >= PHNT_VISTA)
+typedef TP_ALPC_CALLBACK_EX *PTP_ALPC_CALLBACK_EX;
 
 // winbase:CreateThreadpool
 NTSYSAPI
@@ -63,7 +65,6 @@ TpSetPoolMinThreads(
     _In_ ULONG MinThreads
     );
 
-#if (PHNT_VERSION >= PHNT_WIN7)
 // winbase:QueryThreadpoolStackInformation
 NTSYSAPI
 NTSTATUS
@@ -90,7 +91,6 @@ TpSetPoolThreadBasePriority(
     _Inout_ PTP_POOL Pool,
     _In_ ULONG BasePriority
     );
-#endif
 
 // winbase:CreateThreadpoolCleanupGroup
 NTSYSAPI
@@ -256,7 +256,7 @@ TpSetTimer(
     _In_opt_ ULONG WindowLength
     );
 
-#if (PHNT_VERSION >= PHNT_WIN8)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
 // winbase:SetThreadpoolTimerEx
 NTSYSAPI
 NTSTATUS
@@ -315,7 +315,7 @@ TpSetWait(
     _In_opt_ PLARGE_INTEGER Timeout
     );
 
-#if (PHNT_VERSION >= PHNT_WIN8)
+#if (PHNT_VERSION >= PHNT_WINDOWS_8)
 // winbase:SetThreadpoolWaitEx
 NTSYSAPI
 NTSTATUS
@@ -338,13 +338,15 @@ TpWaitForWait(
     );
 
 // private
-typedef VOID (NTAPI *PTP_IO_CALLBACK)(
+typedef _Function_class_(TP_IO_CALLBACK)
+VOID NTAPI TP_IO_CALLBACK(
     _Inout_ PTP_CALLBACK_INSTANCE Instance,
     _Inout_opt_ PVOID Context,
     _In_ PVOID ApcContext,
     _In_ PIO_STATUS_BLOCK IoSB,
     _In_ PTP_IO Io
     );
+typedef TP_IO_CALLBACK *PTP_IO_CALLBACK;
 
 // winbase:CreateThreadpoolIo
 NTSYSAPI
@@ -403,7 +405,6 @@ TpAllocAlpcCompletion(
     _In_opt_ PTP_CALLBACK_ENVIRON CallbackEnviron
     );
 
-#if (PHNT_VERSION >= PHNT_WIN7)
 // rev
 NTSYSAPI
 NTSTATUS
@@ -415,7 +416,6 @@ TpAllocAlpcCompletionEx(
     _Inout_opt_ PVOID Context,
     _In_opt_ PTP_CALLBACK_ENVIRON CallbackEnviron
     );
-#endif
 
 // private
 NTSYSAPI
@@ -430,6 +430,22 @@ NTSYSAPI
 VOID
 NTAPI
 TpWaitForAlpcCompletion(
+    _Inout_ PTP_ALPC Alpc
+    );
+
+// rev
+NTSYSAPI
+VOID
+NTAPI
+TpAlpcRegisterCompletionList(
+    _Inout_ PTP_ALPC Alpc
+    );
+
+// rev
+NTSYSAPI
+VOID
+NTAPI
+TpAlpcUnregisterCompletionList(
     _Inout_ PTP_ALPC Alpc
     );
 
@@ -457,6 +473,4 @@ TpCheckTerminateWorker(
     _In_ HANDLE Thread
     );
 
-#endif
-
-#endif
+#endif // _NTTP_H
