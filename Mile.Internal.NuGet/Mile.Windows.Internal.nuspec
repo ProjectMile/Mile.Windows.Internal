@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-  PROJECT:   Mouri Internal Library Essentials
-  FILE:      Mile.Windows.Internal.nuspec
-  PURPOSE:   NuGet package definition for Mile.Windows.Internal
+  PROJECT:    Mouri Internal Library Essentials
+  FILE:       Mile.Windows.Internal.nuspec
+  PURPOSE:    NuGet package definition for Mile.Windows.Internal
 
-  LICENSE:   The MIT License
+  LICENSE:    The MIT License
 
   MAINTAINER: MouriNaruto (Kenji.Mouri@outlook.com)
 -->

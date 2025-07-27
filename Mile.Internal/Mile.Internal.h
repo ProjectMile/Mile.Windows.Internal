@@ -1,9 +1,9 @@
 ﻿/*
- * PROJECT:   Mouri Internal Library Essentials
- * FILE:      Mile.Internal.h
- * PURPOSE:   Definition for the Windows Internal API
+ * PROJECT:    Mouri Internal Library Essentials
+ * FILE:       Mile.Internal.h
+ * PURPOSE:    Definition for the Windows Internal API
  *
- * LICENSE:   The MIT License
+ * LICENSE:    The MIT License
  *
  * MAINTAINER: MouriNaruto (Kenji.Mouri@outlook.com)
  */
