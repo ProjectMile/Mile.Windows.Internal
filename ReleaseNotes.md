@@ -1,5 +1,14 @@
 ﻿# Mile.Windows.Internal Release Notes
 
+**Mile.Windows.Internal 1.0.3515.0**
+
+- Update PHNT from System Informer to
+  https://github.com/winsiderss/systeminformer/tree/4d1e309e1ec2e52a7ae9e4b7909b38521c154166.
+- Update Mile.Project.Configurations to 1.0.1827.
+- Update Mile.Internal.ZwGen to .NET 10.
+- Migrate solution from sln to slnx.
+- Fix the source code file header comment format.
+
 **Mile.Windows.Internal 1.0.3259.0**
 
 - Update PHNT from System Informer to
