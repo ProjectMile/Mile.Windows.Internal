@@ -7,6 +7,7 @@
 *  Copyright (c) Microsoft Corp.  All rights reserved.            *
 *                                                                 *
 ******************************************************************/
+
 #ifndef _NTINTSAFE_H_INCLUDED_
 #define _NTINTSAFE_H_INCLUDED_
 
@@ -120,7 +121,7 @@ ULONG64
 UnsignedMultiply128(
     _In_ ULONGLONG ullMultiplicand,
     _In_ ULONGLONG ullMultiplier,
-    _Out_ _Deref_out_range_(==, ullMultiplicand * ullMultiplier) ULONGLONG* pullResultHigh);
+    _Out_ ULONGLONG* pullResultHigh); // _Deref_out_range_(==, ullMultiplicand * ullMultiplier) 
 
 #if !defined(_ARM64EC_)
 #pragma intrinsic(_umul128)
@@ -6914,7 +6915,7 @@ RtlUShortAdd(
 #define RtlUInt16Add   RtlUShortAdd
 
 //
-// WORD addtition
+// WORD addition
 //
 #define RtlWordAdd     RtlUShortAdd
 

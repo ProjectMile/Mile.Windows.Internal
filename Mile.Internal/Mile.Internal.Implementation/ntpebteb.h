@@ -7,39 +7,66 @@
 #ifndef _NTPEBTEB_H
 #define _NTPEBTEB_H
 
+#ifdef __has_include
+#if __has_include ("ntgdi.h")
+#include "ntgdi.h"
+#endif // __has_include
+#if __has_include ("ntsxs.h")
 #include "ntsxs.h"
+#endif // __has_include
+#endif // __has_include
 
+typedef struct _APPCOMPAT_EXE_DATA APPCOMPAT_EXE_DATA, *PAPPCOMPAT_EXE_DATA;
 typedef struct _RTL_USER_PROCESS_PARAMETERS *PRTL_USER_PROCESS_PARAMETERS;
 typedef struct _RTL_CRITICAL_SECTION *PRTL_CRITICAL_SECTION;
 typedef struct _SILO_USER_SHARED_DATA *PSILO_USER_SHARED_DATA;
+typedef struct _LDR_RESLOADER_RET LDR_RESLOADER_RET, *PLDR_RESLOADER_RET;
 typedef struct _LEAP_SECOND_DATA *PLEAP_SECOND_DATA;
 typedef struct _PEB_LDR_DATA PEB_LDR_DATA, *PPEB_LDR_DATA;
+typedef struct tagSOleTlsData SOleTlsData, *PSOleTlsData;
+typedef struct _KERNEL_CALLBACK_TABLE KERNEL_CALLBACK_TABLE, *PKERNEL_CALLBACK_TABLE;
+typedef struct _GDI_HANDLE_ENTRY GDI_HANDLE_ENTRY, *PGDI_HANDLE_ENTRY;
 
 // PEB->AppCompatFlags
-#define KACF_OLDGETSHORTPATHNAME 0x00000001
-#define KACF_VERSIONLIE_NOT_USED 0x00000002
-#define KACF_GETTEMPPATH_NOT_USED 0x00000004
-#define KACF_GETDISKFREESPACE 0x00000008
-#define KACF_FTMFROMCURRENTAPT 0x00000020
-#define KACF_DISALLOWORBINDINGCHANGES 0x00000040
-#define KACF_OLE32VALIDATEPTRS 0x00000080
-#define KACF_DISABLECICERO 0x00000100
-#define KACF_OLE32ENABLEASYNCDOCFILE 0x00000200
-#define KACF_OLE32ENABLELEGACYEXCEPTIONHANDLING 0x00000400
-#define KACF_RPCDISABLENDRCLIENTHARDENING 0x00000800
-#define KACF_RPCDISABLENDRMAYBENULL_SIZEIS 0x00001000
-#define KACF_DISABLEALLDDEHACK_NOT_USED 0x00002000
-#define KACF_RPCDISABLENDR61_RANGE 0x00004000
-#define KACF_RPC32ENABLELEGACYEXCEPTIONHANDLING 0x00008000
-#define KACF_OLE32DOCFILEUSELEGACYNTFSFLAGS 0x00010000
-#define KACF_RPCDISABLENDRCONSTIIDCHECK 0x00020000
-#define KACF_USERDISABLEFORWARDERPATCH 0x00040000
-#define KACF_OLE32DISABLENEW_WMPAINT_DISPATCH 0x00100000
-#define KACF_ADDRESTRICTEDSIDINCOINITIALIZESECURITY 0x00200000
-#define KACF_ALLOCDEBUGINFOFORCRITSECTIONS 0x00400000
-#define KACF_OLEAUT32ENABLEUNSAFELOADTYPELIBRELATIVE 0x00800000
-#define KACF_ALLOWMAXIMIZEDWINDOWGAMMA 0x01000000
-#define KACF_DONOTADDTOCACHE 0x80000000
+#define KACF_OLDGETSHORTPATHNAME                      0x00000001
+#define KACF_VERSIONLIE_NOT_USED                      0x00000002
+#define KACF_GETTEMPPATH_NOT_USED                     0x00000004
+#define KACF_GETDISKFREESPACE                         0x00000008
+#define KACF_FTMFROMCURRENTAPT                        0x00000020
+#define KACF_DISALLOWORBINDINGCHANGES                 0x00000040
+#define KACF_OLE32VALIDATEPTRS                        0x00000080
+#define KACF_DISABLECICERO                            0x00000100
+#define KACF_OLE32ENABLEASYNCDOCFILE                  0x00000200
+#define KACF_OLE32ENABLELEGACYEXCEPTIONHANDLING       0x00000400
+#define KACF_RPCDISABLENDRCLIENTHARDENING             0x00000800
+#define KACF_RPCDISABLENDRMAYBENULL_SIZEIS            0x00001000
+#define KACF_DISABLEALLDDEHACK_NOT_USED               0x00002000
+#define KACF_RPCDISABLENDR61_RANGE                    0x00004000
+#define KACF_RPC32ENABLELEGACYEXCEPTIONHANDLING       0x00008000
+#define KACF_OLE32DOCFILEUSELEGACYNTFSFLAGS           0x00010000
+#define KACF_RPCDISABLENDRCONSTIIDCHECK               0x00020000
+#define KACF_USERDISABLEFORWARDERPATCH                0x00040000
+#define KACF_OLE32DISABLENEW_WMPAINT_DISPATCH         0x00100000
+#define KACF_ADDRESTRICTEDSIDINCOINITIALIZESECURITY   0x00200000
+#define KACF_ALLOCDEBUGINFOFORCRITSECTIONS            0x00400000
+#define KACF_OLEAUT32ENABLEUNSAFELOADTYPELIBRELATIVE  0x00800000
+#define KACF_ALLOWMAXIMIZEDWINDOWGAMMA                0x01000000
+#define KACF_DONOTADDTOCACHE                          0x80000000
+#define KACF_DISABLEPOSIXDELETEFILE                   0x100000000 // rev KernelBase!InternalDeleteFileW
+#define KACF_ENABLE_PROCESS_SYSTEMDPIAWARENESS        0x20000000000000 // rev // Enable Per-Process System DPI Awareness and Opt-in to Per-Process System DPI mode.
+#define KACF_DISABLE_PROCESS_SYSTEMDPIAWARENESS       0x40000000000000 // rev // Disable Per-Process System DPI Awareness and force legacy DPI behavior.
+#define KACF_ENABLE_GDI_DPI_SCALING                   0x800000000000000
+#define KACF_FORCE_DISABLE_GDI_SCALING                0x4000000000000000
+
+// PEB->CrossProcessFlags
+#define PEB_FLAG_PROCESS_IN_JOB                       0x00000001 // Process is part of a job
+#define PEB_FLAG_PROCESS_INITIALIZING                 0x00000002 // Process is initializing
+#define PEB_FLAG_PROCESS_USING_VEH                    0x00000004 // Process is using VEH
+#define PEB_FLAG_PROCESS_USING_VCH                    0x00000008 // Process is using VCH
+#define PEB_FLAG_PROCESS_USING_FTH                    0x00000010 // Process is using FTH
+#define PEB_FLAG_PROCESS_PREVIOUSLY_THROTTLED         0x00000020 // Process was previously throttled
+#define PEB_FLAG_PROCESS_CURRENTLY_THROTTLED          0x00000040 // Process is currently throttled
+#define PEB_FLAG_PROCESS_IMAGES_HOT_PATCHED           0x00000080 // Process images are hot patched (RS5+)
 
 // private
 #define API_SET_SECTION_NAME ".apiset"
@@ -302,8 +329,11 @@ VOID NTAPI PS_POST_PROCESS_INIT_ROUTINE(
     );
 typedef PS_POST_PROCESS_INIT_ROUTINE* PPS_POST_PROCESS_INIT_ROUTINE;
 
+#ifndef RTL_FLS_MAXIMUM_AVAILABLE
+#define RTL_FLS_MAXIMUM_AVAILABLE 128
+#endif
 #ifndef FLS_MAXIMUM_AVAILABLE
-#define FLS_MAXIMUM_AVAILABLE 128
+#define FLS_MAXIMUM_AVAILABLE 4080
 #endif
 #ifndef TLS_MINIMUM_AVAILABLE
 #define TLS_MINIMUM_AVAILABLE 64
@@ -315,7 +345,7 @@ typedef PS_POST_PROCESS_INIT_ROUTINE* PPS_POST_PROCESS_INIT_ROUTINE;
 /**
  * Process Environment Block (PEB) structure.
  *
- * @remarks https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb
  */
 typedef struct _PEB
 {
@@ -344,7 +374,7 @@ typedef struct _PEB
             BOOLEAN IsImageDynamicallyRelocated : 1;    // The process image base address was relocated.
             BOOLEAN SkipPatchingUser32Forwarders : 1;   // The process skipped forwarders for User32.dll functions. 1 for 64-bit, 0 for 32-bit.
             BOOLEAN IsPackagedProcess : 1;              // The process is a packaged store process (APPX/MSIX).
-            BOOLEAN IsAppContainer : 1;                 // The process has an AppContainer token.
+            BOOLEAN IsAppContainerProcess : 1;          // The process has an AppContainer token.
             BOOLEAN IsProtectedProcessLight : 1;        // The process is a protected process (light).
             BOOLEAN IsLongPathAwareProcess : 1;         // The process is long path aware.
         };
@@ -391,9 +421,9 @@ typedef struct _PEB
     PSLIST_HEADER AtlThunkSListPtr;
 
     //
-    // Pointer to the Image File Execution Options key.
+    // Handle to the Image File Execution Options key.
     //
-    PVOID IFEOKey;
+    HANDLE IFEOKey;
 
     //
     // Cross process flags.
@@ -420,7 +450,7 @@ typedef struct _PEB
     //
     union
     {
-        PVOID KernelCallbackTable;
+        PKERNEL_CALLBACK_TABLE KernelCallbackTable;
         PVOID UserSharedInfoPtr;
     };
 
@@ -470,19 +500,19 @@ typedef struct _PEB
     PVOID* ReadOnlyStaticServerData;
 
     //
-    // Pointer to the ANSI code page data. (PCPTABLEINFO)
+    // Pointer to the ANSI code page data.
     //
-    PVOID AnsiCodePageData;
+    PCPTABLEINFO AnsiCodePageData;
 
     //
-    // Pointer to the OEM code page data. (PCPTABLEINFO)
+    // Pointer to the OEM code page data.
     //
-    PVOID OemCodePageData;
+    PCPTABLEINFO OemCodePageData;
 
     //
-    // Pointer to the Unicode case table data. (PNLSTABLEINFO)
+    // Pointer to the Unicode case table data.
     //
-    PVOID UnicodeCaseTableData;
+    PNLSTABLEINFO UnicodeCaseTableData;
 
     //
     // The total number of system processors.
@@ -578,7 +608,7 @@ typedef struct _PEB
     //
     // Pointer to the system GDI shared handle table.
     //
-    PVOID GdiSharedHandleTable;
+    PGDI_HANDLE_ENTRY GdiSharedHandleTable;
 
     //
     // Pointer to the process starter helper.
@@ -681,9 +711,9 @@ typedef struct _PEB
     PVOID pShimData;
 
     //
-    // Pointer to the Application Compatibility Engine. // APPCOMPAT_EXE_DATA
+    // Pointer to the Application Compatibility Engine.
     //
-    PVOID AppCompatInfo;
+    PAPPCOMPAT_EXE_DATA AppCompatInfo;
 
     //
     // CSD version string of the operating system.
@@ -733,15 +763,7 @@ typedef struct _PEB
     //
     // Packaged process feature state.
     //
-    union
-    {
-        ULONG AppModelFeatureState;
-        struct
-        {
-            ULONG ForegroundBoostProcesses : 1;
-            ULONG AppModelFeatureStateReserved : 31;
-        };
-    };
+    ULONG AppModelFeatureState;
 
     //
     // SpareUlongs
@@ -790,7 +812,7 @@ typedef struct _PEB
     //
     // Reserved.
     //
-    PVOID pImageHeaderHash;
+    PVOID ImageHeaderHash;
 
     //
     // ETW tracing flags.
@@ -945,67 +967,68 @@ typedef struct _TEB_ACTIVE_FRAME_EX
 #define STATIC_UNICODE_BUFFER_LENGTH 261
 #define WIN32_CLIENT_INFO_LENGTH 62
 
+#if (PHNT_MODE != PHNT_MODE_KERNEL)
 // private
-typedef enum tagOLETLSFLAGS
+typedef struct _CALLBACKWND
 {
-    OLETLS_LOCALTID = 0x01, // This TID is in the current process.
-    OLETLS_UUIDINITIALIZED = 0x02, // This Logical thread is init'd.
-    OLETLS_INTHREADDETACH = 0x04, // This is in thread detach.
-    OLETLS_CHANNELTHREADINITIALZED = 0x08,// This channel has been init'd
-    OLETLS_WOWTHREAD = 0x10, // This thread is a 16-bit WOW thread.
-    OLETLS_THREADUNINITIALIZING = 0x20, // This thread is in CoUninitialize.
-    OLETLS_DISABLE_OLE1DDE = 0x40, // This thread can't use a DDE window.
-    OLETLS_APARTMENTTHREADED = 0x80, // This is an STA apartment thread
-    OLETLS_MULTITHREADED = 0x100, // This is an MTA apartment thread
-    OLETLS_IMPERSONATING = 0x200, // This thread is impersonating
-    OLETLS_DISABLE_EVENTLOGGER = 0x400, // Prevent recursion in event logger
-    OLETLS_INNEUTRALAPT = 0x800, // This thread is in the NTA
-    OLETLS_DISPATCHTHREAD = 0x1000, // This is a dispatch thread
-    OLETLS_HOSTTHREAD = 0x2000, // This is a host thread
-    OLETLS_ALLOWCOINIT = 0x4000, // This thread allows inits
-    OLETLS_PENDINGUNINIT = 0x8000, // This thread has pending uninit
-    OLETLS_FIRSTMTAINIT = 0x10000,// First thread to attempt an MTA init
-    OLETLS_FIRSTNTAINIT = 0x20000,// First thread to attempt an NTA init
-    OLETLS_APTINITIALIZING = 0x40000, // Apartment Object is initializing
-    OLETLS_UIMSGSINMODALLOOP = 0x80000,
-    OLETLS_MARSHALING_ERROR_OBJECT = 0x100000, // since WIN8
-    OLETLS_WINRT_INITIALIZE = 0x200000, // This thread called RoInitialize
-    OLETLS_APPLICATION_STA = 0x400000,
-    OLETLS_IN_SHUTDOWN_CALLBACKS = 0x800000,
-    OLETLS_POINTER_INPUT_BLOCKED = 0x1000000,
-    OLETLS_IN_ACTIVATION_FILTER = 0x2000000, // since WINBLUE
-    OLETLS_ASTATOASTAEXEMPT_QUIRK = 0x4000000,
-    OLETLS_ASTATOASTAEXEMPT_PROXY = 0x8000000,
-    OLETLS_ASTATOASTAEXEMPT_INDOUBT = 0x10000000,
-    OLETLS_DETECTED_USER_INITIALIZED = 0x20000000, // since RS3
-    OLETLS_BRIDGE_STA = 0x40000000, // since RS5
-    OLETLS_NAINITIALIZING = 0x80000000UL // since 19H1
-} OLETLSFLAGS, *POLETLSFLAGS;
+    HWND hwnd;
+    ULONG_PTR pwnd;
+    PACTIVATION_CONTEXT ActCtx;
+} CALLBACKWND, *PCALLBACKWND;
 
 // private
-typedef struct tagSOleTlsData
+typedef struct tagDPICONTEXTINFO
 {
-    PVOID ThreadBase;
-    PVOID SmAllocator;
-    ULONG ApartmentID;
-    OLETLSFLAGS Flags;
-    LONG TlsMapIndex;
-    PVOID *TlsSlot;
-    ULONG ComInits;
-    ULONG OleInits;
-    ULONG Calls;
-    PVOID ServerCall; // previously CallInfo (before TH1)
-    PVOID CallObjectCache; // previously FreeAsyncCall (before TH1)
-    PVOID ContextStack; // previously FreeClientCall (before TH1)
-    PVOID ObjServer;
-    ULONG TIDCaller;
-    // ... (other fields are version-dependant)
-} SOleTlsData, *PSOleTlsData;
+    ULONG dpiContext;
+    LOGICAL Dirty;
+} DPICONTEXTINFO, *PDPICONTEXTINFO;
+
+// private + rev
+typedef struct tagCLIENTINFO
+{
+    ULONG_PTR CI_flags;
+    ULONG_PTR Spins;
+    ULONG ExpWinVer;
+    ULONG CompatFlags;
+    ULONG CompatFlags2;
+    ULONG TIFlags;
+    struct tagDESKTOPINFO* DeskInfo;
+    PVOID DesktopBase; // ClientDelta before RS2
+    HHOOK hkCurrent;
+    ULONG Hooks;
+    CALLBACKWND CallbackWnd;
+    ULONG HookCurrent;
+    LONG InDDEMLCallback;
+    struct tagCLIENTTHREADINFO* ClientThreadInfo;
+    ULONG_PTR HookData;
+    ULONG KeyCache;
+    UCHAR KeyState[8];
+    ULONG AsyncKeyCache;
+    UCHAR AsyncKeyState[8];
+    UCHAR AsyncKeyStateRecentDown[8];
+    HKL hKL;
+    USHORT CodePage;
+    UCHAR DbcsCFOld[2];
+    UCHAR DbcsCFNew[2];
+    MSG msgDbcsCB;
+    PULONG RegisteredClasses;
+    HANDLE mmcssHandle;
+    ULONG_PTR CI_exflags;
+    DPICONTEXTINFO dci;
+} CLIENTINFO, *PCLIENTINFO;
+#endif // (PHNT_MODE != PHNT_MODE_KERNEL)
+
+// rev - xor key for ReservedForNtRpc
+#ifdef _WIN64
+#define RPC_THREAD_POINTER_KEY 0xABABABABDEDEDEDEui64
+#else
+#define RPC_THREAD_POINTER_KEY 0xABABABAB
+#endif
 
 /**
  * Thread Environment Block (TEB) structure.
  *
- * @remarks https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-teb
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-teb
  */
 typedef struct _TEB
 {
@@ -1055,17 +1078,17 @@ typedef struct _TEB
     PVOID CsrClientThread;
 
     //
-    // Reserved.
+    // Reserved for win32k.sys
     //
     PVOID Win32ThreadInfo;
 
     //
-    // Reserved.
+    // Reserved for user32.dll
     //
     ULONG User32Reserved[26];
 
     //
-    // Reserved.
+    // Reserved for winsrv.dll
     //
     ULONG UserReserved[5];
 
@@ -1091,7 +1114,7 @@ typedef struct _TEB
 
 #ifdef _WIN64
     //
-    // Reserved.
+    // Reserved for floating-point emulation.
     //
     PVOID SystemReserved1[25];
 
@@ -1122,7 +1145,7 @@ typedef struct _TEB
     BOOLEAN PlaceholderHydrationAlwaysExplicit;
 
     //
-    // Reserved.
+    // ProjFs and Cloud Files (reparse point) file virtualization.
     //
     CHAR PlaceholderReserved[10];
 
@@ -1198,7 +1221,7 @@ typedef struct _TEB
 #endif
 
     //
-    // Reserved for GDI.
+    // Reserved for GDI (Win32k).
     //
     GDI_TEB_BATCH GdiTebBatch;
     CLIENT_ID RealClientId;
@@ -1207,10 +1230,18 @@ typedef struct _TEB
     ULONG GdiClientTID;
     PVOID GdiThreadLocalInfo;
 
-    //
-    // Reserved for User32.
-    //
+#if (PHNT_MODE != PHNT_MODE_KERNEL)
+    union
+    {
+        //
+        // User32 (Win32k) thread information.
+        //
+        CLIENTINFO Win32ClientInfo;
+        ULONG_PTR Win32ClientInfoArea[WIN32_CLIENT_INFO_LENGTH];
+    };
+#else
     ULONG_PTR Win32ClientInfo[WIN32_CLIENT_INFO_LENGTH];
+#endif
 
     //
     // Reserved for opengl32.dll
@@ -1250,7 +1281,7 @@ typedef struct _TEB
     PVOID TlsSlots[TLS_MINIMUM_AVAILABLE];
 
     //
-    // Reserved.
+    // Reserved for TLS.
     //
     LIST_ENTRY TlsLinks;
 
@@ -1260,12 +1291,12 @@ typedef struct _TEB
     PVOID Vdm;
 
     //
-    // Reserved.
+    // Reserved for RPC. The pointer is XOR'ed with RPC_THREAD_POINTER_KEY.
     //
     PVOID ReservedForNtRpc;
 
     //
-    // Reserved.
+    // Reserved for Debugging (DebugActiveProcess).
     //
     PVOID DbgSsReserved[2];
 
@@ -1289,7 +1320,7 @@ typedef struct _TEB
     GUID ActivityId;
 
     //
-    // The service creating the thread (svchost).
+    // The identifier of the service that created the thread. (svchost)
     //
     PVOID SubProcessTag;
 
@@ -1340,7 +1371,7 @@ typedef struct _TEB
     PVOID ReservedForPerf;
 
     //
-    // Per-thread COM/OLE state
+    // Reserved for Object Linking and Embedding (OLE)
     //
     PSOleTlsData ReservedForOle;
 
@@ -1414,54 +1445,111 @@ typedef struct _TEB
     //
     PVOID FlsData;
 
+    //
+    // Pointer to the preferred languages for the current thread. (GetThreadPreferredUILanguages)
+    //
     PVOID PreferredLanguages;
+
+    //
+    // Pointer to the user-preferred languages for the current thread. (GetUserPreferredUILanguages)
+    //
     PVOID UserPrefLanguages;
+
+    //
+    // Pointer to the merged preferred languages for the current thread. (MUI_MERGE_USER_FALLBACK)
+    //
     PVOID MergedPrefLanguages;
+
+    //
+    // Indicates whether the thread is impersonating another user's language settings.
+    //
     ULONG MuiImpersonation;
 
+    //
+    // Reserved.
+    //
     union
     {
         USHORT CrossTebFlags;
         USHORT SpareCrossTebBits : 16;
     };
+
+    //
+    // SameTebFlags modify the state and behavior of the current thread.
+    //
     union
     {
         USHORT SameTebFlags;
         struct
         {
             USHORT SafeThunkCall : 1;
-            USHORT InDebugPrint : 1;
-            USHORT HasFiberData : 1;
-            USHORT SkipThreadAttach : 1;
+            USHORT InDebugPrint : 1;            // Indicates if the thread is currently in a debug print routine.
+            USHORT HasFiberData : 1;            // Indicates if the thread has local fiber-local storage (FLS).
+            USHORT SkipThreadAttach : 1;        // Indicates if the thread should suppress DLL_THREAD_ATTACH notifications.
             USHORT WerInShipAssertCode : 1;
-            USHORT RanProcessInit : 1;
-            USHORT ClonedThread : 1;
-            USHORT SuppressDebugMsg : 1;
+            USHORT RanProcessInit : 1;          // Indicates if the thread has run process initialization code.
+            USHORT ClonedThread : 1;            // Indicates if the thread is a clone of a different thread.
+            USHORT SuppressDebugMsg : 1;        // Indicates if the thread should suppress LOAD_DLL_DEBUG_INFO notifications.
             USHORT DisableUserStackWalk : 1;
             USHORT RtlExceptionAttached : 1;
-            USHORT InitialThread : 1;
+            USHORT InitialThread : 1;           // Indicates if the thread is the initial thread of the process.
             USHORT SessionAware : 1;
-            USHORT LoadOwner : 1;
+            USHORT LoadOwner : 1;               // Indicates if the thread is the owner of the process loader lock.
             USHORT LoaderWorker : 1;
             USHORT SkipLoaderInit : 1;
             USHORT SkipFileAPIBrokering : 1;
         };
     };
 
+    //
+    // Pointer to the callback function that is called when a KTM transaction scope is entered.
+    //
     PVOID TxnScopeEnterCallback;
+
+    //
+    // Pointer to the callback function that is called when a KTM transaction scope is exited.
+    ///
     PVOID TxnScopeExitCallback;
+
+    //
+    // Pointer to optional context data for use by the application when a KTM transaction scope callback is called.
+    //
     PVOID TxnScopeContext;
+
+    //
+    // The lock count of critical sections for the current thread.
+    //
     ULONG LockCount;
+
+    //
+    // The offset to the WOW64 (Windows on Windows) TEB for the current thread.
+    //
     LONG WowTebOffset;
-    PVOID ResourceRetValue;
+
+    //
+    // Pointer to the DLL containing the resource (valid after LdrFindResource_U/LdrResFindResource/etc... returns).
+    //
+    PLDR_RESLOADER_RET ResourceRetValue;
+
+    //
+    // Reserved for Windows Driver Framework (WDF).
+    //
     PVOID ReservedForWdf;
+
+    //
+    // Reserved for the Microsoft C runtime (CRT).
+    //
     ULONGLONG ReservedForCrt;
+
+    //
+    // The Host Compute Service (HCS) container identifier.
+    //
     GUID EffectiveContainerId;
 
     //
     // Reserved for Kernel32!Sleep (SpinWait).
     //
-    ULONGLONG LastSleepCounter; // Win11
+    ULONGLONG LastSleepCounter; // since Win11
 
     //
     // Reserved for Kernel32!Sleep (SpinWait).
@@ -1476,7 +1564,7 @@ typedef struct _TEB
     //
     // Reserved.
     //
-    PVOID SchedulerSharedDataSlot; // 24H2
+    PVOID SchedulerSharedDataSlot; // since 24H2
 
     //
     // Reserved.
@@ -1495,10 +1583,10 @@ typedef struct _TEB
 } TEB, *PTEB;
 
 #ifdef _WIN64
-//static_assert(sizeof(TEB) == 0x1850, "Size of TEB is incorrect"); // WIN11
+static_assert(FIELD_OFFSET(TEB, SchedulerSharedDataSlot) == 0x1850, "Size of TEB is incorrect"); // WIN11
 static_assert(sizeof(TEB) == 0x1878, "Size of TEB is incorrect"); // 24H2
 #else
-//static_assert(sizeof(TEB) == 0x1018, "Size of TEB is incorrect"); // WIN11
+static_assert(FIELD_OFFSET(TEB, SchedulerSharedDataSlot) == 0x1018, "Size of TEB is incorrect"); // WIN11
 static_assert(sizeof(TEB) == 0x1038, "Size of TEB is incorrect"); // 24H2
 #endif
 

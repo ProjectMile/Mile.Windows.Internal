@@ -27,9 +27,9 @@ RtlRaiseStatus(
 /**
  * Raises an exception in the calling thread.
  *
- * @param ExceptionRecord A pointer to an EXCEPTION_RECORD structure that contains the exception information. You must specify the ExceptionAddress and ExceptionCode members.
- * @return This function does not return a value.
- * @see https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raiseexception
+ * \param ExceptionRecord A pointer to an EXCEPTION_RECORD structure that contains the exception information. You must specify the ExceptionAddress and ExceptionCode members.
+ * \return This function does not return a value.
+ * \see https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raiseexception
  */
 NTSYSAPI
 VOID
@@ -152,13 +152,4 @@ RtlAssert(
     _In_opt_ PCSTR MutableMessage
     );
 
-#define RTL_ASSERT(exp) \
-    ((!(exp)) ? (RtlAssert((PVOID)#exp, (PVOID)__FILE__, __LINE__, NULL), FALSE) : TRUE)
-#define RTL_ASSERTMSG(msg, exp) \
-    ((!(exp)) ? (RtlAssert((PVOID)#exp, (PVOID)__FILE__, __LINE__, msg), FALSE) : TRUE)
-#define RTL_SOFT_ASSERT(_exp) \
-    ((!(_exp)) ? (DbgPrint("%s(%d): Soft assertion failed\n   Expression: %s\n", __FILE__, __LINE__, #_exp), FALSE) : TRUE)
-#define RTL_SOFT_ASSERTMSG(_msg, _exp) \
-    ((!(_exp)) ? (DbgPrint("%s(%d): Soft assertion failed\n   Expression: %s\n   Message: %s\n", __FILE__, __LINE__, #_exp, (_msg)), FALSE) : TRUE)
-
-#endif
+#endif // _NTXCAPI_H

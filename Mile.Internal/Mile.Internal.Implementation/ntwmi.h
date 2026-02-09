@@ -2669,14 +2669,16 @@ typedef struct _ETW_OBJECT_TYPE_EVENT
     WCHAR Name[ANYSIZE_ARRAY];
 } ETW_OBJECT_TYPE_EVENT, *PETW_OBJECT_TYPE_EVENT;
 
+#include <pshpack1.h>
 typedef struct _ETW_OBJECT_HANDLE_EVENT
 {
     PVOID Object;
     ULONG ProcessId;
     ULONG Handle;
     USHORT ObjectType;
-    WCHAR ObjectName[1];
+    WCHAR ObjectName[ANYSIZE_ARRAY];
 } ETW_OBJECT_HANDLE_EVENT, *PETW_OBJECT_HANDLE_EVENT;
+#include <poppack.h>
 
 typedef struct _ETW_REFDEREF_OBJECT_EVENT
 {
@@ -2712,9 +2714,7 @@ typedef struct _ETW_HEAP_EVENT_COMMON
     SYSTEM_TRACE_HEADER Header;    // Header
     PVOID Handle;                  // Handle of Heap
 } ETW_HEAP_EVENT_COMMON, *PETW_HEAP_EVENT_COMMON;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_ALLOC
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2724,9 +2724,7 @@ typedef struct _ETW_HEAP_EVENT_ALLOC
     ULONG Source;                   // Type ie Lookaside, Lowfrag or main path
 
 } ETW_HEAP_EVENT_ALLOC, *PETW_HEAP_EVENT_ALLOC;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_FREE
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2735,9 +2733,7 @@ typedef struct _ETW_HEAP_EVENT_FREE
     ULONG Source;                   // Type ie Lookaside, Lowfrag or main path
 
 } ETW_HEAP_EVENT_FREE, *PETW_HEAP_EVENT_FREE;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_REALLOC
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2748,9 +2744,7 @@ typedef struct _ETW_HEAP_EVENT_REALLOC
     SIZE_T OldSize;                 // Old Size in bytes
     ULONG Source;                   // Type ie Lookaside, Lowfrag or main path
 } ETW_HEAP_EVENT_REALLOC, *PETW_HEAP_EVENT_REALLOC;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_EXPANSION
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2763,9 +2757,7 @@ typedef struct _ETW_HEAP_EVENT_EXPANSION
     ULONG NoOfUCRs;                 // Number of uncommitted ranges
     SIZE_T AllocatedSpace;          // Memory allocated
 } ETW_HEAP_EVENT_EXPANSION, *PETW_HEAP_EVENT_EXPANSION;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_CONTRACTION
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2779,9 +2771,7 @@ typedef struct _ETW_HEAP_EVENT_CONTRACTION
     SIZE_T AllocatedSpace;          // Memory allocated
 
 } ETW_HEAP_EVENT_CONTRACTION, *PETW_HEAP_EVENT_CONTRACTION;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_CREATE
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2851,18 +2841,14 @@ typedef struct _HEAP_SUBSEGMENT_INIT
     SIZE_T BlockCount;
     ULONG AffinityIndex;
 } HEAP_SUBSEGMENT_INIT, *PHEAP_SUBSEGMENT_INIT;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _HEAP_AFFINITY_MANAGER_ENABLE
 {
     SYSTEM_TRACE_HEADER Header;
     PVOID HeapHandle;
     ULONG BucketIndex;
 } HEAP_AFFINITY_MANAGER_ENABLE, *PHEAP_AFFINITY_MANAGER_ENABLE;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _HEAP_AFFINITY_SLOT_ASSIGN
 {
     SYSTEM_TRACE_HEADER Header;
@@ -2870,9 +2856,7 @@ typedef struct _HEAP_AFFINITY_SLOT_ASSIGN
     PVOID SubSegment;
     ULONG SlotIndex;
 } HEAP_AFFINITY_SLOT_ASSIGN, *PHEAP_AFFINITY_SLOT_ASSIGN;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _HEAP_REUSE_THRESHOLD_ACTIVATED
 {
     SYSTEM_TRACE_HEADER Header;
@@ -2880,18 +2864,14 @@ typedef struct _HEAP_REUSE_THRESHOLD_ACTIVATED
     PVOID SubSegment;
     ULONG BucketIndex;
 } HEAP_REUSE_THRESHOLD_ACTIVATED, *PHEAP_REUSE_THRESHOLD_ACTIVATED;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _HEAP_SUBSEGMENT_ACTIVATED
 {
     SYSTEM_TRACE_HEADER Header;
     PVOID HeapHandle;
     PVOID SubSegment;
 } HEAP_SUBSEGMENT_ACTIVATED, *PHEAP_SUBSEGMENT_ACTIVATED;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_SNAPSHOT
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -2906,17 +2886,13 @@ typedef struct _ETW_HEAP_EVENT_SNAPSHOT
     ULONG UCRLength;
     SIZE_T AllocatedSpace;          // Total allocated space in heap, in bytes
 } ETW_HEAP_EVENT_SNAPSHOT, *PETW_HEAP_EVENT_SNAPSHOT;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_RUNDOWN_RANGE
 {
     PVOID Address;
     SIZE_T Size;
 } ETW_HEAP_EVENT_RUNDOWN_RANGE, *PETW_HEAP_EVENT_RUNDOWN_RANGE;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _ETW_HEAP_EVENT_RUNDOWN
 {
     SYSTEM_TRACE_HEADER Header;     // Header
@@ -3734,6 +3710,10 @@ DEFINE_GUID(  /* e46eead8-0c54-4489-9898-8fa79d059e0e */
 //    0xae, 0xfc, 0xdc, 0x0f, 0x1d, 0x2f, 0xd2, 0x35
 //    );
 
+/**
+ * The ETW class GUID for file I/O events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/fileio
+ */
 DEFINE_GUID( /* 90cbdc39-4a3e-11d1-84f4-0000f80464e3 */
     FileIoGuid,
     0x90cbdc39,
@@ -3742,6 +3722,10 @@ DEFINE_GUID( /* 90cbdc39-4a3e-11d1-84f4-0000f80464e3 */
     0x84, 0xf4, 0x00, 0x00, 0xf8, 0x04, 0x64, 0xe3
     );
 
+/**
+ * The ETW class GUID for image load events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/image
+ */
 DEFINE_GUID( /* 2cb15d1d-5fc1-11d2-abe1-00a0c911f518 */
     ImageLoadGuid,
     0x2cb15d1d,
@@ -3750,6 +3734,10 @@ DEFINE_GUID( /* 2cb15d1d-5fc1-11d2-abe1-00a0c911f518 */
     0xab, 0xe1, 0x00, 0xa0, 0xc9, 0x11, 0xf5, 0x18
     );
 
+/**
+ * The ETW class GUID for page fault events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/pagefault-v2
+ */
 DEFINE_GUID( /* 3d6fa8d3-fe05-11d0-9dda-00c04fd7ba7c */
     PageFaultGuid,
     0x3d6fa8d3,
@@ -3758,6 +3746,10 @@ DEFINE_GUID( /* 3d6fa8d3-fe05-11d0-9dda-00c04fd7ba7c */
     0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
     );
 
+/**
+ * The ETW class GUID for registry events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/registry
+ */
 DEFINE_GUID( /* AE53722E-C863-11d2-8659-00C04FA321A1 */
     RegistryGuid,
     0xae53722e,
@@ -3766,6 +3758,10 @@ DEFINE_GUID( /* AE53722E-C863-11d2-8659-00C04FA321A1 */
     0x86, 0x59, 0x0, 0xc0, 0x4f, 0xa3, 0x21, 0xa1
     );
 
+/**
+ * The ETW class GUID for TCP/IP events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/tcpip
+ */
 DEFINE_GUID( /* 9a280ac0-c8e0-11d1-84e2-00c04fb998a2 */
     TcpIpGuid,
     0x9a280ac0,
@@ -3774,6 +3770,10 @@ DEFINE_GUID( /* 9a280ac0-c8e0-11d1-84e2-00c04fb998a2 */
     0x84, 0xe2, 0x00, 0xc0, 0x4f, 0xb9, 0x98, 0xa2
     );
 
+/**
+ * The ETW class GUID for thread events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/thread
+ */
 DEFINE_GUID( /* 3d6fa8d1-fe05-11d0-9dda-00c04fd7ba7c */
     ThreadGuid,
     0x3d6fa8d1,
@@ -3782,12 +3782,27 @@ DEFINE_GUID( /* 3d6fa8d1-fe05-11d0-9dda-00c04fd7ba7c */
     0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c
     );
 
+/**
+ * The ETW class GUID for UDP/IP events.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/etw/udpip
+ */
 DEFINE_GUID( /* bf3a50c5-a9c9-4988-a005-2df0b7c80f80 */
     UdpIpGuid,
     0xbf3a50c5,
     0xa9c9,
     0x4988,
     0xa0, 0x05, 0x2d, 0xf0, 0xb7, 0xc8, 0x0f, 0x80
+    );
+
+/**
+ * The ETW class GUID for Intel Processor Trace (IPT) events.
+ */
+DEFINE_GUID( /* ff1fd2fd-6008-42bb-9e75-00a20051f3be */
+    IptGuid,
+    0xff1fd2fd,
+    0x6008,
+    0x42bb,
+    0x9e, 0x75, 0x00, 0xa2, 0x00, 0x51, 0xf3, 0xbe
     );
 
 //
@@ -4031,17 +4046,13 @@ typedef struct _PERFINFO_DRIVER_MAJORFUNCTION
     PVOID Irp;
     ULONG UniqMatchId;
 } PERFINFO_DRIVER_MAJORFUNCTION, *PPERFINFO_DRIVER_MAJORFUNCTION;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _PERFINFO_DRIVER_MAJORFUNCTION_RET
 {
     PVOID Irp;
     ULONG UniqMatchId;
 } PERFINFO_DRIVER_MAJORFUNCTION_RET, *PPERFINFO_DRIVER_MAJORFUNCTION_RET;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _PERFINFO_DRIVER_COMPLETE_REQUEST
 {
     //
@@ -4061,9 +4072,7 @@ typedef struct _PERFINFO_DRIVER_COMPLETE_REQUEST
     ULONG UniqMatchId;
 
 } PERFINFO_DRIVER_COMPLETE_REQUEST, *PPERFINFO_DRIVER_COMPLETE_REQUEST;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _PERFINFO_DRIVER_COMPLETE_REQUEST_RET
 {
     //
@@ -4073,9 +4082,7 @@ typedef struct _PERFINFO_DRIVER_COMPLETE_REQUEST_RET
     PVOID Irp;
     ULONG UniqMatchId;
 } PERFINFO_DRIVER_COMPLETE_REQUEST_RET, *PPERFINFO_DRIVER_COMPLETE_REQUEST_RET;
-#include <poppack.h>
 
-#include <pshpack1.h>
 typedef struct _PERFINFO_DRIVER_COMPLETIONROUTINE
 {
     PVOID Routine;
@@ -4382,16 +4389,17 @@ typedef struct _PERFINFO_PPM_IDLE_EXIT_LATENCY
 
 typedef struct _PERFINFO_PPM_PERF_STATE_CHANGE
 {
-  ULONG Type;
-  ULONG NewState;
-  ULONG OldState;
-  NTSTATUS Result;
-  ULONG64 Processors;
+    ULONG Type;
+    ULONG NewState;
+    ULONG OldState;
+    NTSTATUS Result;
+    ULONG64 Processors;
 } PERFINFO_PPM_PERF_STATE_CHANGE, *PPERFINFO_PPM_PERF_STATE_CHANGE;
 
-typedef struct _PERFINFO_PPM_THERMAL_CONSTRAINT{
-  ULONG Constraint;
-  ULONG64 Processors;
+typedef struct _PERFINFO_PPM_THERMAL_CONSTRAINT
+{
+    ULONG Constraint;
+    ULONG64 Processors;
 } PERFINFO_PPM_THERMAL_CONSTRAINT, *PPERFINFO_PPM_THERMAL_CONSTRAINT;
 
 //
@@ -5465,6 +5473,12 @@ typedef struct _WMI_LOGGER_INFORMATION
 #define ETW_NT_FLAGS_USE_NATIVE_HEADER       0x40000000   // Use native header for WOW64
 #define ETW_NT_FLAGS_WOW64_CALL              0x80000000   // For use by WOW (Internal)
 
+#define ETW_NT_FLAGS_TRACE_SYSTEM_V1         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V1)
+#define ETW_NT_FLAGS_TRACE_SYSTEM_V2         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V2)
+#define ETW_NT_FLAGS_TRACE_SYSTEM_V3         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V3)
+#define ETW_NT_FLAGS_TRACE_SYSTEM_V4         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V4)
+#define ETW_NT_FLAGS_TRACE_SYSTEM_V5         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V5)
+
 #define ETW_NT_FLAGS_TRACE_RUNDOWN_V2 (ETW_NT_FLAGS_TRACE_SYSTEM_V2 | ETW_NT_FLAGS_USE_NATIVE_HEADER)  // Rundown and SysConfig events
 #define ETW_NT_FLAGS_TRACE_RUNDOWN_V3 (ETW_NT_FLAGS_TRACE_SYSTEM_V3 | ETW_NT_FLAGS_USE_NATIVE_HEADER)  // Rundown and SysConfig events
 #define ETW_NT_FLAGS_TRACE_RUNDOWN_V4 (ETW_NT_FLAGS_TRACE_SYSTEM_V4 | ETW_NT_FLAGS_USE_NATIVE_HEADER)  // Rundown and SysConfig events
@@ -5481,12 +5495,6 @@ typedef struct _WMI_LOGGER_INFORMATION
 
 #define ETW_SKIP_USER_FRAMES(X)              ((X) << ETW_USER_FRAMES_TO_SKIP_SHIFT)
 #define ETW_USER_EVENT_WITH_STACKWALK(X)     (ETW_NT_FLAGS_TRACE_SYSTEM_V2| ETW_SKIP_USER_FRAMES(X))
-
-#define ETW_NT_FLAGS_TRACE_SYSTEM_V1         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V1)
-#define ETW_NT_FLAGS_TRACE_SYSTEM_V2         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V2)
-#define ETW_NT_FLAGS_TRACE_SYSTEM_V3         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V3)
-#define ETW_NT_FLAGS_TRACE_SYSTEM_V4         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V4)
-#define ETW_NT_FLAGS_TRACE_SYSTEM_V5         (ETW_NT_FLAGS_TRACE_SYSTEM | ETW_SYSTEM_EVENT_V5)
 
 // Constants for UMGL (User Mode Global Logging).
 //
@@ -6435,4 +6443,4 @@ WmiFreeBuffer(
     _In_ PVOID Buffer
     );
 
-#endif
+#endif // _NTWMI_H
