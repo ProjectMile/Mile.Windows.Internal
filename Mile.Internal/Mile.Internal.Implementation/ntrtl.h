@@ -153,6 +153,14 @@ RtlFailFast(
     __fastfail(Code);
 }
 
+/**
+ * The RtlFatalListEntryError routine reports a fatal list entry error.
+ *
+ * \param p1 The first parameter passed to `RtlFailFast`.
+ * \param p2 The second parameter passed to `RtlFailFast`.
+ * \param p3 The third parameter passed to `RtlFailFast`.
+ * \remarks This routine is a wrapper around `RtlFailFast` that can be used to provide alternative reporting mechanisms, such as logging and trying to continue.
+ */
 DECLSPEC_NORETURN
 FORCEINLINE
 VOID
@@ -192,6 +200,12 @@ typedef struct _LIST_ENTRY LIST_ENTRY, *PLIST_ENTRY;
 // #define NO_LIST_ENTRY_CHECKS
 // #endif
 
+/**
+ * The RtlCheckListEntry routine checks the integrity of a doubly linked list entry.
+ *
+ * \param Entry A pointer to the list entry to check.
+ * \remarks This function calls `RtlFatalListEntryError` if the list entry is corrupted.
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -209,6 +223,12 @@ RtlCheckListEntry(
     }
 }
 
+/**
+ * The InitializeListHead routine initializes a doubly linked list head.
+ *
+ * \param ListHead A pointer to the `LIST_ENTRY` structure to be initialized as a list head.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-initializelisthead
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -219,6 +239,11 @@ InitializeListHead(
     ListHead->Flink = ListHead->Blink = ListHead;
 }
 
+/**
+ * The InitializeListHead32 routine initializes a 32-bit doubly linked list head.
+ *
+ * \param ListHead A pointer to the `LIST_ENTRY32` structure to be initialized as a list head.
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -229,6 +254,14 @@ InitializeListHead32(
     ListHead->Flink = ListHead->Blink = PtrToUlong(ListHead);
 }
 
+/**
+ * The IsListEmpty routine determines whether a doubly linked list is empty.
+ *
+ * \param ListHead A pointer to the list head.
+ *
+ * \return `TRUE` if the list is empty, otherwise `FALSE`.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-islistempty
+ */
 _Must_inspect_result_
 FORCEINLINE
 BOOLEAN
@@ -240,6 +273,12 @@ IsListEmpty(
     return ListHead->Flink == ListHead;
 }
 
+/**
+ * The RemoveEntryListUnsafe routine removes an entry from a doubly linked list without checking for integrity.
+ *
+ * \param Entry A pointer to the list entry to be removed.
+ * \return `TRUE` if the list becomes empty after the entry is removed, otherwise `FALSE`.
+ */
 FORCEINLINE
 BOOLEAN
 NTAPI_INLINE
@@ -257,6 +296,13 @@ RemoveEntryListUnsafe(
     return (BOOLEAN)(Flink == Blink);
 }
 
+/**
+ * The RemoveEntryList routine removes an entry from a doubly linked list.
+ *
+ * \param Entry A pointer to the list entry to be removed.
+ * \return `TRUE` if the list becomes empty after the entry is removed, otherwise `FALSE`.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-removeentrylist
+ */
 FORCEINLINE
 BOOLEAN
 NTAPI_INLINE
@@ -283,6 +329,13 @@ RemoveEntryList(
     return NextEntry == PrevEntry;
 }
 
+/**
+ * The RemoveHeadList routine removes the entry from the head of a doubly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \return A pointer to the entry removed from the head of the list.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-removeheadlist
+ */
 FORCEINLINE
 PLIST_ENTRY
 NTAPI_INLINE
@@ -309,6 +362,13 @@ RemoveHeadList(
     return Entry;
 }
 
+/**
+ * The RemoveTailList routine removes the entry from the tail of a doubly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \return A pointer to the entry removed from the tail of the list.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-removetaillist
+ */
 FORCEINLINE
 PLIST_ENTRY
 NTAPI_INLINE
@@ -335,6 +395,13 @@ RemoveTailList(
     return Entry;
 }
 
+/**
+ * The InsertTailList routine inserts an entry at the tail of a doubly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \param Entry A pointer to the list entry to be inserted.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-inserttaillist
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -360,6 +427,13 @@ InsertTailList(
     ListHead->Blink = Entry;
 }
 
+/**
+ * The InsertHeadList routine inserts an entry at the head of a doubly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \param Entry A pointer to the list entry to be inserted.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-insertheadlist
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -387,6 +461,12 @@ InsertHeadList(
     ListHead->Flink = Entry;
 }
 
+/**
+ * The AppendTailList routine appends a doubly linked list to the tail of another doubly linked list.
+ *
+ * \param ListHead A pointer to the head of the list to which to append.
+ * \param ListToAppend A pointer to the list to be appended.
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -408,6 +488,13 @@ AppendTailList(
     ListToAppend->Blink = ListEnd;
 }
 
+/**
+ * The PopEntryList routine removes the first entry from a singly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \return A pointer to the entry removed from the head of the list, or `NULL` if the list is empty.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-popentrylist
+ */
 FORCEINLINE
 PSINGLE_LIST_ENTRY
 NTAPI_INLINE
@@ -425,6 +512,13 @@ PopEntryList(
     return FirstEntry;
 }
 
+/**
+ * The PushEntryList routine inserts an entry at the head of a singly linked list.
+ *
+ * \param ListHead A pointer to the list head.
+ * \param Entry A pointer to the list entry to be inserted.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-pushentrylist
+ */
 FORCEINLINE
 VOID
 NTAPI_INLINE
@@ -512,6 +606,16 @@ typedef struct _RTL_AVL_TABLE
     PVOID TableContext;
 } RTL_AVL_TABLE, *PRTL_AVL_TABLE;
 
+/**
+ * The RtlInitializeGenericTableAvl routine initializes a generic AVL table.
+ *
+ * \param Table A pointer to the `RTL_AVL_TABLE` structure to be initialized.
+ * \param CompareRoutine A comparison routine to be used for comparing elements.
+ * \param AllocateRoutine An allocation routine to be used for allocating memory for the table.
+ * \param FreeRoutine A free routine to be used for freeing memory allocated for the table.
+ * \param TableContext A context to be passed to the comparison, allocation, and free routines.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictableavl
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -523,6 +627,16 @@ RtlInitializeGenericTableAvl(
     _In_opt_ PVOID TableContext
     );
 
+/**
+ * The RtlInsertElementGenericTableAvl routine inserts an element into a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to be inserted.
+ * \param BufferSize The size of the buffer.
+ * \param NewElement A pointer to a boolean that receives `TRUE` if the element was newly inserted, or `FALSE` if the element already existed.
+ * \return A pointer to the newly inserted or existing element.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinsertelementgenerictableavl
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -533,6 +647,18 @@ RtlInsertElementGenericTableAvl(
     _Out_opt_ PBOOLEAN NewElement
     );
 
+/**
+ * The RtlInsertElementGenericTableFullAvl routine inserts an element into a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to be inserted.
+ * \param BufferSize The size of the buffer.
+ * \param NewElement A pointer to a boolean that receives `TRUE` if the element was newly inserted, or `FALSE` if the element already existed.
+ * \param NodeOrParent A pointer to the node or parent for the insertion.
+ * \param SearchResult The result of the search for the insertion point.
+ * \return A pointer to the newly inserted or existing element.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinsertelementgenerictablefullavl
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -545,6 +671,14 @@ RtlInsertElementGenericTableFullAvl(
     _In_ TABLE_SEARCH_RESULT SearchResult
     );
 
+/**
+ * The RtlDeleteElementGenericTableAvl routine deletes an element from a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to be deleted.
+ * \return `TRUE` if the element was deleted, otherwise `FALSE`.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtldeleteelementgenerictableavl
+ */
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -553,6 +687,14 @@ RtlDeleteElementGenericTableAvl(
     _In_ PVOID Buffer
     );
 
+/**
+ * The RtlLookupElementGenericTableAvl routine looks up an element in a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to look up.
+ * \return A pointer to the found element, or `NULL` if the element was not found.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtllookupelementgenerictableavl
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -562,6 +704,16 @@ RtlLookupElementGenericTableAvl(
     _In_ PVOID Buffer
     );
 
+/**
+ * The RtlLookupElementGenericTableFullAvl routine looks up an element in a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to look up.
+ * \param NodeOrParent A pointer that receives the node or parent of the element.
+ * \param SearchResult A pointer that receives the result of the search.
+ * \return A pointer to the found element, or `NULL` if the element was not found.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtllookupelementgenerictablefullavl
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -572,6 +724,14 @@ RtlLookupElementGenericTableFullAvl(
     _Out_ TABLE_SEARCH_RESULT *SearchResult
     );
 
+/**
+ * The RtlEnumerateGenericTableAvl routine enumerates the elements in a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Restart `TRUE` to restart the enumeration, `FALSE` to continue.
+ * \return A pointer to the next element in the table, or `NULL` if there are no more elements.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlenumerategenerictableavl
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -581,6 +741,14 @@ RtlEnumerateGenericTableAvl(
     _In_ BOOLEAN Restart
     );
 
+/**
+ * The RtlEnumerateGenericTableWithoutSplayingAvl routine enumerates the elements in a generic AVL table without splaying.
+ *
+ * \param Table A pointer to the generic table.
+ * \param RestartKey A pointer to a restart key.
+ * \return A pointer to the next element in the table, or `NULL` if there are no more elements.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlenumerategenerictablewithoutsplayingavl
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -590,6 +758,15 @@ RtlEnumerateGenericTableWithoutSplayingAvl(
     _Inout_ PVOID *RestartKey
     );
 
+/**
+ * The RtlLookupFirstMatchingElementGenericTableAvl routine looks up the first matching element in a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to look up.
+ * \param RestartKey A pointer to a restart key.
+ * \return A pointer to the first matching element, or `NULL` if no matching element was found.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtllookupfirstmatchingelementgenerictableavl
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -600,6 +777,18 @@ RtlLookupFirstMatchingElementGenericTableAvl(
     _Out_ PVOID *RestartKey
     );
 
+/**
+ * The RtlEnumerateGenericTableLikeADirectory routine enumerates the elements in a generic AVL table like a directory.
+ *
+ * \param Table A pointer to the generic table.
+ * \param MatchFunction A match function to be used for comparing elements.
+ * \param MatchData A context to be passed to the match function.
+ * \param NextFlag A flag indicating whether to move to the next element.
+ * \param RestartKey A pointer to a restart key.
+ * \param DeleteCount A pointer to a counter for deleted elements.
+ * \param Buffer A pointer to the buffer containing the element to look up.
+ * \return A pointer to the next element in the table, or `NULL` if there are no more elements.
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -614,6 +803,14 @@ RtlEnumerateGenericTableLikeADirectory(
     _In_ PVOID Buffer
     );
 
+/**
+ * The RtlGetElementGenericTableAvl routine gets an element from a generic AVL table by its index.
+ *
+ * \param Table A pointer to the generic table.
+ * \param I The index of the element to get.
+ * \return A pointer to the element, or `NULL` if the index is out of range.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlgetelementgenerictableavl
+ */
 _Check_return_
 NTSYSAPI
 PVOID
@@ -623,6 +820,13 @@ RtlGetElementGenericTableAvl(
     _In_ ULONG I
     );
 
+/**
+ * The RtlNumberGenericTableElementsAvl routine gets the number of elements in a generic AVL table.
+ *
+ * \param Table A pointer to the generic table.
+ * \return The number of elements in the table.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlnumbergenerictableelementsavl
+ */
 NTSYSAPI
 ULONG
 NTAPI
@@ -630,6 +834,13 @@ RtlNumberGenericTableElementsAvl(
     _In_ PRTL_AVL_TABLE Table
     );
 
+/**
+ * The RtlIsGenericTableEmptyAvl routine determines whether a generic AVL table is empty.
+ *
+ * \param Table A pointer to the generic table.
+ * \return `TRUE` if the table is empty, otherwise `FALSE`.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlisgenerictableemptyavl
+ */
 _Check_return_
 NTSYSAPI
 BOOLEAN
@@ -681,6 +892,13 @@ typedef struct _RTL_SPLAY_LINKS
     _SplayChild->Parent = _SplayParent; \
 }
 
+/**
+ * The RtlSplay routine performs a splay operation on a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node to splay.
+ * \return A pointer to the new root of the splay tree.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlsplay
+ */
 NTSYSAPI
 PRTL_SPLAY_LINKS
 NTAPI
@@ -688,6 +906,13 @@ RtlSplay(
     _Inout_ PRTL_SPLAY_LINKS Links
     );
 
+/**
+ * The RtlDelete routine deletes a node from a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node to delete.
+ * \return A pointer to the new root of the splay tree.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtldelete
+ */
 NTSYSAPI
 PRTL_SPLAY_LINKS
 NTAPI
@@ -695,6 +920,12 @@ RtlDelete(
     _In_ PRTL_SPLAY_LINKS Links
     );
 
+/**
+ * The RtlDeleteNoSplay routine deletes a node from a splay tree without splaying.
+ *
+ * \param Links A pointer to the splay links of the node to delete.
+ * \param Root A pointer to the root of the splay tree.
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -703,6 +934,13 @@ RtlDeleteNoSplay(
     _Inout_ PRTL_SPLAY_LINKS *Root
     );
 
+/**
+ * The RtlSubtreeSuccessor routine finds the successor of a node in a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node.
+ * \return A pointer to the splay links of the successor node.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlsubtreesuccessor
+ */
 _Check_return_
 NTSYSAPI
 PRTL_SPLAY_LINKS
@@ -711,6 +949,13 @@ RtlSubtreeSuccessor(
     _In_ PRTL_SPLAY_LINKS Links
     );
 
+/**
+ * The RtlSubtreePredecessor routine finds the predecessor of a node in a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node.
+ * \return A pointer to the splay links of the predecessor node.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlsubtreepredecessor
+ */
 _Check_return_
 NTSYSAPI
 PRTL_SPLAY_LINKS
@@ -719,6 +964,13 @@ RtlSubtreePredecessor(
     _In_ PRTL_SPLAY_LINKS Links
     );
 
+/**
+ * The RtlRealSuccessor routine finds the real successor of a node in a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node.
+ * \return A pointer to the splay links of the real successor node.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlrealsuccessor
+ */
 _Check_return_
 NTSYSAPI
 PRTL_SPLAY_LINKS
@@ -727,6 +979,13 @@ RtlRealSuccessor(
     _In_ PRTL_SPLAY_LINKS Links
     );
 
+/**
+ * The RtlRealPredecessor routine finds the real predecessor of a node in a splay tree.
+ *
+ * \param Links A pointer to the splay links of the node.
+ * \return A pointer to the splay links of the real predecessor node.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlrealpredecessor
+ */
 _Check_return_
 NTSYSAPI
 PRTL_SPLAY_LINKS
@@ -772,6 +1031,16 @@ typedef struct _RTL_GENERIC_TABLE
     PVOID TableContext;
 } RTL_GENERIC_TABLE, *PRTL_GENERIC_TABLE;
 
+/**
+ * The RtlInitializeGenericTable routine initializes a generic table.
+ *
+ * \param Table A pointer to the `RTL_GENERIC_TABLE` structure to be initialized.
+ * \param CompareRoutine A comparison routine to be used for comparing elements.
+ * \param AllocateRoutine An allocation routine to be used for allocating memory for the table.
+ * \param FreeRoutine A free routine to be used for freeing memory allocated for the table.
+ * \param TableContext A context to be passed to the comparison, allocation, and free routines.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictable
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -783,6 +1052,16 @@ RtlInitializeGenericTable(
     _In_opt_ PVOID TableContext
     );
 
+/**
+ * The RtlInsertElementGenericTable routine inserts an element into a generic table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to be inserted.
+ * \param BufferSize The size of the buffer.
+ * \param NewElement A pointer to a boolean that receives `TRUE` if the element was newly inserted, or `FALSE` if the element already existed.
+ * \return A pointer to the newly inserted or existing element.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinsertelementgenerictable
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -793,6 +1072,18 @@ RtlInsertElementGenericTable(
     _Out_opt_ PBOOLEAN NewElement
     );
 
+/**
+ * The RtlInsertElementGenericTableFull routine inserts an element into a generic table.
+ *
+ * \param Table A pointer to the generic table.
+ * \param Buffer A pointer to the buffer containing the element to be inserted.
+ * \param BufferSize The size of the buffer.
+ * \param NewElement A pointer to a boolean that receives `TRUE` if the element was newly inserted, or `FALSE` if the element already existed.
+ * \param NodeOrParent A pointer to the node or parent for the insertion.
+ * \param SearchResult The result of the search for the insertion point.
+ * \return A pointer to the newly inserted or existing element.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinsertelementgenerictablefull
+ */
 NTSYSAPI
 PVOID
 NTAPI
@@ -1606,41 +1897,132 @@ RtlConvertSRWLockExclusiveToShared(
 // @remarks RCU synchronization is not for general-purpose synchronization.
 // Teb->Rcu is used to store the RCU state.
 
+#if defined(PHNT_NATIVE_RCU)
+// rev
+typedef struct _RTL_RCU_SEGMENT
+{
+    ULONG Count;
+    ULONG Reserved; // padding/unused
+    PVOID Slots[ANYSIZE_ARRAY];
+    //
+    // Interpretation (x64):
+    //   Slots[0 .. Count-1] = RTL_RCU_THREAD_ENTRY* (or NULL)
+    //   Slots[Count]        = RTL_RCU_SEGMENT* link to next segment (or NULL)
+    //
+} RTL_RCU_SEGMENT, *PRTL_RCU_SEGMENT;
+
+// Helper for the address of link slot (the "next segment pointer")
+#define RTL_RCU_SEGMENT_NEXT_PTR(S) ((PRTL_RCU_SEGMENT*)&((S)->Slots[(S)->Count]))
+
+// rev
+typedef struct _RTL_RCU_THREAD_ENTRY
+{
+    volatile ULONGLONG ReadDepth;
+    ULONG ThreadCookie; // compared with TEB cached cookie
+    ULONG ThreadIdLike; // compared with TEB cached id
+    volatile ULONGLONG SeenEpoch; // WaitOnAddress/WakeAddressAll target
+    struct _RTL_RCU_THREAD_ENTRY* Next; // linked via State->ThreadList
+} RTL_RCU_THREAD_ENTRY, *PRTL_RCU_THREAD_ENTRY;
+
+C_ASSERT(sizeof(RTL_RCU_THREAD_ENTRY) == 0x20);
+C_ASSERT(FIELD_OFFSET(RTL_RCU_THREAD_ENTRY, SeenEpoch) == 0x10);
+
+//typedef struct _RTL_RCU_THREAD_ENTRY RTL_RCU_THREAD_ENTRY, *PRTL_RCU_THREAD_ENTRY;
+//typedef struct _RTL_RCU_SEGMENT      RTL_RCU_SEGMENT,      *PRTL_RCU_SEGMENT;
+
+// rev
+typedef struct _RTL_RCU_STATE
+{
+    //
+    // Global list links (inserted by RtlRcuAllocate under a global SRW lock).
+    //
+    struct _RTL_RCU_STATE *GlobalNext;
+    struct _RTL_RCU_STATE *GlobalPrev;
+
+    //
+    // Global epoch/state.
+    //
+    volatile ULONGLONG Epoch;
+
+    //
+    // Segmented array root used by RtlpRcuCurrentThreadData()
+    // to map "thread-id-like" (ebx) -> RTL_RCU_THREAD_ENTRY*.
+    //
+    PRTL_RCU_SEGMENT SegmentRoot;
+
+    //
+    // Singly-linked list of all per-thread entries for this state.
+    // synchronize walks this list and waits on each entry->SeenEpoch.
+    //
+    PRTL_RCU_THREAD_ENTRY ThreadList;
+
+    //
+    // Small cache indexed by (ebx % 10) (the 0xCCCCCCCD multiply trick).
+    //
+    PRTL_RCU_THREAD_ENTRY Cache[10];
+
+    //
+    // Slow-path SRW lock used when RtlpRcuCurrentThreadData() returns NULL.
+    //  - ReadLock uses AcquireSRWLockShared(&state+0x78)
+    //  - Synchronize uses Acquire/Release Exclusive on &state+0x78 (via helper)
+    //
+    RTL_SRWLOCK SlowPathLock;
+
+    //
+    // Stored from RtlRcuAllocate(ecx)
+    //
+    ULONG TagOrFlags;
+
+    ULONG Padding; // (to make sizeof == 0x88 on x64)
+} RTL_RCU_STATE, *PRTL_RCU_STATE;
+
+// Sanity checks (x64)
+C_ASSERT(sizeof(RTL_RCU_STATE) == 0x88);
+
+typedef struct _RTL_RCU_COOKIE
+{
+    ULONG_PTR ThreadEntryOrNull; // NULL => slow-path SRW shared lock was used
+} RTL_RCU_COOKIE, *PRTL_RCU_COOKIE;
+#else
+typedef struct _RTL_RCU_STATE RTL_RCU_STATE, *PRTL_RCU_STATE;
+typedef ULONG_PTR RTL_RCU_COOKIE, *PRTL_RCU_COOKIE;
+#endif // #if defined(PHNT_NATIVE_RCU)
+
 NTSYSAPI
-PVOID
+PRTL_RCU_STATE
 NTAPI
 RtlRcuAllocate(
-    _In_ SIZE_T Size
+    _In_ ULONG Flags
     );
 
 NTSYSAPI
 LOGICAL
 NTAPI
 RtlRcuFree(
-    _In_ PULONG Rcu
+    _In_ PRTL_RCU_STATE State
     );
 
 NTSYSAPI
 VOID
 NTAPI
 RtlRcuReadLock(
-    _Inout_ PRTL_SRWLOCK SRWLock,
-    _Out_ PULONG Rcu
+    _Inout_ PRTL_RCU_STATE State,
+    _Out_ PRTL_RCU_COOKIE Cookie
     );
 
 NTSYSAPI
 VOID
 NTAPI
 RtlRcuReadUnlock(
-    _Inout_ PRTL_SRWLOCK SRWLock,
-    _Inout_ PULONG* Rcu
+    _Inout_ PRTL_RCU_STATE State,
+    _Inout_ PRTL_RCU_COOKIE Cookie
     );
 
 NTSYSAPI
 LONG
 NTAPI
 RtlRcuSynchronize(
-    _Inout_ PRTL_SRWLOCK SRWLock
+    _Inout_ PRTL_RCU_STATE State
     );
 
 #endif // PHNT_VERSION >= PHNT_WINDOWS_11
@@ -1743,6 +2125,17 @@ RtlBarrierForDelete(
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_8)
 
+/**
+ * The RtlWaitOnAddress routine waits for the value at the specified address to change.
+ *
+ * \param Address The address on which to wait.
+ * \param CompareAddress A pointer to the location of the previously observed value at Address.
+ * \param AddressSize The size of the value, in bytes. This parameter can be 1, 2, 4, or 8.
+ * \param Timeout The number of milliseconds to wait before the operation times out. If this parameter is NULL (INFINITE), the thread waits indefinitely.
+ * \remarks WaitOnAddress is guaranteed to return when the address is signaled, but it is also allowed to return for other reasons.
+ * For this reason, the caller should compare the new value with the original undesired value to confirm that the value has actually changed. 
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitonaddress
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1753,6 +2146,12 @@ RtlWaitOnAddress(
     _In_opt_ PLARGE_INTEGER Timeout
     );
 
+/**
+ * The RtlWakeAddressAll routine wakes all threads that are waiting for the value of an address to change.
+ *
+ * \param Address The address to signal. If any threads have previously called RtlWaitOnAddress for this address, the system wakes all of the waiting threads.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddressall
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -1760,6 +2159,12 @@ RtlWakeAddressAll(
     _In_ PVOID Address
     );
 
+/**
+ * The RtlWakeAddressAllNoFence routine wakes all threads that are waiting for the value of an address to change.
+ *
+ * \param Address The address to signal. If any threads have previously called RtlWaitOnAddress for this address, the system wakes all of the waiting threads.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddressall
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -1767,6 +2172,12 @@ RtlWakeAddressAllNoFence(
     _In_ PVOID Address
     );
 
+/**
+ * The RtlWakeAddressSingle routine wakes one thread that is waiting for the value of an address to change.
+ *
+ * \param Address The address to signal.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddresssingle
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -1774,6 +2185,12 @@ RtlWakeAddressSingle(
     _In_ PVOID Address
     );
 
+/**
+ * The RtlWakeAddressSingleNoFence routine wakes one thread that is waiting for the value of an address to change.
+ *
+ * \param Address The address to signal.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddresssingle
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -3642,6 +4059,7 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS
 #define RTL_USER_PROC_PROFILE_USER                      0x00000002
 #define RTL_USER_PROC_PROFILE_KERNEL                    0x00000004
 #define RTL_USER_PROC_PROFILE_SERVER                    0x00000008
+//#define RTL_USER_PROC_RESERVE_64K                     0x00000010
 #define RTL_USER_PROC_RESERVE_1MB                       0x00000020
 #define RTL_USER_PROC_RESERVE_16MB                      0x00000040
 #define RTL_USER_PROC_CASE_SENSITIVE                    0x00000080
@@ -4203,20 +4621,18 @@ static_assert(CONTEXT_EX_LENGTH == 0x20);
 #define RTL_CONTEXT_LENGTH(Context, Chunk) RTL_CONTEXT_EX_LENGTH((PCONTEXT_EX)((Context) + 1), Chunk)
 #define RTL_CONTEXT_CHUNK(Context, Chunk) RTL_CONTEXT_EX_CHUNK((PCONTEXT_EX)((Context) + 1), (PCONTEXT_EX)((Context) + 1), Chunk)
 
-#if defined(_M_AMD64)
-// returns constant 0xf0e0d0c0a0908070 (dmex)
-NTSYSAPI
-ULONG64
-NTAPI
-RtlInitializeContext(
-    _Reserved_ HANDLE Reserved,
-    _Out_ PCONTEXT Context,
-    _In_opt_ PVOID Parameter,
-    _In_opt_ PVOID InitialPc,
-    _In_opt_ PVOID InitialSp
-    );
-#else
-// returns status of NtWriteVirtualMemory (dmex)
+/**
+ * The RtlInitializeContext function initializes a CONTEXT structure.
+ *
+ * \param ProcessHandle Handle to the process to write the CONTEXT. (32bit only)
+ * \param Context A pointer to a buffer within which to initialize a CONTEXT structure.
+ * \param Parameter Optional parameter passed to the thread start routine.
+ * \param InitialPc Initial instruction pointer (thread start routine).
+ * \param InitialSp Initial stack pointer.
+ * \return On 32bit, returns the status of NtWriteVirtualMemory. On 64bit, returns a constant value (0xf0e0d0c0a0908070).
+ * \remarks The return value on 64bit systems is not an NTSTATUS; callers should ignore it.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-initializecontext
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4227,7 +4643,6 @@ RtlInitializeContext(
     _In_opt_ PVOID InitialPc,
     _In_opt_ PVOID InitialSp
     );
-#endif // _M_AMD64
 
 NTSYSAPI
 NTSTATUS
@@ -5740,6 +6155,25 @@ RtlWow64GetProcessMachines(
 #define IMAGE_FILE_NATIVE_MACHINE_AMD64 0x2
 #define IMAGE_FILE_NATIVE_MACHINE_ARMNT 0x4
 #define IMAGE_FILE_NATIVE_MACHINE_ARM64 0x8
+#define IMAGE_FILE_NATIVE_MACHINE_ARM64EC 0x10
+
+#if !defined(NTDDI_WIN11_BR) || (NTDDI_VERSION < NTDDI_WIN11_BR)
+// private
+typedef struct _IMAGE_FILE_MACHINES
+{
+    union
+    {
+        ULONG Value;
+        struct 
+        {
+            ULONG MachineX86 : 1;
+            ULONG MachineAmd64 : 1;
+            ULONG MachineArm : 1;
+            ULONG MachineArm64 : 1;
+            ULONG MachineArm64EC : 1;
+        } DUMMYSTRUCTNAME;
+    } DUMMYUNIONNAME;
+} IMAGE_FILE_MACHINES;
 
 // rev
 NTSYSAPI
@@ -5747,8 +6181,9 @@ NTSTATUS
 NTAPI
 RtlGetImageFileMachines(
     _In_ PCWSTR FileName,
-    _Out_ PUSHORT FileMachines
+    _Out_ IMAGE_FILE_MACHINES *MachineTypeFlags
     );
+#endif // #if !defined(NTDDI_WIN11_BR) || (NTDDI_VERSION < NTDDI_WIN11_BR)
 #endif // PHNT_VERSION >= PHNT_WINDOWS_11
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_10_RS2)
@@ -9724,6 +10159,7 @@ RtlNewSecurityGrantedAccess(
 //
 
 // rev
+#define BOUNDARY_DESCRIPTOR_FLAG_NONE 0x0
 #define BOUNDARY_DESCRIPTOR_ADD_APPCONTAINER_SID 0x0001
 
 _Ret_maybenull_
@@ -9748,7 +10184,7 @@ NTSTATUS
 NTAPI
 RtlAddSIDToBoundaryDescriptor(
     _Inout_ POBJECT_BOUNDARY_DESCRIPTOR *BoundaryDescriptor,
-    _In_ PSID RequiredSid
+    _In_ PCSID RequiredSid
     );
 
 // rev
@@ -9757,7 +10193,7 @@ NTSTATUS
 NTAPI
 RtlAddIntegrityLabelToBoundaryDescriptor(
     _Inout_ POBJECT_BOUNDARY_DESCRIPTOR *BoundaryDescriptor,
-    _In_ PSID IntegrityLabel
+    _In_ PCSID IntegrityLabel
     );
 
 //
@@ -10050,6 +10486,13 @@ NTAPI
 LdrInitializeThunk(
     _In_ PCONTEXT ContextRecord,
     _In_ PVOID Parameter
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrProcessInitializationComplete(
+    VOID
     );
 
 //
@@ -11850,82 +12293,63 @@ RtlGetSessionProperties(
 // private
 typedef enum _RTL_BSD_ITEM_TYPE
 {
-    RtlBsdItemVersionNumber, // q; s: ULONG
-    RtlBsdItemProductType, // q; s: NT_PRODUCT_TYPE (ULONG)
-    RtlBsdItemAabEnabled, // q: s: BOOLEAN // AutoAdvancedBoot
-    RtlBsdItemAabTimeout, // q: s: UCHAR // AdvancedBootMenuTimeout
-    RtlBsdItemBootGood, // q: s: BOOLEAN // LastBootSucceeded
-    RtlBsdItemBootShutdown, // q: s: BOOLEAN // LastBootShutdown
-    RtlBsdSleepInProgress, // q: s: BOOLEAN // SleepInProgress
-    RtlBsdPowerTransition, // q: s: RTL_BSD_DATA_POWER_TRANSITION
-    RtlBsdItemBootAttemptCount, // q: s: UCHAR // BootAttemptCount
-    RtlBsdItemBootCheckpoint, // q: s: UCHAR // LastBootCheckpoint
-    RtlBsdItemBootId, // q; s: ULONG (USER_SHARED_DATA->BootId) // 10
-    RtlBsdItemShutdownBootId, // q; s: ULONG
-    RtlBsdItemReportedAbnormalShutdownBootId, // q; s: ULONG
-    RtlBsdItemErrorInfo, // RTL_BSD_DATA_ERROR_INFO
-    RtlBsdItemPowerButtonPressInfo, // RTL_BSD_POWER_BUTTON_PRESS_INFO
-    RtlBsdItemChecksum, // q: s: UCHAR
-    RtlBsdPowerTransitionExtension,
-    RtlBsdItemFeatureConfigurationState, // q; s: ULONG
-    RtlBsdItemRevocationListInfo, // 24H2
+    RtlBsdItemVersionNumber,                    // qs: ULONG
+    RtlBsdItemProductType,                      // qs: NT_PRODUCT_TYPE (ULONG)
+    RtlBsdItemAabEnabled,                       // qs: BOOLEAN // AutoAdvancedBoot
+    RtlBsdItemAabTimeout,                       // qs: UCHAR // AdvancedBootMenuTimeout
+    RtlBsdItemBootGood,                         // qs: BOOLEAN // LastBootSucceeded
+    RtlBsdItemBootShutdown,                     // qs: BOOLEAN // LastBootShutdown
+    RtlBsdSleepInProgress,                      // qs: BOOLEAN // SleepInProgress
+    RtlBsdPowerTransition,                      // qs: RTL_BSD_DATA_POWER_TRANSITION
+    RtlBsdItemBootAttemptCount,                 // qs: UCHAR // BootAttemptCount
+    RtlBsdItemBootCheckpoint,                   // qs: UCHAR // LastBootCheckpoint
+    RtlBsdItemBootId,                           // qs: ULONG (USER_SHARED_DATA->BootId) // 10
+    RtlBsdItemShutdownBootId,                   // qs: ULONG
+    RtlBsdItemReportedAbnormalShutdownBootId,   // qs: ULONG
+    RtlBsdItemErrorInfo,                        // qs: RTL_BSD_DATA_ERROR_INFO
+    RtlBsdItemPowerButtonPressInfo,             // qs: RTL_BSD_POWER_BUTTON_PRESS_INFO
+    RtlBsdItemChecksum,                         // q: UCHAR
+    RtlBsdPowerTransitionExtension,             // qs: RTL_BSD_DATA_POWER_TRANSITION_EXTENSION
+    RtlBsdItemFeatureConfigurationState,        // qs: ULONG
+    RtlBsdItemRevocationListInfo,               // qs: RTL_BSD_ITEM_REVOCATION_LIST // 24H2
     RtlBsdItemMax
 } RTL_BSD_ITEM_TYPE;
 
-#define BOOT_STATUS_FIELD_MAX RtlBsdItemMax
-
-// ros
-typedef struct _RTL_BSD_DATA_POWER_TRANSITION
+typedef struct _RTL_BSD_DATA_POWER_TRANSITION 
 {
-    LARGE_INTEGER PowerButtonTimestamp;
-    struct
-    {
-        BOOLEAN SystemRunning : 1;
-        BOOLEAN ConnectedStandbyInProgress : 1;
-        BOOLEAN UserShutdownInProgress : 1;
-        BOOLEAN SystemShutdownInProgress : 1;
-        BOOLEAN SleepInProgress : 4;
-    } Flags;
-    UCHAR ConnectedStandbyScenarioInstanceId;
-    UCHAR ConnectedStandbyEntryReason;
-    UCHAR ConnectedStandbyExitReason;
-    USHORT SystemSleepTransitionCount;
-    LARGE_INTEGER LastReferenceTime;
-    ULONG LastReferenceTimeChecksum;
-    ULONG LastUpdateBootId;
+    UCHAR PowerButton : 1;
+    UCHAR SleepButton : 1;
+    UCHAR LidClose : 1;
+    UCHAR SystemIdle : 1;
+    UCHAR UserPresent : 1; // Power setting "Keep Alive"
+    UCHAR ApmBattery : 1;
+    UCHAR Reserved : 2;
 } RTL_BSD_DATA_POWER_TRANSITION, *PRTL_BSD_DATA_POWER_TRANSITION;
 
-// ros
-typedef struct _RTL_BSD_DATA_ERROR_INFO
+typedef struct _RTL_BSD_DATA_ERROR_INFO 
 {
-    ULONG BootId;
-    ULONG RepeatCount;
-    ULONG OtherErrorCount;
-    ULONG Code;
-    ULONG OtherErrorCount2;
+    ULONG BootId;           // The Boot ID where the error occurred
+    ULONG RepeatCount;      // How many times this specific error happened
+    ULONG OtherErrorCount;  // Count of other errors
 } RTL_BSD_DATA_ERROR_INFO, *PRTL_BSD_DATA_ERROR_INFO;
 
-// ros
-typedef struct _RTL_BSD_POWER_BUTTON_PRESS_INFO
+typedef struct _RTL_BSD_POWER_BUTTON_PRESS_INFO 
 {
-    LARGE_INTEGER LastPressTime;
-    ULONG CumulativePressCount;
-    USHORT LastPressBootId;
-    UCHAR LastPowerWatchdogStage;
-    struct
-    {
-        UCHAR WatchdogArmed : 1;
-        UCHAR ShutdownInProgress : 1;
-    } Flags;
-    LARGE_INTEGER LastReleaseTime;
-    ULONG CumulativeReleaseCount;
-    USHORT LastReleaseBootId;
-    USHORT ErrorCount;
-    UCHAR CurrentConnectedStandbyPhase;
-    ULONG TransitionLatestCheckpointId;
-    ULONG TransitionLatestCheckpointType;
-    ULONG TransitionLatestCheckpointSequenceNumber;
+    ULONG LastPressBootId;
+    ULONG LastPressTime;         // Time in seconds since boot
+    ULONG LastReleaseTime;
+    ULONG ButtonPressCount;
+    ULONG CoalescedPressTime;    // Total time pressed across recent boots
+    ULONG CoalescedPressCount;
 } RTL_BSD_POWER_BUTTON_PRESS_INFO, *PRTL_BSD_POWER_BUTTON_PRESS_INFO;
+
+typedef struct _RTL_BSD_DATA_POWER_TRANSITION_EXTENSION 
+{
+    UCHAR SystemIdleTransition : 1;
+    UCHAR FanError : 1;
+    UCHAR ThermalShutdown : 1;
+    UCHAR Reserved : 5;
+} RTL_BSD_DATA_POWER_TRANSITION_EXTENSION, *PRTL_BSD_DATA_POWER_TRANSITION_EXTENSION;
 
 // private
 typedef struct _RTL_BSD_ITEM
@@ -12714,7 +13138,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlUnsubscribeWnfStateChangeNotification(
-    _In_ PWNF_USER_CALLBACK Callback
+    _In_ PWNF_USER_SUBSCRIPTION SubscriptionHandle
     );
 
 NTSYSAPI

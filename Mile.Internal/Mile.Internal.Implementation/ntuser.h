@@ -2297,6 +2297,7 @@ NtUserBringWindowToTop(
         3
         );
 }
+
 // Send to the window registered with NtUserRegisterCloakedNotification
 // when cloak state of the window has changed
 // wParam - if window cloak state changed contains cloaking value
