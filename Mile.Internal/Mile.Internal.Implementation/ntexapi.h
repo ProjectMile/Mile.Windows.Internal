@@ -10452,6 +10452,7 @@ typedef struct _KUSER_SHARED_DATA
 
     XSTATE_CONFIGURATION XState;
 
+#if !defined(NTDDI_WIN11_BR) || (NTDDI_VERSION < NTDDI_WIN11_BR)
     //
     // RtlQueryFeatureConfigurationChangeStamp
     //
@@ -10463,6 +10464,7 @@ typedef struct _KUSER_SHARED_DATA
     //
 
     ULONG Spare;
+#endif
 
     //
     // This field holds a mask that is used in the process of authenticating pointers in user mode.
@@ -10477,9 +10479,31 @@ typedef struct _KUSER_SHARED_DATA
     //
 
 #if defined(_ARM64_)
+
     XSTATE_CONFIGURATION XStateArm64;
+
 #else
+
+#if !defined(NTDDI_WIN11_BR) || (NTDDI_VERSION < NTDDI_WIN11_BR)
     ULONG Reserved10[210];
+#else
+    ULONG Reserved10[214];
+#endif
+
+#endif
+
+#if defined(NTDDI_WIN11_BR) && (NTDDI_VERSION >= NTDDI_WIN11_BR)
+    //
+    // RtlQueryFeatureConfigurationChangeStamp
+    //
+
+    KSYSTEM_TIME FeatureConfigurationChangeStamp;
+
+    //
+    // Spare (available for re-use).
+    //
+
+    ULONG Spare;
 #endif
 } KUSER_SHARED_DATA, *PKUSER_SHARED_DATA;
 
@@ -10575,7 +10599,7 @@ static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved10)                       
 #if !defined(WINDOWS_IGNORE_PACKING_MISMATCH)
 static_assert(sizeof(KUSER_SHARED_DATA)                                             == 0xa70, "KUSER_SHARED_DATA size is incorrect (expected 0xa70)");
 #endif
-#else
+#elif !defined(NTDDI_WIN11_BR) || (NTDDI_VERSION < NTDDI_WIN11_BR)
 static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, FeatureConfigurationChangeStamp)      == 0x720, "KUSER_SHARED_DATA.FeatureConfigurationChangeStamp offset is incorrect");
 static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, UserPointerAuthMask)                  == 0x730, "KUSER_SHARED_DATA.UserPointerAuthMask offset is incorrect");
 #if defined(_ARM64_)
@@ -10585,6 +10609,17 @@ static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved10)                       
 #endif
 #if !defined(WINDOWS_IGNORE_PACKING_MISMATCH)
 static_assert(sizeof(KUSER_SHARED_DATA)                                             == 0xa80, "KUSER_SHARED_DATA size is incorrect (expected 0xa80)");
+#endif
+#else
+static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, UserPointerAuthMask) == 0x730, "KUSER_SHARED_DATA.UserPointerAuthMask offset is incorrect");
+#if defined(_ARM64_)
+static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, XStateArm64) == 0x738, "KUSER_SHARED_DATA.XStateArm64 offset is incorrect");
+#else
+static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, Reserved10) == 0x738, "KUSER_SHARED_DATA.Reserved10 offset is incorrect");
+#endif
+static_assert(FIELD_OFFSET(KUSER_SHARED_DATA, FeatureConfigurationChangeStamp) == 0xA90, "KUSER_SHARED_DATA.FeatureConfigurationChangeStamp offset is incorrect");
+#if !defined(WINDOWS_IGNORE_PACKING_MISMATCH)
+static_assert(sizeof(KUSER_SHARED_DATA) == 0xaa0, "KUSER_SHARED_DATA size is incorrect (expected 0xaa0)");
 #endif
 #endif
 
