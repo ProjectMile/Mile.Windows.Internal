@@ -59,6 +59,7 @@ RtlRaiseNoncontinuableException(
     );
 #endif // PHNT_VERSION >= PHNT_WINDOWS_10_20H1
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -67,6 +68,7 @@ NtContinue(
     _In_ BOOLEAN TestAlert
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -95,6 +97,7 @@ typedef struct _KCONTINUE_ARGUMENT
 #define KCONTINUE_FLAG_TEST_ALERT 0x00000001 // wbenny
 #define KCONTINUE_FLAG_DELIVER_APC 0x00000002 // wbenny
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -103,6 +106,7 @@ NtContinueEx(
     _In_ PVOID ContinueArgument // PKCONTINUE_ARGUMENT and BOOLEAN are valid
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -122,6 +126,7 @@ ZwContinueEx(
 //}
 #endif // PHNT_VERSION >= PHNT_WINDOWS_10
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -131,6 +136,7 @@ NtRaiseException(
     _In_ BOOLEAN FirstChance
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI

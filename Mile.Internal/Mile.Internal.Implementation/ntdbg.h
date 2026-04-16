@@ -349,6 +349,7 @@ typedef enum _DEBUGOBJECTINFOCLASS
  * \param Flags Flags for the debug object creation. (DEBUG_KILL_ON_CLOSE)
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -359,6 +360,7 @@ NtCreateDebugObject(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -376,6 +378,7 @@ ZwCreateDebugObject(
  * \param DebugObjectHandle A handle to the debug object.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -384,6 +387,7 @@ NtDebugActiveProcess(
     _In_ HANDLE DebugObjectHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -400,6 +404,7 @@ ZwDebugActiveProcess(
  * \param ContinueStatus The status code to use when continuing the thread.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -409,6 +414,7 @@ NtDebugContinue(
     _In_ NTSTATUS ContinueStatus
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -425,6 +431,7 @@ ZwDebugContinue(
  * \param DebugObjectHandle A handle to the debug object.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -433,6 +440,7 @@ NtRemoveProcessDebug(
     _In_ HANDLE DebugObjectHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -451,6 +459,7 @@ ZwRemoveProcessDebug(
  * \param ReturnLength Optional. A pointer to a variable that receives the number of bytes returned.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -462,6 +471,7 @@ NtSetInformationDebugObject(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -482,6 +492,7 @@ ZwSetInformationDebugObject(
  * \param WaitStateChange A pointer to a DBGUI_WAIT_STATE_CHANGE structure that receives information about the debug event.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -492,6 +503,7 @@ NtWaitForDebugEvent(
     _Out_ PDBGUI_WAIT_STATE_CHANGE WaitStateChange
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI

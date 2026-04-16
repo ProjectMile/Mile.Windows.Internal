@@ -25,14 +25,14 @@ template <typename T>
 FORCEINLINE
 T*
 RTL_PTR_ADD(T* Pointer, ULONG_PTR Value) noexcept {
-    return reinterpret_cast<T*>(reinterpret_cast<PBYTE>(Pointer) + Value);
+    return reinterpret_cast<T*>(reinterpret_cast<PUCHAR>(Pointer) + Value);
 }
 
 template <typename T>
 FORCEINLINE
 T*
 RTL_PTR_SUBTRACT(T* Pointer, ULONG_PTR Value) noexcept {
-    return reinterpret_cast<T*>(reinterpret_cast<PBYTE>(Pointer) - Value);
+    return reinterpret_cast<T*>(reinterpret_cast<PUCHAR>(Pointer) - Value);
 }
 
 EXTERN_C_START
@@ -69,29 +69,29 @@ EXTERN_C_START
 // Time unit constants (ordered by magnitude)
 //
 
-#define RTL_NANOSEC_PER_TICK        100
-#define RTL_TICKS_PER_MICROSEC      10
-#define RTL_TICKS_PER_MILLISEC      (RTL_TICKS_PER_MICROSEC * 1000)  // 10,000
-#define RTL_TICKS_PER_SEC           (RTL_TICKS_PER_MILLISEC * 1000)  // 10,000,000
-#define RTL_TICKS_PER_MIN           (RTL_TICKS_PER_SEC * 60)         // 600,000,000
-#define RTL_TICKS_PER_HOUR          (RTL_TICKS_PER_MIN * 60)         // 36,000,000,000
-#define RTL_TICKS_PER_DAY           (RTL_TICKS_PER_HOUR * 24)        // 864,000,000,000
-#define RTL_TICKS_PER_WEEK          (RTL_TICKS_PER_DAY * 7)          // 6,048,000,000,000
-#define RTL_TICKS_PER_MONTH         (RTL_TICKS_PER_DAY * 30)         // 25,920,000,000,000
-#define RTL_TICKS_PER_YEAR          (RTL_TICKS_PER_DAY * 365)        // 31,536,000,000,000
-#define RTL_TICKS_PER_LEAP_YEAR     (RTL_TICKS_PER_DAY * 366)        // 31,622,400,000,000
+#define RTL_NANOSEC_PER_TICK        ULONG64_C(100)
+#define RTL_TICKS_PER_MICROSEC      ULONG64_C(10)
+#define RTL_TICKS_PER_MILLISEC      (RTL_TICKS_PER_MICROSEC * ULONG64_C(1000))  // 10,000
+#define RTL_TICKS_PER_SEC           (RTL_TICKS_PER_MILLISEC * ULONG64_C(1000))  // 10,000,000
+#define RTL_TICKS_PER_MIN           (RTL_TICKS_PER_SEC      * ULONG64_C(60))    // 600,000,000
+#define RTL_TICKS_PER_HOUR          (RTL_TICKS_PER_MIN      * ULONG64_C(60))    // 36,000,000,000
+#define RTL_TICKS_PER_DAY           (RTL_TICKS_PER_HOUR     * ULONG64_C(24))    // 864,000,000,000
+#define RTL_TICKS_PER_WEEK          (RTL_TICKS_PER_DAY      * ULONG64_C(7))     // 6,048,000,000,000
+#define RTL_TICKS_PER_MONTH         (RTL_TICKS_PER_DAY      * ULONG64_C(30))    // 25,920,000,000,000
+#define RTL_TICKS_PER_YEAR          (RTL_TICKS_PER_DAY      * ULONG64_C(365))   // 31,536,000,000,000
+#define RTL_TICKS_PER_LEAP_YEAR     (RTL_TICKS_PER_DAY      * ULONG64_C(366))   // 31,622,400,000,000
 
-#define RTL_NANOSEC_PER_SEC              1000000000ull
-#define RTL_NANOSEC_PER_MILLISEC            1000000ull
-#define RTL_100NANOSEC_PER_SEC             10000000ull
-#define RTL_100NANOSEC_PER_MILLISEC           10000ull
-#define RTL_MILLISEC_PER_SEC                   1000ull
+#define RTL_NANOSEC_PER_SEC              ULONG64_C(1000000000)
+#define RTL_NANOSEC_PER_MILLISEC            ULONG64_C(1000000)
+#define RTL_100NANOSEC_PER_SEC             ULONG64_C(10000000)
+#define RTL_100NANOSEC_PER_MILLISEC           ULONG64_C(10000)
+#define RTL_MILLISEC_PER_SEC                   ULONG64_C(1000)
 
-#define RTL_SEC_PER_HOUR                       3600ull // 1 hour  // 3,600 seconds
-#define RTL_SEC_PER_DAY                       86400ull // 1 day   // 86,400 seconds
-#define RTL_SEC_PER_WEEK                     604800ull // 1 week  // 604,800 seconds
-#define RTL_SEC_PER_MONTH                   2592000ull // 1 month // 2,592,000 seconds (30 days)
-#define RTL_SEC_PER_YEAR                   31536000ull // 1 year  // 31,536,000 seconds (365 days)
+#define RTL_SEC_PER_HOUR                       ULONG64_C(3600) // 1 hour  // 3,600 seconds
+#define RTL_SEC_PER_DAY                       ULONG64_C(86400) // 1 day   // 86,400 seconds
+#define RTL_SEC_PER_WEEK                     ULONG64_C(604800) // 1 week  // 604,800 seconds
+#define RTL_SEC_PER_MONTH                   ULONG64_C(2592000) // 1 month // 2,592,000 seconds (30 days)
+#define RTL_SEC_PER_YEAR                   ULONG64_C(31536000) // 1 year  // 31,536,000 seconds (365 days)
 
 //
 // Time conversion macros (ordered by unit)
@@ -102,8 +102,8 @@ EXTERN_C_START
 #define RTL_NANOSEC_TO_SEC(ns)         ((ns) / RTL_NANOSEC_PER_SEC)
 #define RTL_MILLISEC_TO_NANOSEC(m)     ((m) * RTL_NANOSEC_PER_MILLISEC)
 #define RTL_NANOSEC_TO_MILLISEC(ns)    ((ns) / RTL_NANOSEC_PER_MILLISEC)
-#define RTL_NANOSEC_TO_100NANOSEC(ns)  ((ns) / 100)
-#define RTL_100NANOSEC_TO_NANOSEC(ns)  ((ns) * 100)
+#define RTL_NANOSEC_TO_100NANOSEC(ns)  ((ns) / ULONG64_C(100))
+#define RTL_100NANOSEC_TO_NANOSEC(ns)  ((ns) * ULONG64_C(100))
 
 // 100-Nanoseconds
 #define RTL_SEC_TO_100NANOSEC(s)       ((s) * RTL_100NANOSEC_PER_SEC)
@@ -118,7 +118,7 @@ EXTERN_C_START
 /**
  * The maximum value of the e_lfanew field in the IMAGE_DOS_HEADER structure for validation.
  */
-#define RTL_IMAGE_MAX_DOS_HEADER (256UL * (1024UL * 1024UL)) // 256 MB
+#define RTL_IMAGE_MAX_DOS_HEADER (ULONG_C(256) * (ULONG_C(1024) * ULONG_C(1024))) // 256 MB
 
 /**
  * Meta characters for wildcard processing.
@@ -488,6 +488,16 @@ AppendTailList(
     ListToAppend->Blink = ListEnd;
 }
 
+_Must_inspect_result_
+FORCEINLINE
+BOOLEAN
+IsSingleListEmpty (
+    _Inout_ PSINGLE_LIST_ENTRY ListHead
+    )
+{
+    return ListHead->Next == NULL;
+}
+
 /**
  * The PopEntryList routine removes the first entry from a singly linked list.
  *
@@ -530,6 +540,239 @@ PushEntryList(
     Entry->Next = ListHead->Next;
     ListHead->Next = Entry;
 }
+
+
+//
+// Single list volatile accessors
+//
+
+_Must_inspect_result_
+FORCEINLINE
+BOOLEAN
+IsSingleListEmptyNoFence (
+    _Inout_ PSINGLE_LIST_ENTRY ListHead
+    )
+{
+    return ReadPointerNoFence((PVOID*)&ListHead->Next) == NULL;
+}
+
+FORCEINLINE
+PSINGLE_LIST_ENTRY
+PopEntryListNoFence (
+    _Inout_ PSINGLE_LIST_ENTRY ListHead
+    )
+{
+    PSINGLE_LIST_ENTRY FirstEntry;
+
+    FirstEntry = ListHead->Next;
+    if (FirstEntry != NULL)
+    {
+        WritePointerNoFence((PVOID*)&ListHead->Next, FirstEntry->Next);
+    }
+
+    return FirstEntry;
+}
+
+FORCEINLINE
+VOID
+PushEntryListNoFence (
+    _Inout_ PSINGLE_LIST_ENTRY ListHead,
+    _Inout_ __drv_aliasesMem PSINGLE_LIST_ENTRY Entry
+    )
+{
+    Entry->Next = ListHead->Next;
+    WritePointerNoFence((PVOID*)&ListHead->Next, Entry);
+    return;
+}
+
+//
+// List volatile accessors
+//
+
+FORCEINLINE
+BOOLEAN
+RemoveEntryListNoFence(
+    _In_ PLIST_ENTRY Entry
+    )
+{
+    PLIST_ENTRY PrevEntry;
+    PLIST_ENTRY NextEntry;
+
+    NextEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&Entry->Flink);
+    PrevEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&Entry->Blink);
+
+    if ((ReadPointerNoFence((volatile const PVOID*)&NextEntry->Blink) != Entry) ||
+        (ReadPointerNoFence((volatile const PVOID*)&PrevEntry->Flink) != Entry))
+    {
+        RtlFatalListEntryError((PVOID)PrevEntry,
+                               (PVOID)Entry,
+                               (PVOID)NextEntry);
+    }
+
+    WritePointerNoFence((volatile PVOID*)&PrevEntry->Flink, NextEntry);
+    WritePointerNoFence((volatile PVOID*)&NextEntry->Blink, PrevEntry);
+    return (BOOLEAN)(PrevEntry == NextEntry);
+}
+
+FORCEINLINE
+PLIST_ENTRY
+RemoveHeadListNoFence(
+    _Inout_ PLIST_ENTRY ListHead
+    )
+{
+    PLIST_ENTRY Entry;
+    PLIST_ENTRY NextEntry;
+
+    Entry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&ListHead->Flink);
+
+#if DBG
+
+    RtlCheckListEntry(ListHead);
+
+#endif
+
+    NextEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&Entry->Flink);
+
+    if ((ReadPointerNoFence((volatile const PVOID*)&Entry->Blink) != ListHead) ||
+        (ReadPointerNoFence((volatile const PVOID*)&NextEntry->Blink) != Entry))
+    {
+        RtlFatalListEntryError((PVOID)ListHead,
+                               (PVOID)Entry,
+                               (PVOID)NextEntry);
+    }
+
+    WritePointerNoFence((volatile PVOID*)&ListHead->Flink, NextEntry);
+    WritePointerNoFence((volatile PVOID*)&NextEntry->Blink, ListHead);
+
+    return Entry;
+}
+
+FORCEINLINE
+PLIST_ENTRY
+RemoveTailListNoFence(
+    _Inout_ PLIST_ENTRY ListHead
+    )
+{
+    PLIST_ENTRY Entry;
+    PLIST_ENTRY PrevEntry;
+
+    Entry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&ListHead->Blink);
+
+#if DEBUG
+
+    RtlCheckListEntry(ListHead);
+
+#endif
+
+    PrevEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&Entry->Blink);
+
+    if ((ReadPointerNoFence((volatile const PVOID*)&Entry->Flink) != ListHead) ||
+        (ReadPointerNoFence((volatile const PVOID*)&PrevEntry->Flink) != Entry))
+    {
+        RtlFatalListEntryError((PVOID)PrevEntry,
+                               (PVOID)Entry,
+                               (PVOID)ListHead);
+    }
+
+    WritePointerNoFence((volatile PVOID*)&ListHead->Blink, PrevEntry);
+    WritePointerNoFence((volatile PVOID*)&PrevEntry->Flink, ListHead);
+    return Entry;
+}
+
+FORCEINLINE
+VOID
+InsertTailListNoFence(
+    _Inout_ PLIST_ENTRY ListHead,
+    _Inout_ __drv_aliasesMem PLIST_ENTRY Entry
+    )
+{
+    PLIST_ENTRY PrevEntry;
+
+#if DEBUG
+
+    RtlCheckListEntry(ListHead);
+
+#endif
+
+    PrevEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&ListHead->Blink);
+
+    if (ReadPointerNoFence((volatile const PVOID*)&PrevEntry->Flink) != ListHead)
+    {
+        RtlFatalListEntryError((PVOID)PrevEntry,
+                               (PVOID)ListHead,
+                               (PVOID)PrevEntry->Flink);
+    }
+
+    WritePointerNoFence((volatile PVOID*)&Entry->Flink, ListHead);
+    WritePointerNoFence((volatile PVOID*)&Entry->Blink, PrevEntry);
+    WritePointerNoFence((volatile PVOID*)&PrevEntry->Flink, Entry);
+    WritePointerNoFence((volatile PVOID*)&ListHead->Blink, Entry);
+    return;
+}
+
+FORCEINLINE
+VOID
+InsertHeadListNoFence(
+    _Inout_ PLIST_ENTRY ListHead,
+    _Inout_ __drv_aliasesMem PLIST_ENTRY Entry
+    )
+{
+    PLIST_ENTRY NextEntry;
+
+#if DEBUG
+
+    RtlCheckListEntry(ListHead);
+
+#endif
+
+    NextEntry = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&ListHead->Flink);
+
+    if (ReadPointerNoFence((volatile const PVOID*)&NextEntry->Blink) != ListHead)
+    {
+        RtlFatalListEntryError((PVOID)ListHead,
+                               (PVOID)NextEntry,
+                               (PVOID)NextEntry->Blink);
+    }
+
+    WritePointerNoFence((volatile PVOID*)&Entry->Flink, NextEntry);
+    WritePointerNoFence((volatile PVOID*)&Entry->Blink, ListHead);
+    WritePointerNoFence((volatile PVOID*)&NextEntry->Blink, Entry);
+    WritePointerNoFence((volatile PVOID*)&ListHead->Flink, Entry);
+    return;
+}
+
+FORCEINLINE
+VOID
+AppendTailListNoFence(
+    _Inout_ PLIST_ENTRY ListHead,
+    _Inout_ PLIST_ENTRY ListToAppend
+    )
+{
+    PLIST_ENTRY ListEnd = (PLIST_ENTRY)ReadPointerNoFence((volatile const PVOID*)&ListHead->Blink);
+
+    RtlCheckListEntry(ListHead);
+    RtlCheckListEntry(ListToAppend);
+
+    WritePointerNoFence((volatile PVOID*)&ListHead->Blink->Flink, ListToAppend);
+    WritePointerNoFence((volatile PVOID*)&ListHead->Blink, ListToAppend->Blink);
+    WritePointerNoFence((volatile PVOID*)&ListToAppend->Blink->Flink, ListHead);
+    WritePointerNoFence((volatile PVOID*)&ListToAppend->Blink, ListEnd);
+    return;
+}
+
+// Rtl-prefixed aliases for list helpers.
+#define RtlInitializeListHead InitializeListHead
+#define RtlInitializeListHead32 InitializeListHead32
+#define RtlIsListEmpty IsListEmpty
+#define RtlRemoveEntryListUnsafe RemoveEntryListUnsafe
+#define RtlRemoveEntryList RemoveEntryList
+#define RtlRemoveHeadList RemoveHeadList
+#define RtlRemoveTailList RemoveTailList
+#define RtlInsertTailList InsertTailList
+#define RtlInsertHeadList InsertHeadList
+#define RtlAppendTailList AppendTailList
+#define RtlPopEntryList PopEntryList
+#define RtlPushEntryList PushEntryList
 
 //
 // AVL and splay trees
@@ -2133,7 +2376,7 @@ RtlBarrierForDelete(
  * \param AddressSize The size of the value, in bytes. This parameter can be 1, 2, 4, or 8.
  * \param Timeout The number of milliseconds to wait before the operation times out. If this parameter is NULL (INFINITE), the thread waits indefinitely.
  * \remarks WaitOnAddress is guaranteed to return when the address is signaled, but it is also allowed to return for other reasons.
- * For this reason, the caller should compare the new value with the original undesired value to confirm that the value has actually changed. 
+ * For this reason, the caller should compare the new value with the original undesired value to confirm that the value has actually changed.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitonaddress
  */
 NTSYSAPI
@@ -2835,6 +3078,49 @@ RtlxAnsiStringToUnicodeSize(
     _In_ PCANSI_STRING AnsiString
     );
 
+/**
+ * The RtlxUnicodeStringToAnsiSize routine routine returns the number of bytes required for a null-terminated ANSI string that is equivalent to a specified Unicode string.
+ *
+ * \param UnicodeString Pointer to the Unicode string for which to compute the number of bytes required for an equivalent null-terminated ANSI string.
+ * \return If the Unicode string can be translated into an ANSI string using the current system locale information,
+ * RtlxUnicodeStringToAnsiSize returns the number of bytes required for an equivalent null-terminated ANSI string. Otherwise, it returns zero.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlxunicodestringtoansisize
+ */
+NTSYSAPI
+ULONG
+NTAPI
+RtlxUnicodeStringToAnsiSize(
+    _In_ PCUNICODE_STRING UnicodeString
+    );
+
+/**
+ * The RtlxUnicodeStringToOemSize routine is reserved for system use - use RtlUnicodeStringToOemSize instead.
+ *
+ * \param UnicodeString Reserved.
+ * \return Reserved.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlxunicodestringtooemsize
+ */
+NTSYSAPI
+ULONG
+NTAPI
+RtlxUnicodeStringToOemSize(
+    _In_ PCUNICODE_STRING UnicodeString
+    );
+
+/**
+ * The RtlxOemStringToUnicodeSize routine is reserved for system use - use RtlOemStringToUnicodeSize instead.
+ *
+ * \param UnicodeString Reserved.
+ * \return Reserved.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlxoemstringtounicodesize
+ */
+NTSYSAPI
+ULONG
+NTAPI
+RtlxOemStringToUnicodeSize(
+    _In_ PCUNICODE_STRING UnicodeString
+    );
+
 // NTSYSAPI
 // ULONG
 // NTAPI
@@ -3346,7 +3632,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlStringFromGUID(
-    _In_ PGUID Guid,
+    _In_ PCGUID Guid,
     _Out_ PUNICODE_STRING GuidString
     );
 
@@ -3360,7 +3646,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlStringFromGUIDEx(
-    _In_ PGUID Guid,
+    _In_ PCGUID Guid,
     _Inout_ PUNICODE_STRING GuidString,
     _In_ BOOLEAN AllocateGuidString
     );
@@ -4004,16 +4290,44 @@ typedef struct _RTL_DRIVE_LETTER_CURDIR
 #define RTL_USER_PROC_CREATE_NEW_CONSOLE ((HANDLE)(LONG_PTR)-2)
 #define RTL_USER_PROC_CREATE_NO_WINDOW ((HANDLE)(LONG_PTR)-3)
 
+typedef enum RTL_USER_PROC_FLAGS
+{
+    RTL_USER_PROC_PARAMS_NORMALIZED = 0x1,
+    RTL_USER_PROC_FLAG_INHERITED    = 0x100,
+    RTL_USER_PROC_SECURE_PROCESS    = 0x2000000,
+    RTL_USER_PROC_APPX_CONTEXT      = 0x8000000,
+    RTL_USER_PROC_PROTECTED_PROCESS = 0x80000000,
+} RTL_USER_PROC_FLAGS;
+
+typedef enum _RTL_USER_PROC_CONSOLE_FLAGS
+{
+    RTL_USER_PROC_CONSOLE_FLAG_IGNORE_CTRL_C  = 0x1, // Ignore Ctrl+C events — skip handler dispatch
+    RTL_USER_PROC_CONSOLE_FLAG_SANITIZE_STDIO = 0x2, // Sanitize/validate inherited standard I/O handles at startup
+    RTL_USER_PROC_CONSOLE_FLAG_CLOSE_STDIO    = 0x4, // Close inherited stdin/stdout/stderr before connecting
+} RTL_USER_PROC_CONSOLE_FLAGS;
+
+typedef enum _RTL_USER_PROC_WINDOW_FLAGS
+{
+    RTL_USER_PROC_WINDOW_FLAG_USESHOWWINDOW       = 0x001, // STARTF_USESHOWWINDOW 
+    RTL_USER_PROC_WINDOW_FLAG_USESIZE             = 0x002, // STARTF_USESIZE
+    RTL_USER_PROC_WINDOW_FLAG_USEPOSITION         = 0x004, // STARTF_USEPOSITION
+    RTL_USER_PROC_WINDOW_FLAG_USECOUNTCHARS       = 0x008, // STARTF_USECOUNTCHARS
+    RTL_USER_PROC_WINDOW_FLAG_USEFILLATTRIBUTE    = 0x010, // STARTF_USEFILLATTRIBUTE
+    RTL_USER_PROC_WINDOW_FLAG_USESTDHANDLES       = 0x100, // STARTF_USESTDHANDLES
+    RTL_USER_PROC_WINDOW_FLAG_HASSHELLDATA_STDIN  = 0x200, // STARTF_HASSHELLDATA_STDIN
+    RTL_USER_PROC_WINDOW_FLAG_HASSHELLDATA_STDOUT = 0x400, // STARTF_HASSHELLDATA_STDOUT
+} _RTL_USER_PROC_WINDOW_FLAGS;
+
 typedef struct _RTL_USER_PROCESS_PARAMETERS
 {
     ULONG MaximumLength;
     ULONG Length;
 
-    ULONG Flags;
+    ULONG Flags; // RTL_USER_PROC_FLAGS
     ULONG DebugFlags;
 
     HANDLE ConsoleHandle;
-    ULONG ConsoleFlags;
+    ULONG ConsoleFlags; // RTL_USER_PROC_CONSOLE_FLAGS
     HANDLE StandardInput;
     HANDLE StandardOutput;
     HANDLE StandardError;
@@ -4032,7 +4346,7 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS
     ULONG CountCharsY;
     ULONG FillAttribute;
 
-    ULONG WindowFlags;
+    ULONG WindowFlags; // RTL_USER_PROC_WINDOW_FLAGS
     ULONG ShowWindowFlags;
     UNICODE_STRING WindowTitle;
     UNICODE_STRING DesktopInfo;
@@ -4055,24 +4369,25 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS
 } RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 
 // RTL_USER_PROCESS_PARAMETERS Flags
-#define RTL_USER_PROC_PARAMS_NORMALIZED                 0x00000001
-#define RTL_USER_PROC_PROFILE_USER                      0x00000002
-#define RTL_USER_PROC_PROFILE_KERNEL                    0x00000004
-#define RTL_USER_PROC_PROFILE_SERVER                    0x00000008
-//#define RTL_USER_PROC_RESERVE_64K                     0x00000010
-#define RTL_USER_PROC_RESERVE_1MB                       0x00000020
-#define RTL_USER_PROC_RESERVE_16MB                      0x00000040
-#define RTL_USER_PROC_CASE_SENSITIVE                    0x00000080
-#define RTL_USER_PROC_DISABLE_HEAP_DECOMMIT             0x00000100
-#define RTL_USER_PROC_DLL_REDIRECTION_LOCAL             0x00001000
-#define RTL_USER_PROC_APP_MANIFEST_PRESENT              0x00002000
-#define RTL_USER_PROC_IMAGE_KEY_MISSING                 0x00004000
-#define RTL_USER_PROC_DEV_OVERRIDE_ENABLED              0x00008000
-#define RTL_USER_PROC_OPTIN_PROCESS                     0x00020000
-#define RTL_USER_PROC_SESSION_OWNER                     0x00040000
-#define RTL_USER_PROC_HANDLE_USER_CALLBACK_EXCEPTIONS   0x00080000
-#define RTL_USER_PROC_PROTECTED_PROCESS                 0x00400000
-#define RTL_USER_PROC_SECURE_PROCESS                    0x80000000
+#define RTL_USER_PROC_PARAMS_NORMALIZED                 0x00000001 // Pointer representation: 1=absolute pointers, 0=relative offsets; set by RtlNormalizeProcessParams, cleared by RtlDeNormalizeProcessParams
+#define RTL_USER_PROC_PROFILE_USER                      0x00000002 // User-mode profiling enabled
+#define RTL_USER_PROC_PROFILE_KERNEL                    0x00000004 // Kernel-mode profiling enabled
+#define RTL_USER_PROC_PROFILE_SERVER                    0x00000008 // Server-mode profiling enabled
+//#define RTL_USER_PROC_RESERVE_64K                     0x00000010 // Unused/reserved
+#define RTL_USER_PROC_RESERVE_1MB                       0x00000020 // Reserve 1MB virtual memory (mutually exclusive group)
+#define RTL_USER_PROC_RESERVE_16MB                      0x00000040 // Reserve 16MB virtual memory (mutually exclusive group)
+#define RTL_USER_PROC_CASE_SENSITIVE                    0x00000080 // Enable case-sensitive filename matching (NTFS)
+#define RTL_USER_PROC_DISABLE_HEAP_DECOMMIT             0x00000100 // Disable heap decommitment
+#define RTL_USER_PROC_DLL_REDIRECTION_LOCAL             0x00001000 // Enable local DLL redirection (.local manifest behavior)
+#define RTL_USER_PROC_APP_MANIFEST_PRESENT              0x00002000 // Application manifest is present
+#define RTL_USER_PROC_IMAGE_KEY_MISSING                 0x00004000 // Process registry image key not found (masked during kernel flag validation)
+#define RTL_USER_PROC_DEV_OVERRIDE_ENABLED              0x00008000 // Developer override configuration enabled
+#define RTL_USER_PROC_OPTIN_PROCESS                     0x00020000 // Process opted into mitigations (Windows 8+)
+#define RTL_USER_PROC_SESSION_OWNER                     0x00040000 // Process is session owner
+#define RTL_USER_PROC_HANDLE_USER_CALLBACK_EXCEPTIONS   0x00080000 // Handle user callback exceptions
+#define RTL_USER_PROC_PROTECTED_PROCESS                 0x00400000 // Process is protected (Windows Vista+)
+#define RTL_USER_PROC_RESERVE_PLACEHOLDER               0x01000000 // Reserved user-mapping placeholder mode; grouped with RTL_USER_PROC_RESERVE* flags // PspSetupReservedUserMappings
+#define RTL_USER_PROC_SECURE_PROCESS                    0x80000000 // Process is secure (Windows 11+); rejected by current kernel capture validation path
 
 NTSYSAPI
 NTSTATUS
@@ -4973,6 +5288,12 @@ RtlGetFunctionTableListHead(
 // Linked lists
 //
 
+/**
+ * Initializes the head of a singly linked list.
+ *
+ * \param ListHead A pointer to the SLIST_HEADER that represents the list head.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlinitializeslisthead
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -4980,6 +5301,13 @@ RtlInitializeSListHead(
     _Out_ PSLIST_HEADER ListHead
     );
 
+/**
+ * Retrieves the first entry in a singly linked list.
+ *
+ * \param ListHead A pointer to the initialized singly linked-list header.
+ * \return A pointer to the first entry in the list, or NULL if the list is empty.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlfirstentryslist
+ */
 _Must_inspect_result_
 NTSYSAPI
 PSLIST_ENTRY
@@ -4988,6 +5316,13 @@ RtlFirstEntrySList(
     _In_ const SLIST_HEADER *ListHead
     );
 
+/**
+ * Removes an entry from the front of a singly linked list.
+ *
+ * \param ListHead A pointer to the singly linked-list header.
+ * \return The removed entry, or NULL if the list was empty.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlinterlockedpopentryslist
+ */
 NTSYSAPI
 PSLIST_ENTRY
 NTAPI
@@ -4995,6 +5330,14 @@ RtlInterlockedPopEntrySList(
     _Inout_ PSLIST_HEADER ListHead
     );
 
+/**
+ * Inserts an entry at the front of a singly linked list.
+ *
+ * \param ListHead A pointer to the singly linked-list header.
+ * \param ListEntry A pointer to the entry to insert.
+ * \return The previous first entry in the list, or NULL if the list was empty.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlinterlockedpushentryslist
+ */
 NTSYSAPI
 PSLIST_ENTRY
 NTAPI
@@ -5003,6 +5346,17 @@ RtlInterlockedPushEntrySList(
     _Inout_ __drv_aliasesMem PSLIST_ENTRY ListEntry
     );
 
+/**
+ * Inserts an entire singly linked list at the front of another singly linked list.
+ *
+ * \param ListHead A pointer to the destination list head.
+ * \param List A pointer to the first entry in the list being inserted.
+ * \param ListEnd A pointer to the last entry in the list being inserted.
+ * \param Count The number of entries in the list being inserted.
+ * \return The previous first entry in the destination list, or NULL if the
+ * destination list was empty.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/interlockedapi/nf-interlockedapi-interlockedpushlistslistex
+ */
 NTSYSAPI
 PSLIST_ENTRY
 NTAPI
@@ -5013,6 +5367,13 @@ RtlInterlockedPushListSListEx(
     _In_ ULONG Count
     );
 
+/**
+ * \brief Removes all entries from a singly linked list.
+ *
+ * \param ListHead A pointer to the singly linked-list header.
+ * \return The previous first entry in the list, or NULL if the list was empty.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlinterlockedflushslist
+ */
 NTSYSAPI
 PSLIST_ENTRY
 NTAPI
@@ -5020,6 +5381,13 @@ RtlInterlockedFlushSList(
     _Inout_ PSLIST_HEADER ListHead
     );
 
+/**
+ * Retrieves the number of entries in a singly linked list.
+ *
+ * \param ListHead A pointer to the singly linked-list header.
+ * \return The number of entries currently present in the list.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-rtlquerydepthslist
+ */
 NTSYSAPI
 USHORT
 NTAPI
@@ -5134,7 +5502,7 @@ NTSTATUS
 NTAPI
 RtlFindActivationContextSectionString(
     _In_ ULONG Flags,
-    _In_opt_ PGUID ExtensionGuid,
+    _In_opt_ PCGUID ExtensionGuid,
     _In_ ULONG SectionId, // ACTIVATION_CONTEXT_SECTION_*
     _In_ PCUNICODE_STRING StringToFind,
     _Inout_ PACTCTX_SECTION_KEYED_DATA ReturnedData
@@ -5146,9 +5514,9 @@ NTSTATUS
 NTAPI
 RtlFindActivationContextSectionGuid(
     _In_ ULONG Flags,
-    _In_opt_ PGUID ExtensionGuid,
+    _In_opt_ PCGUID ExtensionGuid,
     _In_ ULONG SectionId, // ACTIVATION_CONTEXT_SECTION_*
-    _In_ PGUID GuidToFind,
+    _In_ PCGUID GuidToFind,
     _Inout_ PACTCTX_SECTION_KEYED_DATA ReturnedData
     );
 
@@ -6164,7 +6532,7 @@ typedef struct _IMAGE_FILE_MACHINES
     union
     {
         ULONG Value;
-        struct 
+        struct
         {
             ULONG MachineX86 : 1;
             ULONG MachineAmd64 : 1;
@@ -6945,7 +7313,7 @@ typedef struct _HEAP_INFORMATION_ITEM
         HEAP_BLOCK_INFORMATION HeapBlockInformation;
         HEAP_PERFORMANCE_COUNTERS_INFORMATION HeapPerfInformation;
         ULONG_PTR DynamicStart;
-    };
+    } DUMMYUNIONNAME;
 } HEAP_INFORMATION_ITEM, *PHEAP_INFORMATION_ITEM;
 
 typedef _Function_class_(RTL_HEAP_EXTENDED_ENUMERATION_ROUTINE)
@@ -6978,15 +7346,18 @@ typedef struct _HEAP_EXTENDED_INFORMATION
 } HEAP_EXTENDED_INFORMATION, *PHEAP_EXTENDED_INFORMATION;
 
 // rev
+// Information points to one of: RTLP_HEAP_STACK_TRACE_SERIALIZATION_INIT,
+// RTLP_HEAP_STACK_TRACE_SERIALIZATION_HEADER, RTLP_HEAP_STACK_TRACE_SERIALIZATION_ALLOCATION.
+// A null Information/Size signals end-of-stream.
 typedef _Function_class_(RTL_HEAP_STACK_WRITE_ROUTINE)
 NTSTATUS NTAPI RTL_HEAP_STACK_WRITE_ROUTINE(
-    _In_ PVOID Information, // TODO: 3 missing structures (dmex)
+    _In_ PVOID Information,
     _In_ ULONG Size,
     _In_opt_ PVOID Context
     );
 typedef RTL_HEAP_STACK_WRITE_ROUTINE* PRTL_HEAP_STACK_WRITE_ROUTINE;
 
-// rev
+// rev - written first; Flags == 0x80001
 typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_INIT
 {
     ULONG Count;
@@ -6994,7 +7365,7 @@ typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_INIT
     ULONG Flags;
 } RTLP_HEAP_STACK_TRACE_SERIALIZATION_INIT, *PRTLP_HEAP_STACK_TRACE_SERIALIZATION_INIT;
 
-// rev
+// rev - written per-heap; Version == 2, Flags/Version field == 0x80002
 typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_HEADER
 {
     USHORT Version;
@@ -7004,7 +7375,7 @@ typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_HEADER
     SIZE_T TotalReserve;
 } RTLP_HEAP_STACK_TRACE_SERIALIZATION_HEADER, *PRTLP_HEAP_STACK_TRACE_SERIALIZATION_HEADER;
 
-// rev
+// rev - written per live allocation
 typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_ALLOCATION
 {
     PVOID Address;
@@ -7012,10 +7383,19 @@ typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_ALLOCATION
     SIZE_T DataSize;
 } RTLP_HEAP_STACK_TRACE_SERIALIZATION_ALLOCATION, *PRTLP_HEAP_STACK_TRACE_SERIALIZATION_ALLOCATION;
 
-// rev
+// rev - written as end-of-heap sentinel; Address == 0x1234CDEF, DataSize == -1
+typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_TERMINATOR
+{
+    PVOID Address; // 0x1234CDEF
+    ULONG Flags;
+    SIZE_T DataSize; // -1
+} RTLP_HEAP_STACK_TRACE_SERIALIZATION_TERMINATOR, *PRTLP_HEAP_STACK_TRACE_SERIALIZATION_TERMINATOR;
+
+// rev - variable-length block; Max depth is 0xC0 (192).
+// Determine frame count from Size / sizeof(PVOID).
 typedef struct _RTLP_HEAP_STACK_TRACE_SERIALIZATION_STACKFRAME
 {
-    PVOID StackFrame[8];
+    PVOID StackFrame[ANYSIZE_ARRAY]; // actual count: Size / sizeof(PVOID)
 } RTLP_HEAP_STACK_TRACE_SERIALIZATION_STACKFRAME, *PRTLP_HEAP_STACK_TRACE_SERIALIZATION_STACKFRAME;
 
 #define HEAP_STACK_QUERY_VERSION 0x2
@@ -7063,18 +7443,40 @@ NTSTATUS NTAPI RTL_HEAP_LEAK_ENUMERATION_ROUTINE(
     );
 typedef RTL_HEAP_LEAK_ENUMERATION_ROUTINE* PRTL_HEAP_LEAK_ENUMERATION_ROUTINE;
 
+// rev
+// ExtendedOptions valid values are 0..3 (low 2 bits).
+// RtlpSetHeapDebuggingInformation writes (ExtendedOptions << 1) into LFH bucket flags (mask 0x6),
+// and app-compat metadata references "HeapPaddingAndLFHSubsegmentCommitSwitch" semantics.
+#define HEAP_DEBUG_EXTENDED_OPTION_NONE                                0x0
+#define HEAP_DEBUG_EXTENDED_OPTION_LFH_SUBSEGMENT_COMMIT               0x1
+#define HEAP_DEBUG_EXTENDED_OPTION_PAD_ALLOCATIONS_WITH_HEADER_BLOCK   0x2
+#define HEAP_DEBUG_EXTENDED_OPTION_VALID_MASK                          0x3
+
 // symbols
 typedef struct _HEAP_DEBUGGING_INFORMATION
 {
     PRTL_HEAP_DEBUGGING_INTERCEPTOR_ROUTINE InterceptorFunction;
     USHORT InterceptorValue;
-    ULONG ExtendedOptions;
+    ULONG ExtendedOptions; // HEAP_DEBUG_EXTENDED_OPTION_*
     ULONG StackTraceDepth;
     SIZE_T MinTotalBlockSize;
     SIZE_T MaxTotalBlockSize;
     PRTL_HEAP_LEAK_ENUMERATION_ROUTINE HeapLeakEnumerationRoutine;
 } HEAP_DEBUGGING_INFORMATION, *PHEAP_DEBUGGING_INFORMATION;
 
+/**
+ * The RtlQueryHeapInformation routine retrieves information about a heap or process heaps.
+ *
+ * \param HeapHandle Handle to the heap to query. For classes that operate on process-wide data,
+ * this parameter may be NULL or ignored depending on HeapInformationClass.
+ * \param HeapInformationClass The information class to query (for example, compatibility mode,
+ * extended heap information, stack database information).
+ * \param HeapInformation A caller-supplied buffer that receives the queried information.
+ * \param HeapInformationLength Size, in bytes, of the HeapInformation buffer.
+ * \param ReturnLength Receives the required or returned size, in bytes.
+ * \return NTSTATUS Successful or errant status.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapqueryinformation
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -7086,6 +7488,17 @@ RtlQueryHeapInformation(
     _Out_opt_ PSIZE_T ReturnLength
     );
 
+/**
+ * The RtlSetHeapInformation routine sets information for a heap or process heap policy.
+ *
+ * \param HeapHandle Handle to the heap to configure. Some information classes allow NULL to apply
+ * process-wide policy.
+ * \param HeapInformationClass The information class to set.
+ * \param HeapInformation Pointer to the class-specific input data.
+ * \param HeapInformationLength Size, in bytes, of HeapInformation.
+ * \return NTSTATUS Successful or errant status.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -7096,6 +7509,17 @@ RtlSetHeapInformation(
     _In_opt_ SIZE_T HeapInformationLength
     );
 
+/**
+ * The RtlMultipleAllocateHeap routine allocates multiple fixed-size blocks from a heap.
+ *
+ * \param HeapHandle Handle for the heap from which memory is allocated.
+ * \param Flags Controllable aspects of heap allocation. Specifying any flags overrides the corresponding heap defaults.
+ * \param Size Number of bytes to allocate for each element.
+ * \param Count Number of elements to allocate.
+ * \param Array Caller-supplied array that receives pointers to allocated blocks.
+ * \return The number of successfully allocated elements.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc
+ */
 NTSYSAPI
 ULONG
 NTAPI
@@ -7107,6 +7531,16 @@ RtlMultipleAllocateHeap(
     _Out_ PVOID *Array
     );
 
+/**
+ * The RtlMultipleFreeHeap routine frees multiple heap blocks.
+ *
+ * \param HeapHandle Handle for the heap that owns the blocks.
+ * \param Flags Controllable aspects of heap free behavior.
+ * \param Count Number of elements in Array.
+ * \param Array Array of pointers to previously allocated heap blocks.
+ * \return The number of successfully freed elements.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree
+ */
 NTSYSAPI
 ULONG
 NTAPI
@@ -7117,6 +7551,10 @@ RtlMultipleFreeHeap(
     _In_ PVOID *Array
     );
 
+/**
+ * The RtlDetectHeapLeaks routine performs heap leak detection across all heaps
+ * in the current process and invokes any registered callbacks during enumeration.
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -7124,6 +7562,12 @@ RtlDetectHeapLeaks(
     VOID
     );
 
+/**
+ * The RtlFlushHeaps routine flushes heap state for process heaps.
+ *
+ * \return This routine does not return a value.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapcompact
+ */
 NTSYSAPI
 VOID
 NTAPI
@@ -7479,34 +7923,43 @@ typedef struct _RTL_PROCESS_VERIFIER_OPTIONS
 // private
 typedef struct _RTL_DEBUG_INFORMATION
 {
-    HANDLE SectionHandleClient;
-    PVOID ViewBaseClient;
-    PVOID ViewBaseTarget;
-    ULONG_PTR ViewBaseDelta;
-    HANDLE EventPairClient;
-    HANDLE EventPairTarget;
-    HANDLE TargetProcessId;
-    HANDLE TargetThreadHandle;
-    ULONG Flags;
-    SIZE_T OffsetFree;
-    SIZE_T CommitSize;
-    SIZE_T ViewSize;
+    HANDLE SectionHandleClient;                         // Debug buffer section handle (client view)
+    PVOID ViewBaseClient;                               // Debug buffer view base (client process)
+    PVOID ViewBaseTarget;                               // Debug buffer view base (target process)
+    ULONG_PTR ViewBaseDelta;                            // Offset between client and target view bases
+    HANDLE EventPairClient;                             // Event pair for synchronization (client)
+    HANDLE EventPairTarget;                             // Event pair for synchronization (target)
+    HANDLE TargetProcessId;                             // Target process ID or current process if RTL_QUERY_PROCESS_USE_CURRENT_PROCESS set)
+    HANDLE TargetThreadHandle;                          // Target thread handle
+    ULONG Flags;                                        // Query flags (RTL_QUERY_PROCESS_* flags)
+    SIZE_T OffsetFree;                                  // Offset of free space in debug buffer
+    SIZE_T CommitSize;                                  // Committed size of debug buffer
+    SIZE_T ViewSize;                                    // Total view size of debug buffer
     union
     {
-        PRTL_PROCESS_MODULES Modules;
-        PRTL_PROCESS_MODULE_INFORMATION_EX ModulesEx;
+        PRTL_PROCESS_MODULES Modules;                   // Module list // RtlQueryProcessModuleInformation // RTL_QUERY_PROCESS_MODULES // RTL_QUERY_PROCESS_MODULES32 // RTL_QUERY_PROCESS_MODULESEX
+        PRTL_PROCESS_MODULE_INFORMATION_EX ModulesEx;   // Extended module list // RtlQueryProcessModuleInformation // RTL_QUERY_PROCESS_MODULES // RTL_QUERY_PROCESS_MODULES32 // RTL_QUERY_PROCESS_MODULESEX
     };
-    PRTL_PROCESS_BACKTRACES BackTraces;
-    PVOID Heaps;
-    PRTL_PROCESS_LOCKS Locks;
-    PVOID SpecificHeap;
-    HANDLE TargetProcessHandle;
-    PRTL_PROCESS_VERIFIER_OPTIONS VerifierOptions;
-    PVOID ProcessHeap;
-    HANDLE CriticalSectionHandle;
-    HANDLE CriticalSectionOwnerThread;
+    PRTL_PROCESS_BACKTRACES BackTraces;                 // Stack backtraces // RtlQueryProcessBackTraceInformation // RTL_QUERY_PROCESS_BACKTRACES
+    PVOID Heaps;                                        // Heap information // RtlQueryProcessHeapInformation // RTL_QUERY_PROCESS_HEAP_SUMMARY // RTL_QUERY_PROCESS_HEAP_TAGS // RTL_QUERY_PROCESS_HEAP_ENTRIES // RTL_QUERY_PROCESS_HEAP_SEGMENTS
+    PRTL_PROCESS_LOCKS Locks;                           // Lock information // RtlQueryProcessLockInformation // RTL_QUERY_PROCESS_LOCKS
+    PVOID SpecificHeap;                                 // Target heap to query
+    HANDLE TargetProcessHandle;                         // Target process to query
+    PRTL_PROCESS_VERIFIER_OPTIONS VerifierOptions;      // Verifier options // AVrfpQueryProcessVerifierOptions // RTL_QUERY_PROCESS_VERIFIER_OPTIONS
+    PVOID ProcessHeap;                                  // Process heap reference
+    HANDLE CriticalSectionHandle;                       // Critical section handle // RtlQueryCriticalSectionOwner // RTL_QUERY_PROCESS_CS_OWNER // RTL_QUERY_PROCESS_NONINVASIVE_CS_OWNER
+    HANDLE CriticalSectionOwnerThread;                  // Critical section owner thread // RtlQueryCriticalSectionOwner
     PVOID Reserved[4];
 } RTL_DEBUG_INFORMATION, *PRTL_DEBUG_INFORMATION;
+
+typedef _Function_class_(RTL_TRACE_HASH_FUNCTION)
+ULONG
+NTAPI
+RTL_TRACE_HASH_FUNCTION(
+    _In_ ULONG Count,
+    _In_reads_(Count) PVOID* Trace
+    );
+typedef RTL_TRACE_HASH_FUNCTION *PRTL_TRACE_HASH_FUNCTION;
 
 NTSYSAPI
 PRTL_DEBUG_INFORMATION
@@ -7542,19 +7995,20 @@ RtlDeCommitDebugInfo(
     _In_ SIZE_T Size
     );
 
-#define RTL_QUERY_PROCESS_MODULES 0x00000001
-#define RTL_QUERY_PROCESS_BACKTRACES 0x00000002
-#define RTL_QUERY_PROCESS_HEAP_SUMMARY 0x00000004
-#define RTL_QUERY_PROCESS_HEAP_TAGS 0x00000008
-#define RTL_QUERY_PROCESS_HEAP_ENTRIES 0x00000010
-#define RTL_QUERY_PROCESS_LOCKS 0x00000020
-#define RTL_QUERY_PROCESS_MODULES32 0x00000040
-#define RTL_QUERY_PROCESS_VERIFIER_OPTIONS 0x00000080 // rev
-#define RTL_QUERY_PROCESS_MODULESEX 0x00000100 // rev
-#define RTL_QUERY_PROCESS_HEAP_SEGMENTS 0x00000200
-#define RTL_QUERY_PROCESS_CS_OWNER 0x00000400 // rev
-#define RTL_QUERY_PROCESS_NONINVASIVE 0x80000000
-#define RTL_QUERY_PROCESS_NONINVASIVE_CS_OWNER 0x80000800 // WIN11
+#define RTL_QUERY_PROCESS_MODULES 0x00000001 // RtlQueryProcessModuleInformation
+#define RTL_QUERY_PROCESS_BACKTRACES 0x00000002 // RtlQueryProcessBackTraceInformation
+#define RTL_QUERY_PROCESS_HEAP_SUMMARY 0x00000004 // RtlQueryProcessHeapInformation
+#define RTL_QUERY_PROCESS_HEAP_TAGS 0x00000008 // RtlQueryProcessHeapInformation
+#define RTL_QUERY_PROCESS_HEAP_ENTRIES 0x00000010 // RtlQueryProcessHeapInformation
+#define RTL_QUERY_PROCESS_LOCKS 0x00000020 // RtlQueryProcessLockInformation
+#define RTL_QUERY_PROCESS_MODULES32 0x00000040 // RtlQueryProcessModuleInformation (32-bit)
+#define RTL_QUERY_PROCESS_VERIFIER_OPTIONS 0x00000080 // AVrfpQueryProcessVerifierOptions; rev
+#define RTL_QUERY_PROCESS_MODULESEX 0x00000100 // RtlQueryProcessModuleInformation (extended); rev
+#define RTL_QUERY_PROCESS_HEAP_SEGMENTS 0x00000200 // RtlQueryProcessHeapInformation (segments)
+#define RTL_QUERY_PROCESS_CS_OWNER 0x00000400 // RtlQueryCriticalSectionOwner; rev
+#define RTL_QUERY_PROCESS_USE_CURRENT_PROCESS 0x40000000 // Control flag for current process path; rev
+#define RTL_QUERY_PROCESS_NONINVASIVE 0x80000000 // Non-invasive query flag
+#define RTL_QUERY_PROCESS_NONINVASIVE_CS_OWNER 0x80000800 // RtlQueryCriticalSectionOwner (non-invasive); WIN11
 
 NTSYSAPI
 NTSTATUS
@@ -7982,6 +8436,17 @@ typedef struct in6_addr IN6_ADDR, *PIN6_ADDR;
 typedef IN_ADDR const *PCIN_ADDR;
 typedef IN6_ADDR const *PCIN6_ADDR;
 
+/**
+ * Converts an IPv4 address to a null-terminated ANSI string in standard
+ * dotted-decimal notation.
+ *
+ * \param Address The IPv4 address in network byte order.
+ * \param AddressString A caller-supplied buffer that receives the string form.
+ * The buffer should be able to hold at least 16 characters.
+ * \return A pointer to the terminating null character written to AddressString.
+ * \remarks This is a convenience routine that does not require Winsock to be loaded.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4addresstostringa
+ */
 NTSYSAPI
 PSTR
 NTAPI
@@ -7990,6 +8455,16 @@ RtlIpv4AddressToStringA(
     _Out_writes_(16) PSTR AddressString
     );
 
+/**
+ * Converts an IPv4 address to a null-terminated Unicode string in standard dotted-decimal notation.
+ *
+ * \param Address The IPv4 address in network byte order.
+ * \param AddressString A caller-supplied buffer that receives the string form.
+ * The buffer should be able to hold at least 16 wide characters.
+ * \return A pointer to the terminating null character written to AddressString.
+ * \remarks This is a convenience routine that does not require Winsock to be loaded.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4addresstostringw
+ */
 NTSYSAPI
 PWSTR
 NTAPI
@@ -7998,6 +8473,20 @@ RtlIpv4AddressToStringW(
     _Out_writes_(16) PWSTR AddressString
     );
 
+/**
+ * Converts an IPv4 address and port to a null-terminated ANSI string.
+ *
+ * \param Address The IPv4 address in network byte order.
+ * \param Port The port number in network byte order.
+ * \param AddressString A caller-supplied output buffer.
+ * \param AddressStringLength On input, the size of AddressString. On output,
+ * receives the required size if the buffer is too small.
+ * \return STATUS_SUCCESS on success, or an error status such as
+ * STATUS_INVALID_PARAMETER if the buffer is too small.
+ * \remarks The resulting string uses dotted-decimal notation followed by a
+ * colon and port number.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4addresstostringexa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8008,6 +8497,20 @@ RtlIpv4AddressToStringExA(
     _Inout_ PULONG AddressStringLength
     );
 
+/**
+ * Converts an IPv4 address and port to a null-terminated Unicode string.
+ *
+ * \param Address The IPv4 address in network byte order.
+ * \param Port The port number in network byte order.
+ * \param AddressString A caller-supplied output buffer.
+ * \param AddressStringLength On input, the size of AddressString. On output,
+ * receives the required size if the buffer is too small.
+ * \return STATUS_SUCCESS on success, or an error status such as
+ * STATUS_INVALID_PARAMETER if the buffer is too small.
+ * \remarks The resulting string uses dotted-decimal notation followed by a
+ * colon and port number.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4addresstostringexw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8018,6 +8521,16 @@ RtlIpv4AddressToStringExW(
     _Inout_ PULONG AddressStringLength
     );
 
+/**
+ * Converts an IPv6 address to a null-terminated ANSI string in standard IPv6 text format.
+ *
+ * \param Address The IPv6 address in network byte order.
+ * \param AddressString A caller-supplied buffer that receives the string form.
+ * The buffer should be able to hold at least 46 characters.
+ * \return A pointer to the terminating null character written to AddressString.
+ * \remarks This is a convenience routine that does not require Winsock to be loaded.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6addresstostringa
+ */
 NTSYSAPI
 PSTR
 NTAPI
@@ -8026,6 +8539,16 @@ RtlIpv6AddressToStringA(
     _Out_writes_(46) PSTR AddressString
     );
 
+/**
+ * Converts an IPv6 address to a null-terminated Unicode string in standard IPv6 text format.
+ *
+ * \param Address The IPv6 address in network byte order.
+ * \param AddressString A caller-supplied buffer that receives the string form.
+ * The buffer should be able to hold at least 46 wide characters.
+ * \return A pointer to the terminating null character written to AddressString.
+ * \remarks This is a convenience routine that does not require Winsock to be loaded.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6addresstostringw
+ */
 NTSYSAPI
 PWSTR
 NTAPI
@@ -8034,6 +8557,18 @@ RtlIpv6AddressToStringW(
     _Out_writes_(46) PWSTR AddressString
     );
 
+/**
+ * Converts an IPv6 address, scope ID, and port to a null-terminated ANSI string.
+ *
+ * \param Address The IPv6 address in network byte order.
+ * \param ScopeId The IPv6 scope identifier.
+ * \param Port The port number in network byte order.
+ * \param AddressString A caller-supplied output buffer.
+ * \param AddressStringLength On input, the size of AddressString. On output,
+ * receives the required size if the buffer is too small.
+ * \return STATUS_SUCCESS on success or an error status on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6addresstostringexa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8045,6 +8580,18 @@ RtlIpv6AddressToStringExA(
     _Inout_ PULONG AddressStringLength
     );
 
+/**
+ * Converts an IPv6 address, scope ID, and port to a null-terminated Unicode string.
+ *
+ * \param Address The IPv6 address in network byte order.
+ * \param ScopeId The IPv6 scope identifier.
+ * \param Port The port number in network byte order.
+ * \param AddressString A caller-supplied output buffer.
+ * \param AddressStringLength On input, the size of AddressString. On output,
+ * receives the required size if the buffer is too small.
+ * \return STATUS_SUCCESS on success or an error status on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6addresstostringexw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8056,6 +8603,18 @@ RtlIpv6AddressToStringExW(
     _Inout_ PULONG AddressStringLength
     );
 
+/**
+ * Parses an ANSI IPv4 address string into a binary IPv4 address.
+ *
+ * \param AddressString The null-terminated IPv4 address string to parse.
+ * \param Strict If TRUE, requires strict four-part dotted-decimal notation.
+ * If FALSE, additional legacy forms are accepted.
+ * \param Terminator On success, receives a pointer to the character that
+ * terminated the parsed address.
+ * \param Address Receives the parsed IPv4 address in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER if parsing fails.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4stringtoaddressa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8066,6 +8625,18 @@ RtlIpv4StringToAddressA(
     _Out_ PIN_ADDR Address
     );
 
+/**
+ * Parses a Unicode IPv4 address string into a binary IPv4 address.
+ *
+ * \param AddressString The null-terminated IPv4 address string to parse.
+ * \param Strict If TRUE, requires strict four-part dotted-decimal notation.
+ * If FALSE, additional legacy forms are accepted.
+ * \param Terminator On success, receives a pointer to the character that
+ * terminated the parsed address.
+ * \param Address Receives the parsed IPv4 address in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER if parsing fails.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4stringtoaddressw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8076,6 +8647,18 @@ RtlIpv4StringToAddressW(
     _Out_ PIN_ADDR Address
     );
 
+/**
+ * Parses an ANSI IPv4 address string and optional port into binary values.
+ *
+ * \param AddressString The null-terminated IPv4 address string, optionally
+ * followed by a colon and port number.
+ * \param Strict If TRUE, requires strict four-part dotted-decimal notation.
+ * If FALSE, additional legacy forms are accepted.
+ * \param Address Receives the parsed IPv4 address in network byte order.
+ * \param Port Receives the parsed port in network byte order, or zero if not present.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4stringtoaddressexa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8086,6 +8669,18 @@ RtlIpv4StringToAddressExA(
     _Out_ PUSHORT Port
     );
 
+/**
+ * Parses a Unicode IPv4 address string and optional port into binary values.
+ *
+ * \param AddressString The null-terminated IPv4 address string, optionally
+ * followed by a colon and port number.
+ * \param Strict If TRUE, requires strict four-part dotted-decimal notation.
+ * If FALSE, additional legacy forms are accepted.
+ * \param Address Receives the parsed IPv4 address in network byte order.
+ * \param Port Receives the parsed port in network byte order, or zero if not present.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4stringtoaddressexw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8096,6 +8691,16 @@ RtlIpv4StringToAddressExW(
     _Out_ PUSHORT Port
     );
 
+/**
+ * Parses an ANSI IPv6 address string into a binary IPv6 address.
+ *
+ * \param AddressString The null-terminated IPv6 address string to parse.
+ * \param Terminator On success, receives a pointer to the character that
+ * terminated the parsed address.
+ * \param Address Receives the parsed IPv6 address in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6stringtoaddressa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8105,6 +8710,16 @@ RtlIpv6StringToAddressA(
     _Out_ PIN6_ADDR Address
     );
 
+/**
+ * Parses a Unicode IPv6 address string into a binary IPv6 address.
+ *
+ * \param AddressString The null-terminated IPv6 address string to parse.
+ * \param Terminator On success, receives a pointer to the character that
+ * terminated the parsed address.
+ * \param Address Receives the parsed IPv6 address in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6stringtoaddressw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8114,6 +8729,16 @@ RtlIpv6StringToAddressW(
     _Out_ PIN6_ADDR Address
     );
 
+/**
+ * Parses an ANSI IPv6 address string with optional scope ID and port.
+ *
+ * \param AddressString The null-terminated IPv6 address string to parse.
+ * \param Address Receives the parsed IPv6 address in network byte order.
+ * \param ScopeId Receives the parsed scope identifier.
+ * \param Port Receives the parsed port in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6stringtoaddressexa
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8124,6 +8749,16 @@ RtlIpv6StringToAddressExA(
     _Out_ PUSHORT Port
     );
 
+/**
+ * Parses a Unicode IPv6 address string with optional scope ID and port.
+ *
+ * \param AddressString The null-terminated IPv6 address string to parse.
+ * \param Address Receives the parsed IPv6 address in network byte order.
+ * \param ScopeId Receives the parsed scope identifier.
+ * \param Port Receives the parsed port in network byte order.
+ * \return STATUS_SUCCESS on success or STATUS_INVALID_PARAMETER on failure.
+ * \sa https://learn.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv6stringtoaddressexw
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -8255,10 +8890,10 @@ RtlGetSystemTimePrecise(
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_10_21H2)
 NTSYSAPI
-KSYSTEM_TIME
+ULONGLONG
 NTAPI
 RtlGetSystemTimeAndBias(
-    _Out_ KSYSTEM_TIME TimeZoneBias,
+    _Out_ PLARGE_INTEGER TimeZoneBias,
     _Out_opt_ PLARGE_INTEGER TimeZoneBiasEffectiveStart,
     _Out_opt_ PLARGE_INTEGER TimeZoneBiasEffectiveEnd
     );
@@ -8275,7 +8910,7 @@ RtlGetInterruptTimePrecise(
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_8)
 NTSYSAPI
-ULONGLONG
+BOOLEAN
 NTAPI
 RtlQueryUnbiasedInterruptTime(
     _Out_ PLARGE_INTEGER InterruptTime
@@ -8283,12 +8918,30 @@ RtlQueryUnbiasedInterruptTime(
 #endif // PHNT_VERSION >= PHNT_WINDOWS_8
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_11_24H2)
-// rev
+// RtlGetMultiTimePrecise RequestedMask/ProvidedMask bits
+#define RTL_GET_MULTI_TIME_PRECISE_PERF_COUNTER        0x00000001UL
+#define RTL_GET_MULTI_TIME_PRECISE_HV_CORRELATED_TIME  0x00000002UL
+#define RTL_GET_MULTI_TIME_PRECISE_SHAREDUSER_TIME     0x00000004UL
+#define RTL_GET_MULTI_TIME_PRECISE_SUPPORTED_MASK      0x00000007UL
+
+typedef struct _RTL_MULTI_TIME_PRECISE
+{
+    ULONGLONG PerformanceCounter;
+    ULONGLONG HypervisorCorrelatedTime;
+    ULONGLONG SharedUserTime;
+} RTL_MULTI_TIME_PRECISE, *PRTL_MULTI_TIME_PRECISE;
+
+// Bit 0x1: writes PerformanceCounter; sets ProvidedMask bit 0x1.
+// Bit 0x2: writes HypervisorCorrelatedTime when available/stable; sets bit 0x2 on success.
+// Bit 0x4: writes SharedUserTime using SharedUserData calibration fields; sets bit 0x4.
+// RequestedMask == 0 returns success with *ProvidedMask = 0.
 NTSYSAPI
-ULONGLONG
+NTSTATUS
 NTAPI
-RtlQueryUnbiasedInterruptTimePrecise(
-    _Out_ PLARGE_INTEGER InterruptTime
+RtlGetMultiTimePrecise(
+    _Out_ PRTL_MULTI_TIME_PRECISE TimesOut,
+    _In_ ULONG RequestedMask,
+    _Out_ PULONG ProvidedMask
     );
 #endif // PHNT_VERSION >= PHNT_WINDOWS_11_24H2
 
@@ -8727,6 +9380,23 @@ RtlSetBitEx(
     _In_range_(<, BitMapHeader->SizeOfBitMap) ULONG64 BitNumber
     );
 
+NTSYSAPI
+VOID
+NTAPI
+RtlSetBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader,
+    _In_ ULONGLONG StartingIndex,
+    _In_ ULONGLONG NumberToSet
+    );
+
+// rev
+NTSYSAPI
+VOID
+NTAPI
+RtlSetAllBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader
+    );
+
 // rev
 NTSYSAPI
 ULONG64
@@ -8744,6 +9414,47 @@ RtlFindSetBitsAndClearEx(
     _In_ PRTL_BITMAP_EX BitMapHeader,
     _In_ ULONG64 NumberToFind,
     _In_ ULONG64 HintIndex
+    );
+
+NTSYSAPI
+ULONGLONG
+NTAPI
+RtlNumberOfClearBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader
+    );
+
+NTSYSAPI
+ULONGLONG
+NTAPI
+RtlFindClearBitsAndSetEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader,
+    _In_ ULONGLONG NumberToFind,
+    _In_ ULONGLONG HintIndex
+    );
+
+NTSYSAPI
+ULONGLONG
+NTAPI
+RtlFindClearBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader,
+    _In_ ULONGLONG NumberToFind,
+    _In_ ULONGLONG HintIndex
+    );
+
+NTSYSAPI
+VOID
+NTAPI
+RtlClearBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader,
+    _In_ ULONGLONG StartingIndex,
+    _In_ ULONGLONG NumberToClear
+    );
+
+NTSYSAPI
+ULONGLONG
+NTAPI
+RtlNumberOfSetBitsEx(
+    _In_ PRTL_BITMAP_EX BitMapHeader
     );
 
 #endif // PHNT_VERSION >= PHNT_WINDOWS_10
@@ -9751,8 +10462,8 @@ RtlAddAccessAllowedObjectAce(
     _In_ ULONG AceRevision,
     _In_ ULONG AceFlags,
     _In_ ACCESS_MASK AccessMask,
-    _In_opt_ PGUID ObjectTypeGuid,
-    _In_opt_ PGUID InheritedObjectTypeGuid,
+    _In_opt_ PCGUID ObjectTypeGuid,
+    _In_opt_ PCGUID InheritedObjectTypeGuid,
     _In_ PSID Sid
     );
 
@@ -9764,8 +10475,8 @@ RtlAddAccessDeniedObjectAce(
     _In_ ULONG AceRevision,
     _In_ ULONG AceFlags,
     _In_ ACCESS_MASK AccessMask,
-    _In_opt_ PGUID ObjectTypeGuid,
-    _In_opt_ PGUID InheritedObjectTypeGuid,
+    _In_opt_ PCGUID ObjectTypeGuid,
+    _In_opt_ PCGUID InheritedObjectTypeGuid,
     _In_ PSID Sid
     );
 
@@ -9777,8 +10488,8 @@ RtlAddAuditAccessObjectAce(
     _In_ ULONG AceRevision,
     _In_ ULONG AceFlags,
     _In_ ACCESS_MASK AccessMask,
-    _In_opt_ PGUID ObjectTypeGuid,
-    _In_opt_ PGUID InheritedObjectTypeGuid,
+    _In_opt_ PCGUID ObjectTypeGuid,
+    _In_opt_ PCGUID InheritedObjectTypeGuid,
     _In_ PSID Sid,
     _In_ BOOLEAN AuditSuccess,
     _In_ BOOLEAN AuditFailure
@@ -10200,6 +10911,12 @@ RtlAddIntegrityLabelToBoundaryDescriptor(
 // Version
 //
 
+/**
+ * \brief Basic operating system version information returned by RtlGetVersion.
+ *
+ * \details This is the RTL equivalent of OSVERSIONINFOW. Callers must set
+ * OSVersionInfoSize to sizeof(RTL_OSVERSIONINFO) before calling RtlGetVersion.
+ */
 // rev
 typedef struct _RTL_OSVERSIONINFO
 {
@@ -10211,6 +10928,14 @@ typedef struct _RTL_OSVERSIONINFO
     WCHAR CSDVersion[128];
 } RTL_OSVERSIONINFO, *PRTL_OSVERSIONINFO;
 
+/**
+ * \brief Extended operating system version information returned by RtlGetVersion.
+ *
+ * \details This is the RTL equivalent of OSVERSIONINFOEXW. In addition to the
+ * basic version fields, it includes service-pack, suite-mask, and product-type
+ * information. Callers must set OSVersionInfoSize to sizeof(RTL_OSVERSIONINFOEX)
+ * before calling RtlGetVersion.
+ */
 // rev
 typedef struct _RTL_OSVERSIONINFOEX
 {
@@ -10228,6 +10953,10 @@ typedef struct _RTL_OSVERSIONINFOEX
 } RTL_OSVERSIONINFOEX, *PRTL_OSVERSIONINFOEX;
 
 // rev
+/**
+ * Further-extended operating system version information used by newer
+ * Windows builds.
+ */
 typedef struct _RTL_OSVERSIONINFOEX2
 {
     ULONG OSVersionInfoSize;
@@ -10246,22 +10975,65 @@ typedef struct _RTL_OSVERSIONINFOEX2
 } RTL_OSVERSIONINFOEX2, *PRTL_OSVERSIONINFOEX2;
 
 // rev
+//
+// Input:
+// - OSVersionInfoSize must be set to sizeof(RTL_OSVERSIONINFOEX3).
+// - Input.LayerNumber selects which build layer to query.
+// - Input.AttribSelector selects which attribute to return for that layer.
+//
+// Output:
+// - MajorVersion/MinorVersion/BuildNumber identify the selected layer.
+// - LayerAttrib contains the string for the selected attribute.
+// - LayerCount returns the number of available build layers.
+// - LayerFlags contains per-layer flags; bit 0 is top-level and bit 1 is checked.
+
+#define RTL_OSVERSIONINFO_ATTRIB_LAYER_NAME    0
+#define RTL_OSVERSIONINFO_ATTRIB_BUILD_STAMP   1
+#define RTL_OSVERSIONINFO_ATTRIB_BUILD_BRANCH  2 // HKLM\Software\Microsoft\Windows NT\CurrentVersion\BuildBranch
+#define RTL_OSVERSIONINFO_ATTRIB_BUILD_ARCH    3
+#define RTL_OSVERSIONINFO_ATTRIB_BUILD_LAB     4 // HKLM\Software\Microsoft\Windows NT\CurrentVersion\BuildLab
+#define RTL_OSVERSIONINFO_ATTRIB_BUILD_LAB_EX  5 // HKLM\Software\Microsoft\Windows NT\CurrentVersion\BuildLabEx
+
+// rev
+/**
+ * Further-extended operating system version information used by newer
+ * Windows builds.
+ */
 typedef struct _RTL_OSVERSIONINFOEX3
 {
+    //
+    // Input: Set to sizeof(RTL_OSVERSIONINFOEX3) before calling RtlGetVersion.
+    //
     ULONG OSVersionInfoSize;
+
+    //
+    // Output: Version numbers for the selected build layer.
+    //
     ULONG MajorVersion;
     ULONG MinorVersion;
     ULONG BuildNumber;
+
+    //
+    // Output: A QFE/build-layer numeric field.
+    //
     union
     {
         ULONG PlatformId;
         ULONG QfeNumber;
     };
+
+    //
+    // Output: Contains the string for the selected attribute.
+    //
     union
     {
         WCHAR CSDVersion[128];
         WCHAR LayerAttrib[128];
     };
+
+    //
+    // Output: Operating system version information
+    //
     USHORT ServicePackMajor;
     USHORT ServicePackMinor;
     USHORT SuiteMask;
@@ -10269,16 +11041,65 @@ typedef struct _RTL_OSVERSIONINFOEX3
     UCHAR Reserved;
     ULONG SuiteMaskEx;
     ULONG Reserved2;
+
+    //
+    // Input LayerNumber:
+    //   Which build layer to query, in the range [0, LayerCount).
+    //
+    // Input AttribSelector:
+    //   Which value to retrieve for that layer:
+    //     0 = layer display name
+    //     1 = BuildStamp
+    //     2 = BuildBranch
+    //     3 = BuildArch
+    //     4 = BuildLab
+    //     5 = BuildLabEx
+    //
     union
     {
         USHORT RawInput16;
-        USHORT LayerNumber : 12;
-        USHORT AttribSelector : 4;
+        struct
+        {
+            USHORT LayerNumber : 12;
+            USHORT AttribSelector : 4;
+        };
     } Input;
-    USHORT LayerCount;
-    ULONG LayerFlags;
-} RTL_OSVERSIONINFOEX3, *PRTL_OSVERSIONINFOEX3;
 
+    //
+    // Output: total number of available build layers.
+    //
+    USHORT LayerCount;
+
+    //
+    // Output: flags for the selected layer.
+    //
+    union
+    {
+        ULONG LayerFlags;
+        struct
+        {
+            ULONG IsTopLevel : 1;
+            ULONG IsChecked : 1;
+            ULONG Spare : 30;
+        };
+    };
+} RTL_OSVERSIONINFOEX3, * PRTL_OSVERSIONINFOEX3;
+
+/**
+ * Gets version information about the currently running operating system.
+ *
+ * \param VersionInformation A pointer to an RTL_OSVERSIONINFO- or
+ * RTL_OSVERSIONINFOEX-compatible structure that receives the current operating
+ * system version information.
+ * \return STATUS_SUCCESS on success.
+ * \remarks RtlGetVersion is the native equivalent of GetVersionEx. When using
+ * this routine to test for a required Windows version, compare version numbers
+ * as greater-than-or-equal rather than exact equality so later versions also
+ * satisfy the check. Because features can be delivered outside the base OS,
+ * major and minor version numbers alone are not a reliable feature test; use
+ * RtlVerifyVersionInfo when checking for specific system features.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlgetversion
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -10286,6 +11107,28 @@ RtlGetVersion(
     _Out_ PVOID VersionInformation
     );
 
+/**
+ * Compares specified operating system version requirements against the
+ * currently running operating system.
+ *
+ * \param VersionInformation A pointer to an RTL_OSVERSIONINFOEX-compatible
+ * structure that describes the required operating system attributes.
+ * \param TypeMask A bitwise OR of VER_* flags that selects which members of
+ * VersionInformation participate in the comparison.
+ * \param ConditionMask A comparison mask built with VER_SET_CONDITION that
+ * specifies how each selected member is compared.
+ * \return STATUS_SUCCESS if the current operating system satisfies the
+ * specified requirements, STATUS_INVALID_PARAMETER for invalid input, or
+ * STATUS_REVISION_MISMATCH if the version check fails.
+ * \remarks This routine is the native equivalent of VerifyVersionInfo. It is
+ * intended for version and feature gating, and is more reliable than comparing
+ * major/minor version numbers alone. Version comparisons for major version,
+ * minor version, and service pack fields are evaluated sequentially, so a
+ * higher major version satisfies the check without testing lower-order fields.
+ * To verify a version range, call RtlVerifyVersionInfo separately for the lower
+ * and upper bounds.
+ * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlverifyversioninfo
+ */
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -12234,7 +13077,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlQueryProtectedPolicy(
-    _In_ PGUID PolicyGuid,
+    _In_ PCGUID PolicyGuid,
     _Out_ PULONG_PTR PolicyValue
     );
 
@@ -12243,7 +13086,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlSetProtectedPolicy(
-    _In_ PGUID PolicyGuid,
+    _In_ PCGUID PolicyGuid,
     _In_ ULONG_PTR PolicyValue,
     _Out_ PULONG_PTR OldPolicyValue
     );
@@ -12280,13 +13123,19 @@ RtlIsMultiUsersInSessionSku(
 #endif // PHNT_VERSION >= PHNT_WINDOWS_10_RS1
 
 #if (PHNT_VERSION >= PHNT_WINDOWS_11)
+
+typedef struct _RTL_SESSION_PROPERTIES
+{
+    ULONG IsCurrentSessionId;
+} RTL_SESSION_PROPERTIES, *PRTL_SESSION_PROPERTIES;
+
 // rev
 NTSYSAPI
 NTSTATUS
 NTAPI
 RtlGetSessionProperties(
     _In_ ULONG SessionId,
-    _Out_ PULONG SharedUserSessionId
+    _Out_ PRTL_SESSION_PROPERTIES SessionProperties
     );
 #endif // PHNT_VERSION >= PHNT_WINDOWS_11
 
@@ -12315,7 +13164,7 @@ typedef enum _RTL_BSD_ITEM_TYPE
     RtlBsdItemMax
 } RTL_BSD_ITEM_TYPE;
 
-typedef struct _RTL_BSD_DATA_POWER_TRANSITION 
+typedef struct _RTL_BSD_DATA_POWER_TRANSITION
 {
     UCHAR PowerButton : 1;
     UCHAR SleepButton : 1;
@@ -12326,14 +13175,14 @@ typedef struct _RTL_BSD_DATA_POWER_TRANSITION
     UCHAR Reserved : 2;
 } RTL_BSD_DATA_POWER_TRANSITION, *PRTL_BSD_DATA_POWER_TRANSITION;
 
-typedef struct _RTL_BSD_DATA_ERROR_INFO 
+typedef struct _RTL_BSD_DATA_ERROR_INFO
 {
     ULONG BootId;           // The Boot ID where the error occurred
     ULONG RepeatCount;      // How many times this specific error happened
     ULONG OtherErrorCount;  // Count of other errors
 } RTL_BSD_DATA_ERROR_INFO, *PRTL_BSD_DATA_ERROR_INFO;
 
-typedef struct _RTL_BSD_POWER_BUTTON_PRESS_INFO 
+typedef struct _RTL_BSD_POWER_BUTTON_PRESS_INFO
 {
     ULONG LastPressBootId;
     ULONG LastPressTime;         // Time in seconds since boot
@@ -12343,7 +13192,7 @@ typedef struct _RTL_BSD_POWER_BUTTON_PRESS_INFO
     ULONG CoalescedPressCount;
 } RTL_BSD_POWER_BUTTON_PRESS_INFO, *PRTL_BSD_POWER_BUTTON_PRESS_INFO;
 
-typedef struct _RTL_BSD_DATA_POWER_TRANSITION_EXTENSION 
+typedef struct _RTL_BSD_DATA_POWER_TRANSITION_EXTENSION
 {
     UCHAR SystemIdleTransition : 1;
     UCHAR FanError : 1;
@@ -13216,6 +14065,25 @@ RtlWow64ChangeThreadState(
     _In_ HANDLE ThreadStateChangeHandle,
     _In_ HANDLE ThreadHandle,
     _In_ THREAD_STATE_CHANGE_TYPE StateChangeType
+    );
+#endif // PHNT_VERSION >= PHNT_WINDOWS_11
+
+#if (PHNT_VERSION >= PHNT_WINDOWS_11)
+// rev
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlWow64SuspendProcess(
+    _In_ HANDLE ProcessHandle
+    );
+
+// rev
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlWow64SuspendThread(
+    _In_ HANDLE ThreadHandle,
+    _Out_opt_ PULONG SuspendCount
     );
 #endif // PHNT_VERSION >= PHNT_WINDOWS_11
 

@@ -150,6 +150,7 @@ typedef enum _DEVICE_USAGE_NOTIFICATION_TYPE
 } DEVICE_USAGE_NOTIFICATION_TYPE, *PDEVICE_USAGE_NOTIFICATION_TYPE;
 
 #if (PHNT_VERSION < PHNT_WINDOWS_8)
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -160,6 +161,7 @@ NtGetPlugPlayEvent(
     _In_ ULONG EventBufferSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -171,6 +173,7 @@ ZwGetPlugPlayEvent(
     );
 #endif // (PHNT_VERSION < PHNT_WINDOWS_8)
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -180,6 +183,7 @@ NtPlugPlayControl(
     _In_ ULONG PnPControlDataLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -189,6 +193,7 @@ ZwPlugPlayControl(
     _In_ ULONG PnPControlDataLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -196,6 +201,7 @@ NtSerializeBoot(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -203,6 +209,7 @@ ZwSerializeBoot(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -210,6 +217,7 @@ NtEnableLastKnownGood(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -217,6 +225,7 @@ ZwEnableLastKnownGood(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -224,6 +233,7 @@ NtDisableLastKnownGood(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -231,6 +241,7 @@ ZwDisableLastKnownGood(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -240,6 +251,7 @@ NtReplacePartitionUnit(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI

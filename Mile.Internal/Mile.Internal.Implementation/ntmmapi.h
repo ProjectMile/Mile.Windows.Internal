@@ -85,17 +85,45 @@ typedef struct _IO_STATUS_BLOCK* PIO_STATUS_BLOCK;
 #define MEM_IMAGE SEC_IMAGE
 #endif
 
+#define MEM_EXTENDED_PARAMETER_GRAPHICS 0x00000001
+#define MEM_EXTENDED_PARAMETER_NONPAGED 0x00000002
+#define MEM_EXTENDED_PARAMETER_ZERO_PAGES_OPTIONAL 0x00000004
+#define MEM_EXTENDED_PARAMETER_NONPAGED_LARGE 0x00000008
+#define MEM_EXTENDED_PARAMETER_NONPAGED_HUGE 0x00000010
+#define MEM_EXTENDED_PARAMETER_SOFT_FAULT_PAGES 0x00000020
+#define MEM_EXTENDED_PARAMETER_EC_CODE 0x00000040
+#define MEM_EXTENDED_PARAMETER_SECURE_PAGES 0x00000080
+#define MEM_EXTENDED_PARAMETER_TAGGED 0x00000100
+#define MEM_EXTENDED_PARAMETER_NUMA_NODE_MANDATORY MINLONG64
+
+// typedef enum MEM_SECTION_EXTENDED_PARAMETER_TYPE
+// {
+//     MemSectionExtendedParameterInvalidType = 0,
+//     MemSectionExtendedParameterUserPhysicalFlags,
+//     MemSectionExtendedParameterNumaNode,
+//     MemSectionExtendedParameterSigningLevel,
+//     MemSectionExtendedParameterAttributeFlags,
+//     MemSectionExtendedParameterMax
+// } MEM_SECTION_EXTENDED_PARAMETER_TYPE, *PMEM_SECTION_EXTENDED_PARAMETER_TYPE;
+
+#define MemSectionExtendedParameterInvalidType 0x0
+#define MemSectionExtendedParameterUserPhysicalFlags 0x1
+#define MemSectionExtendedParameterNumaNode 0x2
+#define MemSectionExtendedParameterSigningLevel 0x3
+#define MemSectionExtendedParameterAttributeFlags 0x4
+#define MemSectionExtendedParameterMax 0x5
+
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 typedef enum _MEMORY_INFORMATION_CLASS
 {
     MemoryBasicInformation,                     // q: MEMORY_BASIC_INFORMATION
     MemoryWorkingSetInformation,                // q: MEMORY_WORKING_SET_INFORMATION
     MemoryMappedFilenameInformation,            // q: UNICODE_STRING
-    MemoryRegionInformation,                    // q: MEMORY_REGION_INFORMATION
+    MemoryRegionInformation,                    // q: MEMORY_REGION_INFORMATION/MEMORY_REGION_INFORMATION_EX
     MemoryWorkingSetExInformation,              // q: MEMORY_WORKING_SET_EX_INFORMATION // since VISTA
     MemorySharedCommitInformation,              // q: MEMORY_SHARED_COMMIT_INFORMATION // since WIN8
     MemoryImageInformation,                     // q: MEMORY_IMAGE_INFORMATION
-    MemoryRegionInformationEx,                  // q: MEMORY_REGION_INFORMATION
+    MemoryRegionInformationEx,                  // q: MEMORY_REGION_INFORMATION/MEMORY_REGION_INFORMATION_EX
     MemoryPrivilegedBasicInformation,           // q: MEMORY_BASIC_INFORMATION
     MemoryEnclaveImageInformation,              // q: MEMORY_ENCLAVE_IMAGE_INFORMATION // since REDSTONE3
     MemoryBasicInformationCapped,               // q: 10
@@ -184,37 +212,49 @@ typedef struct _MEMORY_WORKING_SET_INFORMATION
     _Field_size_(NumberOfEntries) MEMORY_WORKING_SET_BLOCK WorkingSetInfo[ANYSIZE_ARRAY];
 } MEMORY_WORKING_SET_INFORMATION, *PMEMORY_WORKING_SET_INFORMATION;
 
+typedef union _MEMORY_REGION_INFORMATION_TYPE
+{
+    ULONG RegionType;
+    struct
+    {
+        ULONG Private : 1;                 // Region is private to the process (not shared).
+        ULONG MappedDataFile : 1;          // Region is a mapped view of a data file (read/write data mapping).
+        ULONG MappedImage : 1;             // Region is a mapped view of an image file (executable/DLL mapping).
+        ULONG MappedPageFile : 1;          // Region is a mapped view of a pagefile-backed section.
+        ULONG MappedPhysical : 1;          // Region is a mapped view of the \Device\PhysicalMemory section.
+        ULONG DirectMapped : 1;            // Region is a mapped view of a direct-mapped file.
+        ULONG SoftwareEnclave : 1;         // Region is a mapped view of a software enclave. // since REDSTONE3
+        ULONG PageSize64K : 1;             // Region uses 64 KB page size.
+        ULONG PlaceholderReservation : 1;  // Region uses placeholder reservations. // since REDSTONE4
+        ULONG MappedAwe : 1;               // Region uses Address Windowing Extensions (AWE). // 21H1
+        ULONG MappedWriteWatch : 1;        // Region uses write-watch protection.
+        ULONG PageSizeLarge : 1;           // Region uses large page size.
+        ULONG PageSizeHuge : 1;            // Region uses huge page size.
+        ULONG Reserved : 19;
+    };
+} MEMORY_REGION_INFORMATION_TYPE, *PMEMORY_REGION_INFORMATION_TYPE;
+
 // private
 typedef struct _MEMORY_REGION_INFORMATION
 {
-    PVOID AllocationBase;                             // Base address of the allocation.
-    ULONG AllocationProtect;                          // Page protection when the allocation was created (individual pages can be different from this value).
-    union
-    {
-        ULONG RegionType;
-        struct
-        {
-            ULONG Private : 1;                        // Region is private to the process (not shared).
-            ULONG MappedDataFile : 1;                 // Region is a mapped view of a data file (read/write data mapping).
-            ULONG MappedImage : 1;                    // Region is a mapped view of an image file (executable/DLL mapping).
-            ULONG MappedPageFile : 1;                 // Region is a mapped view of a pagefile-backed section.
-            ULONG MappedPhysical : 1;                 // Region is a mapped view of the \Device\PhysicalMemory section.
-            ULONG DirectMapped : 1;                   // Region is a mapped view of a direct-mapped file.
-            ULONG SoftwareEnclave : 1;                // Region is a mapped view of a software enclave. // since REDSTONE3
-            ULONG PageSize64K : 1;                    // Region uses 64 KB page size.
-            ULONG PlaceholderReservation : 1;         // Region uses placeholder reservations. // since REDSTONE4
-            ULONG MappedAwe : 1; // 21H1              // Region uses Address Windowing Extensions (AWE).
-            ULONG MappedWriteWatch : 1;               // Region uses write-watch protection.
-            ULONG PageSizeLarge : 1;                  // Region uses large page size.
-            ULONG PageSizeHuge : 1;                   // Region uses huge page size.
-            ULONG Reserved : 19;
-        };
-    };
-    SIZE_T RegionSize;                                // The combined size of pages in the region.
-    SIZE_T CommitSize;                                // The commit charge associated with the allocation.
-    ULONG_PTR PartitionId; // 19H1
-    ULONG_PTR NodePreference; // 20H1
+    PVOID AllocationBase;                  // Base address of the allocation.
+    ULONG AllocationProtect;               // Page protection when the allocation was created (individual pages can be different from this value).
+    ULONG RegionType;                      // Region type flags.
+    SIZE_T RegionSize;                     // The combined size of pages in the region.
+    SIZE_T CommitSize;                     // The commit charge associated with the allocation.
 } MEMORY_REGION_INFORMATION, *PMEMORY_REGION_INFORMATION;
+
+// private
+typedef struct _MEMORY_REGION_INFORMATION_EX
+{
+    PVOID AllocationBase;                  // Base address of the allocation.
+    ULONG AllocationProtect;               // Page protection when the allocation was created (individual pages can be different from this value).
+    ULONG RegionType;                      // Region type flags.
+    SIZE_T RegionSize;                     // The combined size of pages in the region.
+    SIZE_T CommitSize;                     // The commit charge associated with the allocation.
+    ULONG_PTR PartitionId;                 // 19H1
+    ULONG_PTR NodePreference;              // 20H1
+} MEMORY_REGION_INFORMATION_EX, *PMEMORY_REGION_INFORMATION_EX;
 
 // private
 typedef enum _MEMORY_WORKING_SET_EX_LOCATION
@@ -672,6 +712,7 @@ typedef struct _MMPFN_MEMSNAP_INFORMATION
  */
 _Must_inspect_result_
 _When_(return == 0, __drv_allocatesMem(mem))
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -684,6 +725,7 @@ NtAllocateVirtualMemory(
     _In_ ULONG PageProtection
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -712,6 +754,7 @@ ZwAllocateVirtualMemory(
  */
 _Must_inspect_result_
 _When_(return == 0, __drv_allocatesMem(Mem))
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -725,6 +768,7 @@ NtAllocateVirtualMemoryEx(
     _In_ ULONG ExtendedParameterCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -748,6 +792,7 @@ ZwAllocateVirtualMemoryEx(
  * \param FreeType The type of free operation. This parameter can be MEM_DECOMMIT or MEM_RELEASE.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -758,6 +803,7 @@ NtFreeVirtualMemory(
     _In_ ULONG FreeType
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -778,6 +824,7 @@ ZwFreeVirtualMemory(
  * \param NumberOfBytesRead A pointer to a variable that receives the number of bytes transferred into the specified buffer.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -789,6 +836,7 @@ NtReadVirtualMemory(
     _Out_opt_ PSIZE_T NumberOfBytesRead
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -834,6 +882,7 @@ NtWow64ReadVirtualMemory64(
  * \param Flags Additional flags for the read operation.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -846,6 +895,7 @@ NtReadVirtualMemoryEx(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -869,6 +919,7 @@ ZwReadVirtualMemoryEx(
  * \param NumberOfBytesWritten A pointer to a variable that receives the number of bytes transferred into the specified buffer.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -880,6 +931,7 @@ NtWriteVirtualMemory(
     _Out_opt_ PSIZE_T NumberOfBytesWritten
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -923,6 +975,7 @@ NtWow64WriteVirtualMemory64(
  * \param OldProtection A pointer to a variable that receives the previous access protection of the first page in the specified region of pages.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -934,6 +987,7 @@ NtProtectVirtualMemory(
     _Out_ PULONG OldProtection
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -956,6 +1010,7 @@ ZwProtectVirtualMemory(
  * \param ReturnLength A pointer to a variable that receives the number of bytes returned in the MemoryInformation buffer.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -968,6 +1023,7 @@ NtQueryVirtualMemory(
     _Out_opt_ PSIZE_T ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1013,6 +1069,7 @@ NtWow64QueryVirtualMemory64(
  * \param IoStatus A pointer to an IO_STATUS_BLOCK structure that receives the status of the flush operation.
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1023,6 +1080,7 @@ NtFlushVirtualMemory(
     _Out_ PIO_STATUS_BLOCK IoStatus
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1152,6 +1210,7 @@ typedef struct _MEMORY_RANGE_ENTRY
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwsetinformationvirtualmemory
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1164,6 +1223,7 @@ NtSetInformationVirtualMemory(
     _In_ ULONG VmInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1192,6 +1252,7 @@ ZwSetInformationVirtualMemory(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtuallock
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1202,6 +1263,7 @@ NtLockVirtualMemory(
     _In_ ULONG MapType
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1223,6 +1285,7 @@ ZwLockVirtualMemory(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualunlock
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1233,6 +1296,7 @@ NtUnlockVirtualMemory(
     _In_ ULONG MapType
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1374,6 +1438,7 @@ typedef enum _SECTION_INHERIT
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1387,6 +1452,7 @@ NtCreateSection(
     _In_opt_ HANDLE FileHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1418,6 +1484,7 @@ ZwCreateSection(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1433,6 +1500,7 @@ NtCreateSectionEx(
     _In_ ULONG ExtendedParameterCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1458,6 +1526,7 @@ ZwCreateSectionEx(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwopensection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1467,6 +1536,7 @@ NtOpenSection(
     _In_ PCOBJECT_ATTRIBUTES ObjectAttributes
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1492,6 +1562,7 @@ ZwOpenSection(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1508,6 +1579,7 @@ NtMapViewOfSection(
     _In_ ULONG PageProtection
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1540,6 +1612,7 @@ ZwMapViewOfSection(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsectionex
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1555,6 +1628,7 @@ NtMapViewOfSectionEx(
     _In_ ULONG ExtendedParameterCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1579,6 +1653,7 @@ ZwMapViewOfSectionEx(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1587,6 +1662,7 @@ NtUnmapViewOfSection(
     _In_opt_ PVOID BaseAddress
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1605,6 +1681,7 @@ ZwUnmapViewOfSection(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1614,6 +1691,7 @@ NtUnmapViewOfSectionEx(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1624,6 +1702,7 @@ ZwUnmapViewOfSectionEx(
     );
 #endif // (PHNT_VERSION >= PHNT_WINDOWS_8)
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1632,6 +1711,7 @@ NtExtendSection(
     _Inout_ PLARGE_INTEGER NewSectionSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1651,6 +1731,7 @@ ZwExtendSection(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/devnotes/ntquerysection
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1662,6 +1743,7 @@ NtQuerySection(
     _Out_opt_ PSIZE_T ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1680,6 +1762,7 @@ ZwQuerySection(
  * \param File2MappedAsFile A pointer to the base address of the second file mapped as a file.
  * \return NTSTATUS Returns STATUS_SUCCESS if the files are the same; otherwise, an appropriate NTSTATUS error code.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1688,6 +1771,7 @@ NtAreMappedFilesTheSame(
     _In_ PVOID File2MappedAsFile
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1848,6 +1932,7 @@ typedef struct _MEMORY_PARTITION_MEMORY_EVENTS_INFORMATION
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 #if (PHNT_VERSION >= PHNT_WINDOWS_10)
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1858,6 +1943,7 @@ NtCreatePartition(
     _In_opt_ PCOBJECT_ATTRIBUTES ObjectAttributes
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1868,6 +1954,7 @@ ZwCreatePartition(
     _In_opt_ PCOBJECT_ATTRIBUTES ObjectAttributes
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1877,6 +1964,7 @@ NtOpenPartition(
     _In_ PCOBJECT_ATTRIBUTES ObjectAttributes
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1886,6 +1974,7 @@ ZwOpenPartition(
     _In_ PCOBJECT_ATTRIBUTES ObjectAttributes
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1897,6 +1986,7 @@ NtManagePartition(
     _In_ ULONG PartitionInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1923,6 +2013,7 @@ ZwManagePartition(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-mapuserphysicalpages
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1932,6 +2023,7 @@ NtMapUserPhysicalPages(
     _In_reads_opt_(NumberOfPages) PULONG_PTR UserPfnArray
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1950,6 +2042,7 @@ ZwMapUserPhysicalPages(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-mapuserphysicalpagesscatter
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1959,6 +2052,7 @@ NtMapUserPhysicalPagesScatter(
     _In_reads_opt_(NumberOfPages) PULONG_PTR UserPfnArray
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1977,6 +2071,7 @@ ZwMapUserPhysicalPagesScatter(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-allocateuserphysicalpages
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1986,6 +2081,7 @@ NtAllocateUserPhysicalPages(
     _Out_writes_(*NumberOfPages) PULONG_PTR UserPfnArray
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2007,6 +2103,7 @@ ZwAllocateUserPhysicalPages(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-allocateuserphysicalpages
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2018,6 +2115,7 @@ NtAllocateUserPhysicalPagesEx(
     _In_ ULONG ExtendedParameterCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2039,6 +2137,7 @@ ZwAllocateUserPhysicalPagesEx(
  * \return NTSTATUS Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-freeuserphysicalpages
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2048,6 +2147,7 @@ NtFreeUserPhysicalPages(
     _In_reads_(*NumberOfPages) PULONG_PTR UserPfnArray
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2074,6 +2174,7 @@ ZwFreeUserPhysicalPages(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-getwritewatch
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2087,6 +2188,7 @@ NtGetWriteWatch(
     _Out_ PULONG Granularity
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2109,6 +2211,7 @@ ZwGetWriteWatch(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-resetwritewatch
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2118,6 +2221,7 @@ NtResetWriteWatch(
     _In_ SIZE_T RegionSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2137,6 +2241,7 @@ ZwResetWriteWatch(
  * \return NTSTATUS Successful or errant status.
  * \remarks The caller must have the SeCreatePagefilePrivilege privilege.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2147,6 +2252,7 @@ NtCreatePagingFile(
     _In_ ULONG Priority
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2167,6 +2273,7 @@ ZwCreatePagingFile(
  * \remarks Applications should call NtFlushInstructionCache if they generate or modify code in memory. The CPU cannot detect the change, and may execute the old code it cached.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-flushinstructioncache
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2176,6 +2283,7 @@ NtFlushInstructionCache(
     _In_ SIZE_T RegionSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2190,6 +2298,7 @@ ZwFlushInstructionCache(
  *
  * \return NTSTATUS Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2197,6 +2306,7 @@ NtFlushWriteBuffer(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2210,6 +2320,7 @@ ZwFlushWriteBuffer(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-flushprocesswritebuffers
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2217,6 +2328,7 @@ NtFlushProcessWriteBuffers(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2250,6 +2362,7 @@ ZwFlushProcessWriteBuffers(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-createenclave
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2265,6 +2378,7 @@ NtCreateEnclave(
     _Out_opt_ PULONG EnclaveError
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2295,6 +2409,7 @@ ZwCreateEnclave(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-loadenclavedata
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2310,6 +2425,7 @@ NtLoadEnclaveData(
     _Out_opt_ PULONG EnclaveError
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2336,6 +2452,7 @@ ZwLoadEnclaveData(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-initializeenclave
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2347,6 +2464,7 @@ NtInitializeEnclave(
     _Out_opt_ PULONG EnclaveError
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2372,6 +2490,7 @@ ZwInitializeEnclave(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-terminateenclave
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2380,6 +2499,7 @@ NtTerminateEnclave(
     _In_ ULONG Flags // TERMINATE_ENCLAVE_FLAG_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2404,6 +2524,7 @@ ZwTerminateEnclave(
  * \return NTSTATUS Successful or errant status.
  * \see https://learn.microsoft.com/en-us/windows/win32/api/enclaveapi/nf-enclaveapi-callenclave
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2414,6 +2535,7 @@ NtCallEnclave(
     _Inout_ PVOID* RoutineParamReturn // input routine parameter, output routine return value
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI

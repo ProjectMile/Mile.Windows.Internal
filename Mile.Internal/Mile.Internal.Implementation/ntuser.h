@@ -8,7 +8,11 @@
 #define _NTUSER_H
 
 typedef enum _USERTHREADINFOCLASS USERTHREADINFOCLASS;
+typedef struct _DOCONNECTDATA* PDOCONNECTDATA;
+typedef struct _CACHESTATISTICS* PCACHESTATISTICS;
+typedef struct _DONOTIFYDATA* PDONOTIFYDATA;
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -18,6 +22,7 @@ NtUserAttachThreadInput(
     _In_ BOOL Attach
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -27,6 +32,7 @@ ZwUserAttachThreadInput(
     _In_ BOOL Attach
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -35,6 +41,7 @@ NtUserBeginPaint(
     _Inout_ LPPAINTSTRUCT lpPaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -43,6 +50,7 @@ ZwUserBeginPaint(
     _Inout_ LPPAINTSTRUCT lpPaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -50,6 +58,7 @@ NtUserBlockInput(
     _In_ BOOL BlockInput
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -61,6 +70,7 @@ ZwUserBlockInput(
 #define FW_16BIT 1
 #define FW_32BIT 2
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -72,6 +82,7 @@ NtUserFindWindowEx(
     _In_ ULONG Type // FW_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -83,6 +94,7 @@ ZwUserFindWindowEx(
     _In_ ULONG Type // FW_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -97,6 +109,7 @@ NtUserBuildHwndList(
     _Out_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -111,6 +124,7 @@ ZwUserBuildHwndList(
     _Out_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -121,6 +135,7 @@ NtUserBuildNameList(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -131,6 +146,7 @@ ZwUserBuildNameList(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -141,6 +157,7 @@ NtUserBuildPropList(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -151,6 +168,7 @@ ZwUserBuildPropList(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -158,6 +176,7 @@ NtUserCanCurrentThreadChangeForeground(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -165,6 +184,7 @@ ZwUserCanCurrentThreadChangeForeground(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -176,6 +196,7 @@ NtUserCalculatePopupWindowPosition(
     _Inout_ RECT* popupWindowPosition
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -187,6 +208,7 @@ ZwUserCalculatePopupWindowPosition(
     _Inout_ RECT* popupWindowPosition
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -196,6 +218,7 @@ NtUserCheckAccessForIntegrityLevel(
     _Out_ PBOOLEAN GrantedAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -205,6 +228,7 @@ ZwUserCheckAccessForIntegrityLevel(
     _Out_ PBOOLEAN GrantedAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -213,6 +237,7 @@ NtUserCheckProcessForClipboardAccess(
     _Out_ PULONG GrantedAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -221,6 +246,7 @@ ZwUserCheckProcessForClipboardAccess(
     _Out_ PULONG GrantedAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -228,6 +254,7 @@ NtUserCloseWindowStation(
     _In_ HWINSTA WindowStationHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -243,6 +270,7 @@ ZwUserCloseWindowStation(
  * \return Successful or errant status.
  * \sa https://learn.microsoft.com/en-us/windows/win32/sbscs/application-manifests#disableWindowFiltering
  */
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -250,6 +278,7 @@ NtUserDisableProcessWindowFiltering(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -258,6 +287,7 @@ ZwUserDisableProcessWindowFiltering(
     );
 #endif
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -266,6 +296,7 @@ NtUserGetProp(
     _In_ PCWSTR String
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -274,6 +305,7 @@ ZwUserGetProp(
     _In_ PCWSTR String
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -282,6 +314,7 @@ NtUserGetProp2(
     _In_ PCUNICODE_STRING String
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -290,6 +323,7 @@ ZwUserGetProp2(
     _In_ PCUNICODE_STRING String
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -304,6 +338,7 @@ NtUserCreateWindowStation(
     _In_opt_ ULONG KeyboardLocale
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -376,6 +411,7 @@ typedef struct _CONSOLEENDTASK
  * \param ConsoleInformationLength The size of the structure pointed to by the ConsoleInformation parameter.
  * \return Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -385,6 +421,7 @@ NtUserConsoleControl(
     _In_ ULONG ConsoleInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -423,6 +460,7 @@ ConsoleControl(
  * \return A handle to the foreground window, or NULL if no foreground window exists.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-realgetwindowclassw
  */
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -432,6 +470,7 @@ NtUserGetClassName(
     _Out_ PUNICODE_STRING ClassName
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -447,6 +486,7 @@ ZwUserGetClassName(
  * \return A handle to the foreground window, or NULL if no foreground window exists.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
  */
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -454,6 +494,7 @@ NtUserGetForegroundWindow(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -461,6 +502,7 @@ ZwUserGetForegroundWindow(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -473,6 +515,7 @@ NtUserGetIconInfo(
     _In_ LOGICAL IsCursorHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -485,6 +528,7 @@ ZwUserGetIconInfo(
     _In_ LOGICAL IsCursorHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -495,6 +539,7 @@ NtUserGetIconSize(
     _Out_ PULONG YY
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -511,6 +556,7 @@ ZwUserGetIconSize(
  * \return A handle to the window station, or NULL if the operation fails.
  * \sa https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation
  */
+_Kernel_entry_
 NTSYSCALLAPI
 HWINSTA
 NTAPI
@@ -518,6 +564,7 @@ NtUserGetProcessWindowStation(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWINSTA
 NTAPI
@@ -546,7 +593,8 @@ typedef struct _PROCESS_UICONTEXT_INFORMATION
     PROCESS_UICONTEXT ProcessUIContext;
     PROCESS_UI_FLAGS Flags;
 } PROCESS_UICONTEXT_INFORMATION, *PPROCESS_UICONTEXT_INFORMATION;
-    
+
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -555,6 +603,7 @@ NtUserGetProcessUIContextInformation(
     _Out_ PPROCESS_UICONTEXT_INFORMATION UIContext
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -562,7 +611,8 @@ ZwUserGetProcessUIContextInformation(
     _In_ HANDLE ProcessHandle,
     _Out_ PPROCESS_UICONTEXT_INFORMATION UIContext
     );
-    
+
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -571,6 +621,7 @@ GetProcessUIContextInformation(
     _Out_ PPROCESS_UICONTEXT_INFORMATION UIContext
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -578,6 +629,7 @@ NtUserGetThreadState(
     _In_ ULONG UserThreadState
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -585,6 +637,7 @@ ZwUserGetThreadState(
     _In_ ULONG UserThreadState
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -592,6 +645,7 @@ NtUserGhostWindowFromHungWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -606,6 +660,7 @@ GhostWindowFromHungWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -613,6 +668,7 @@ NtUserHungWindowFromGhostWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -627,6 +683,7 @@ HungWindowFromGhostWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -636,6 +693,7 @@ NtUserInternalGetWindowText(
     _In_ ULONG cchMaxCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -645,6 +703,7 @@ ZwUserInternalGetWindowText(
     _In_ ULONG cchMaxCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HICON
 NTAPI
@@ -653,6 +712,7 @@ NtUserInternalGetWindowIcon(
     _In_ ULONG IconType
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HICON
 NTAPI
@@ -661,6 +721,7 @@ ZwUserInternalGetWindowIcon(
     _In_ ULONG IconType
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -670,6 +731,7 @@ NtUserOpenDesktop(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -686,6 +748,7 @@ ZwUserOpenDesktop(
  * \param DesiredAccess The access to the window station.
  * \return Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 HWINSTA
 NTAPI
@@ -694,6 +757,7 @@ NtUserOpenWindowStation(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWINSTA
 NTAPI
@@ -716,6 +780,7 @@ typedef enum _WINDOWINFOCLASS
     WindowDefaultInputContext = 9, // q: HIMC
 } WINDOWINFOCLASS, *PWINDOWINFOCLASS;
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -724,6 +789,7 @@ NtUserQueryWindow(
     _In_ WINDOWINFOCLASS WindowInfo
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -732,6 +798,7 @@ ZwUserQueryWindow(
     _In_ WINDOWINFOCLASS WindowInfo
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -739,6 +806,7 @@ NtUserSetActiveWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -746,6 +814,7 @@ ZwUserSetActiveWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -753,6 +822,7 @@ NtUserSetChildWindowNoActivate(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -760,6 +830,7 @@ ZwUserSetChildWindowNoActivate(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -767,6 +838,7 @@ NtUserSetFocus(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -782,6 +854,7 @@ SetChildWindowNoActivate(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -792,6 +865,7 @@ NtUserSetInformationThread(
     _In_ ULONG ThreadInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -802,6 +876,7 @@ ZwUserSetInformationThread(
     _In_ ULONG ThreadInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -809,6 +884,7 @@ NtUserSetProcessWindowStation(
     _In_ HWINSTA WindowStationHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -859,6 +935,7 @@ typedef struct _USER_PROCESS_CAP_INTERNAL
 } USER_PROCESS_CAP_INTERNAL, *PUSER_PROCESS_CAP_INTERNAL;
 
 // rev
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -867,6 +944,7 @@ NtUserSetProcessWin32Capabilities(
     _In_ ULONG Count
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -883,6 +961,7 @@ ZwUserSetProcessWin32Capabilities(
  * \param Enable Indicates whether to enable or disable the exemption.
  * \return Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -890,6 +969,7 @@ NtUserSetProcessRestrictionExemption(
     _In_ BOOL EnableExemption
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -904,6 +984,7 @@ ZwUserSetProcessRestrictionExemption(
  *
  * \return Successful or errant status.
  */
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -911,6 +992,7 @@ NtUserSetProcessUIAccessZorder(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -918,6 +1000,7 @@ ZwUserSetProcessUIAccessZorder(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -926,6 +1009,7 @@ NtUserSetWindowPlacement(
     _Inout_ const WINDOWPLACEMENT* lpwndpl
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -934,6 +1018,7 @@ ZwUserSetWindowPlacement(
     _Inout_ const WINDOWPLACEMENT* lpwndpl
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -944,6 +1029,7 @@ NtUserSetWindowStationUser(
     _In_ ULONG UserSidLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -964,6 +1050,7 @@ SetWindowStationUser(
     _In_ ULONG UserSidLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -971,6 +1058,7 @@ NtUserTestForInteractiveUser(
     _In_ PLUID AuthenticationId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -978,6 +1066,7 @@ ZwUserTestForInteractiveUser(
     _In_ PLUID AuthenticationId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -987,6 +1076,7 @@ NtUserSwitchDesktop(
     _In_opt_ ULONG FadeTime
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -996,6 +1086,7 @@ ZwUserSwitchDesktop(
     _In_opt_ ULONG FadeTime
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1003,6 +1094,7 @@ NtUserSetThreadDesktop(
     _In_ HDESK DesktopHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1018,6 +1110,7 @@ ChildWindowFromPoint(
     _In_ POINT pt
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -1027,6 +1120,7 @@ NtUserChildWindowFromPointEx(
     _In_ ULONG flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -1036,6 +1130,7 @@ ZwUserChildWindowFromPointEx(
     _In_ ULONG flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1043,6 +1138,7 @@ NtUserClipCursor(
     _In_ const RECT* lpRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1050,6 +1146,7 @@ ZwUserClipCursor(
     _In_ const RECT* lpRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1057,6 +1154,7 @@ NtUserCloseDesktop(
     _In_ HDESK DesktopHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1064,6 +1162,7 @@ ZwUserCloseDesktop(
     _In_ HDESK DesktopHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1073,6 +1172,7 @@ NtUserCopyAcceleratorTable(
     _In_ LONG cAccelEntries
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1082,6 +1182,7 @@ ZwUserCopyAcceleratorTable(
     _In_ LONG cAccelEntries
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HACCEL
 NTAPI
@@ -1090,6 +1191,7 @@ NtUserCreateAcceleratorTable(
     _In_ LONG cAccel
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HACCEL
 NTAPI
@@ -1098,6 +1200,7 @@ ZwUserCreateAcceleratorTable(
     _In_ LONG cAccel
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1107,6 +1210,7 @@ NtUserDeleteMenu(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1116,6 +1220,7 @@ ZwUserDeleteMenu(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1123,6 +1228,7 @@ NtUserDestroyMenu(
     _In_ HMENU MenuHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1130,6 +1236,7 @@ ZwUserDestroyMenu(
     _In_ HMENU MenuHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1137,6 +1244,7 @@ NtUserDestroyWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1144,6 +1252,7 @@ ZwUserDestroyWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1152,6 +1261,7 @@ NtUserDragDetect(
     _In_ POINT pt
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1160,6 +1270,7 @@ ZwUserDragDetect(
     _In_ POINT pt
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1171,6 +1282,7 @@ NtUserDragObject(
     _In_ HCURSOR hcur
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1182,6 +1294,7 @@ ZwUserDragObject(
     _In_ HCURSOR hcur
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1192,6 +1305,7 @@ NtUserDrawAnimatedRects(
     _In_ const RECT* lprcTo
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1202,6 +1316,7 @@ ZwUserDrawAnimatedRects(
     _In_ const RECT* lprcTo
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1209,6 +1324,7 @@ NtUserEndMenu(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1216,6 +1332,7 @@ ZwUserEndMenu(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1224,6 +1341,7 @@ NtUserEndPaint(
     _Inout_ const PAINTSTRUCT* lpPaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1232,6 +1350,7 @@ ZwUserEndPaint(
     _Inout_ const PAINTSTRUCT* lpPaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1242,6 +1361,7 @@ NtUserEnumDisplayMonitors(
     _In_ LPARAM dwData
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1252,6 +1372,7 @@ ZwUserEnumDisplayMonitors(
     _In_ LPARAM dwData
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HRGN
 NTAPI
@@ -1260,6 +1381,7 @@ NtUserExcludeUpdateRgn(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HRGN
 NTAPI
@@ -1268,6 +1390,7 @@ ZwUserExcludeUpdateRgn(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1275,6 +1398,7 @@ NtUserFlashWindowEx(
     _In_ PFLASHWINFO pfwi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1282,6 +1406,7 @@ ZwUserFlashWindowEx(
     _In_ PFLASHWINFO pfwi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -1290,6 +1415,7 @@ NtUserGetAncestor(
     _In_ ULONG gaFlags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -1298,6 +1424,7 @@ ZwUserGetAncestor(
     _In_ ULONG gaFlags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1305,6 +1432,7 @@ NtUserGetCaretBlinkTime(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1312,6 +1440,7 @@ ZwUserGetCaretBlinkTime(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1319,6 +1448,7 @@ NtUserGetCaretPos(
     _In_ LPPOINT lpPoint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1326,6 +1456,7 @@ ZwUserGetCaretPos(
     _In_ LPPOINT lpPoint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1333,6 +1464,7 @@ NtUserGetClipCursor(
     _In_ LPRECT lpRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1340,6 +1472,7 @@ ZwUserGetClipCursor(
     _In_ LPRECT lpRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1348,6 +1481,7 @@ NtUserGetComboBoxInfo(
     _Inout_ PCOMBOBOXINFO pcbi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1356,6 +1490,7 @@ ZwUserGetComboBoxInfo(
     _Inout_ PCOMBOBOXINFO pcbi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1363,6 +1498,7 @@ NtUserGetCurrentInputMessageSource(
     _Inout_ INPUT_MESSAGE_SOURCE* InputMessageSource
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1370,6 +1506,7 @@ ZwUserGetCurrentInputMessageSource(
     _Inout_ INPUT_MESSAGE_SOURCE* InputMessageSource
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HCURSOR
 NTAPI
@@ -1377,6 +1514,7 @@ NtUserGetCursor(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HCURSOR
 NTAPI
@@ -1384,6 +1522,7 @@ ZwUserGetCursor(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1391,6 +1530,7 @@ NtUserGetCursorInfo(
     _In_ PCURSORINFO pci
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1398,6 +1538,7 @@ ZwUserGetCursorInfo(
     _In_ PCURSORINFO pci
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -1407,6 +1548,7 @@ NtUserGetDCEx(
     _In_ ULONG flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -1416,6 +1558,7 @@ ZwUserGetDCEx(
     _In_ ULONG flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1423,6 +1566,7 @@ NtUserGetDisplayAutoRotationPreferences(
     _In_ ORIENTATION_PREFERENCE* pOrientation
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1430,6 +1574,7 @@ ZwUserGetDisplayAutoRotationPreferences(
     _In_ ORIENTATION_PREFERENCE* pOrientation
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1437,6 +1582,7 @@ NtUserGetDoubleClickTime(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1444,6 +1590,7 @@ ZwUserGetDoubleClickTime(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1452,6 +1599,7 @@ NtUserGetGUIThreadInfo(
     _In_ PGUITHREADINFO pgui
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1473,6 +1621,7 @@ ZwUserGetGUIThreadInfo(
 #define GR_USEROBJECTS_PEAK 4
 #endif
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1481,6 +1630,7 @@ NtUserGetGuiResources(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1489,6 +1639,7 @@ ZwUserGetGuiResources(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1499,6 +1650,7 @@ NtUserGetLayeredWindowAttributes(
     _Out_opt_ PULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1509,6 +1661,7 @@ ZwUserGetLayeredWindowAttributes(
     _Out_opt_ PULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1516,6 +1669,7 @@ NtUserGetListBoxInfo(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1523,6 +1677,7 @@ ZwUserGetListBoxInfo(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1533,6 +1688,7 @@ NtUserGetMenuBarInfo(
     _In_ PMENUBARINFO pmbi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1543,6 +1699,7 @@ ZwUserGetMenuBarInfo(
     _In_ PMENUBARINFO pmbi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1553,6 +1710,7 @@ NtUserGetMenuItemRect(
     _In_ PRECT MenuRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1563,6 +1721,7 @@ ZwUserGetMenuItemRect(
     _In_ PRECT MenuRect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1574,6 +1733,7 @@ NtUserGetMouseMovePointsEx(
     _In_ ULONG Resolution
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1585,6 +1745,7 @@ ZwUserGetMouseMovePointsEx(
     _In_ ULONG Resolution
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1596,6 +1757,7 @@ NtUserGetRawInputData(
     _In_ ULONG RawInputHeaderSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1607,6 +1769,7 @@ ZwUserGetRawInputData(
     _In_ ULONG RawInputHeaderSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1616,6 +1779,7 @@ NtUserGetRawInputDeviceList(
     _In_ ULONG RawInputDeviceSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1625,6 +1789,7 @@ ZwUserGetRawInputDeviceList(
     _In_ ULONG RawInputDeviceSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1634,6 +1799,7 @@ NtUserGetRegisteredRawInputDevices(
     _In_ ULONG RawInputDeviceSize
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -1650,6 +1816,7 @@ GetSendMessageReceiver(
     _In_ HANDLE ThreadId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -1658,6 +1825,7 @@ NtUserGetSystemMenu(
     _In_ BOOL Revert
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -1666,6 +1834,7 @@ ZwUserGetSystemMenu(
     _In_ BOOL Revert
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -1673,6 +1842,7 @@ NtUserGetThreadDesktop(
     _In_ ULONG ThreadId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -1680,6 +1850,7 @@ ZwUserGetThreadDesktop(
     _In_ ULONG ThreadId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1688,6 +1859,7 @@ NtUserGetTitleBarInfo(
     _In_ PTITLEBARINFO pti
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1696,6 +1868,7 @@ ZwUserGetTitleBarInfo(
     _In_ PTITLEBARINFO pti
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1707,6 +1880,7 @@ NtUserGetObjectInformation(
     _In_ PULONG LengthNeeded
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1718,6 +1892,7 @@ ZwUserGetObjectInformation(
     _In_ PULONG LengthNeeded
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -1725,6 +1900,7 @@ NtUserGetWindowDC(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDC
 NTAPI
@@ -1732,6 +1908,7 @@ ZwUserGetWindowDC(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1740,6 +1917,7 @@ NtUserGetWindowPlacement(
     _Inout_ PWINDOWPLACEMENT WindowPlacement
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1748,6 +1926,7 @@ ZwUserGetWindowPlacement(
     _Inout_ PWINDOWPLACEMENT WindowPlacement
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -1756,6 +1935,7 @@ GetWindowProcessHandle(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -1764,6 +1944,7 @@ NtUserGetWindowProcessHandle(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -1772,6 +1953,7 @@ ZwUserGetWindowProcessHandle(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1782,6 +1964,7 @@ NtUserHiliteMenuItem(
     _In_ ULONG Hilite
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1792,6 +1975,7 @@ ZwUserHiliteMenuItem(
     _In_ ULONG Hilite
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1801,6 +1985,7 @@ NtUserInvalidateRect(
     _In_ BOOL Erase
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1810,6 +1995,7 @@ ZwUserInvalidateRect(
     _In_ BOOL Erase
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1819,6 +2005,7 @@ NtUserInvalidateRgn(
     _In_ BOOL Erase
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1828,6 +2015,7 @@ ZwUserInvalidateRgn(
     _In_ BOOL Erase
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1836,6 +2024,7 @@ NtUserIsTouchWindow(
     _In_ PULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1844,6 +2033,7 @@ ZwUserIsTouchWindow(
     _In_ PULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1852,6 +2042,7 @@ NtUserKillTimer(
     _In_ ULONG_PTR IDEvent
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1860,6 +2051,7 @@ ZwUserKillTimer(
     _In_ ULONG_PTR IDEvent
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1867,6 +2059,7 @@ NtUserLockWorkStation(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1874,6 +2067,7 @@ ZwUserLockWorkStation(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1882,6 +2076,7 @@ NtUserLogicalToPhysicalPoint(
     _In_ LPPOINT lpPoint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1890,6 +2085,7 @@ ZwUserLogicalToPhysicalPoint(
     _In_ LPPOINT lpPoint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1899,6 +2095,7 @@ NtUserMenuItemFromPoint(
     _In_ POINT ptScreen
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -1908,6 +2105,7 @@ ZwUserMenuItemFromPoint(
     _In_ POINT ptScreen
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1920,6 +2118,7 @@ NtUserMoveWindow(
     _In_ BOOL Repaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1932,6 +2131,7 @@ ZwUserMoveWindow(
     _In_ BOOL Repaint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -1941,6 +2141,7 @@ NtUserOpenInputDesktop(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -1950,6 +2151,7 @@ ZwUserOpenInputDesktop(
     _In_ ACCESS_MASK DesiredAccess
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1958,6 +2160,7 @@ NtUserPhysicalToLogicalPoint(
     _In_ LPPOINT Point
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1966,6 +2169,7 @@ ZwUserPhysicalToLogicalPoint(
     _In_ LPPOINT Point
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1975,6 +2179,7 @@ NtUserPrintWindow(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -1984,6 +2189,7 @@ ZwUserPrintWindow(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -1994,6 +2200,7 @@ NtUserQueryInformationThread(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2004,6 +2211,7 @@ ZwUserQueryInformationThread(
     _Out_opt_ PULONG ReturnLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2014,6 +2222,7 @@ NtUserSetInformationThread(
     _In_ ULONG ThreadInformationLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2031,6 +2240,7 @@ NtUserQuerySendMessage(
     _Inout_ PMSG Message
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2039,6 +2249,7 @@ NtUserRaiseLowerShellWindow(
     _In_ BOOLEAN SetWithOptions
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2047,6 +2258,7 @@ ZwUserRaiseLowerShellWindow(
     _In_ BOOLEAN SetWithOptions
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2057,6 +2269,7 @@ NtUserRedrawWindow(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2067,6 +2280,7 @@ ZwUserRedrawWindow(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2075,6 +2289,7 @@ NtUserRealChildWindowFromPoint(
     _In_ POINT ptParentClientCoords
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2083,6 +2298,7 @@ ZwUserRealChildWindowFromPoint(
     _In_ POINT ptParentClientCoords
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2093,6 +2309,7 @@ NtUserRegisterHotKey(
     _In_ ULONG vk
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2103,6 +2320,7 @@ ZwUserRegisterHotKey(
     _In_ ULONG vk
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2112,6 +2330,7 @@ NtUserRemoveMenu(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2121,6 +2340,7 @@ ZwUserRemoveMenu(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2130,6 +2350,7 @@ NtUserSendInput(
     _In_ LONG Size
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2139,6 +2360,7 @@ ZwUserSendInput(
     _In_ LONG Size
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2146,6 +2368,7 @@ NtUserSetActiveWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2153,6 +2376,7 @@ ZwUserSetActiveWindow(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2160,6 +2384,7 @@ NtUserSetCapture(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2167,6 +2392,7 @@ ZwUserSetCapture(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2178,6 +2404,7 @@ NtUserSetTimer(
     _In_ ULONG ToleranceDelay
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2189,6 +2416,7 @@ ZwUserSetTimer(
     _In_ ULONG ToleranceDelay
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 USHORT
 NTAPI
@@ -2198,6 +2426,7 @@ NtUserSetClassWord(
     _In_ USHORT NewWord
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 USHORT
 NTAPI
@@ -2207,6 +2436,7 @@ ZwUserSetClassWord(
     _In_ USHORT NewWord
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2215,6 +2445,7 @@ NtUserSetCursorPos(
     _In_ LONG Y
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2223,6 +2454,7 @@ ZwUserSetCursorPos(
     _In_ LONG Y
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2230,6 +2462,7 @@ NtUserSetFocus(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2237,6 +2470,7 @@ ZwUserSetFocus(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2247,6 +2481,7 @@ NtUserSetLayeredWindowAttributes(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2257,6 +2492,7 @@ ZwUserSetLayeredWindowAttributes(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2270,6 +2506,7 @@ NtUserSetWindowPos(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2310,6 +2547,7 @@ NtUserBringWindowToTop(
 //
 #define WM_CLOAKED_STATE_CHANGED 0x0347
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2318,6 +2556,7 @@ NtUserRegisterCloakedNotification(
     _In_ BOOL Register
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2326,6 +2565,7 @@ ZwUserRegisterCloakedNotification(
     _In_ BOOL Register
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 USHORT
 NTAPI
@@ -2335,6 +2575,7 @@ NtUserSetWindowWord(
     _In_ USHORT NewWord
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 USHORT
 NTAPI
@@ -2344,6 +2585,7 @@ ZwUserSetWindowWord(
     _In_ USHORT NewWord
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2351,6 +2593,7 @@ NtUserSetForegroundWindowForApplication(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -2358,6 +2601,7 @@ ZwUserSetForegroundWindowForApplication(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2366,6 +2610,7 @@ NtUserShellForegroundBoostProcess(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2374,6 +2619,7 @@ ZwUserShellForegroundBoostProcess(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2381,6 +2627,7 @@ NtUserSetAdditionalForegroundBoostProcesses(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2389,6 +2636,7 @@ ZwUserSetAdditionalForegroundBoostProcesses(
     );
 
 // rev
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2398,6 +2646,7 @@ NtUserSetAdditionalPowerThrottlingProcess(
     _In_reads_(ProcessHandlesCount) PHANDLE ProcessHandles
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -2407,6 +2656,7 @@ ZwUserSetAdditionalPowerThrottlingProcess(
     _In_reads_(ProcessHandlesCount) PHANDLE ProcessHandles
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -2414,6 +2664,7 @@ NtUserShowCursor(
     _In_ BOOL Show
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LONG
 NTAPI
@@ -2421,6 +2672,7 @@ ZwUserShowCursor(
     _In_ BOOL Show
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2429,6 +2681,7 @@ NtUserShowWindow(
     _In_ LONG CmdShow
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2437,6 +2690,7 @@ ZwUserShowWindow(
     _In_ LONG CmdShow
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2445,6 +2699,7 @@ NtUserShowWindowAsync(
     _In_ LONG CmdShow
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2453,6 +2708,7 @@ ZwUserShowWindowAsync(
     _In_ LONG CmdShow
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2462,6 +2718,7 @@ NtUserShutdownBlockReasonQuery(
     _Inout_ PULONG BufferCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2471,6 +2728,7 @@ ZwUserShutdownBlockReasonQuery(
     _Inout_ PULONG BufferCount
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2478,6 +2736,7 @@ NtUserShutdownReasonDestroy(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2485,6 +2744,7 @@ ZwUserShutdownReasonDestroy(
     _In_ HWND WindowHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2492,6 +2752,7 @@ NtUserTrackMouseEvent(
     _In_ LPTRACKMOUSEEVENT EventTrack
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2499,6 +2760,7 @@ ZwUserTrackMouseEvent(
     _In_ LPTRACKMOUSEEVENT EventTrack
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2511,6 +2773,7 @@ NtUserTrackPopupMenuEx(
     _In_ LPTPMPARAMS lptpm
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2523,6 +2786,7 @@ ZwUserTrackPopupMenuEx(
     _In_ LPTPMPARAMS lptpm
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2530,6 +2794,7 @@ NtUserUnhookWinEvent(
     _In_ HWINEVENTHOOK WinEventHookHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2537,6 +2802,7 @@ ZwUserUnhookWinEvent(
     _In_ HWINEVENTHOOK WinEventHookHandle
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2545,6 +2811,7 @@ NtUserUnregisterHotKey(
     _In_ LONG Id
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2553,6 +2820,7 @@ ZwUserUnregisterHotKey(
     _In_ LONG Id
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2562,6 +2830,7 @@ NtUserUserHandleGrantAccess(
     _In_ BOOL Grant
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2571,6 +2840,7 @@ ZwUserUserHandleGrantAccess(
     _In_ BOOL Grant
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2579,6 +2849,7 @@ NtUserValidateRect(
     _In_ const RECT* Rect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 BOOL
 NTAPI
@@ -2587,6 +2858,7 @@ ZwUserValidateRect(
     _In_ const RECT* Rect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2594,6 +2866,7 @@ NtUserWindowFromDC(
     _In_ HDC Hdc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2601,6 +2874,7 @@ ZwUserWindowFromDC(
     _In_ HDC Hdc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2608,6 +2882,7 @@ NtUserWindowFromPhysicalPoint(
     _In_ POINT Point
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2615,6 +2890,7 @@ ZwUserWindowFromPhysicalPoint(
     _In_ POINT Point
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2622,6 +2898,7 @@ NtUserWindowFromPoint(
     _In_ POINT Point
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -2773,6 +3050,7 @@ ZwUserWindowFromPoint(
 // Windows 11 uses the newly introduced syscalls for each function instead.
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2780,6 +3058,7 @@ NtUserCallNoParam(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2788,6 +3067,7 @@ ZwUserCallNoParam(
     );
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2796,6 +3076,7 @@ NtUserCallOneParam(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2805,6 +3086,7 @@ ZwUserCallOneParam(
     );
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2813,6 +3095,7 @@ NtUserCallHwnd(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2823,6 +3106,7 @@ ZwUserCallHwnd(
 
 // private // before WIN11
 #if (PHNT_VERSION >= PHNT_WINDOWS_10_RS5)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2831,6 +3115,7 @@ NtUserCallHwndSafe(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2841,6 +3126,7 @@ ZwUserCallHwndSafe(
 #endif
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2849,6 +3135,7 @@ NtUserCallHwndOpt(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2858,6 +3145,7 @@ ZwUserCallHwndOpt(
     );
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2867,6 +3155,7 @@ NtUserCallHwndParam(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2877,6 +3166,7 @@ ZwUserCallHwndParam(
     );
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2885,6 +3175,7 @@ NtUserCallHwndLock(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2895,6 +3186,7 @@ ZwUserCallHwndLock(
 
 // private // before WIN11
 #if (PHNT_VERSION >= PHNT_WINDOWS_10_RS5)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2903,6 +3195,7 @@ NtUserCallHwndLockSafe(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2913,6 +3206,7 @@ ZwUserCallHwndLockSafe(
 #endif
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2922,6 +3216,7 @@ NtUserCallHwndParamLock(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2933,6 +3228,7 @@ ZwUserCallHwndParamLock(
 
 // private // before WIN11
 #if (PHNT_VERSION >= PHNT_WINDOWS_10_RS5)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2942,6 +3238,7 @@ NtUserCallHwndParamLockSafe(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2953,6 +3250,7 @@ ZwUserCallHwndParamLockSafe(
 #endif
 
 // private // before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2962,6 +3260,7 @@ NtUserCallTwoParam(
     _In_ ULONG xpfnProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -2976,6 +3275,7 @@ ZwUserCallTwoParam(
 // private // NtUserCallNoParam(SFI_CREATEMENU) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -2983,6 +3283,7 @@ NtUserCreateMenu(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -2993,6 +3294,7 @@ ZwUserCreateMenu(
 // private // NtUserCallNoParam(SFI_CREATEPOPUPMENU) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -3000,6 +3302,7 @@ NtUserCreatePopupMenu(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HMENU
 NTAPI
@@ -3009,6 +3312,7 @@ ZwUserCreatePopupMenu(
 
 // private // NtUserCallNoParam(SFI_ALLOWFOREGROUNDACTIVATION) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3016,6 +3320,7 @@ NtUserAllowForegroundActivation(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3025,6 +3330,7 @@ ZwUserAllowForegroundActivation(
 
 // rev // NtUserCallNoParam(SFI_CANCELQUEUEEVENTCOMPLETIONPACKET) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3032,6 +3338,7 @@ NtUserCancelQueueEventCompletionPacket(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3041,6 +3348,7 @@ ZwUserCancelQueueEventCompletionPacket(
 
 // private // NtUserCallNoParam(SFI_CLEARWAKEMASK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3048,6 +3356,7 @@ NtUserClearWakeMask(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3057,6 +3366,7 @@ ZwUserClearWakeMask(
 
 // private // NtUserCallNoParam(SFI_CREATESYSTEMTHREADS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3064,6 +3374,7 @@ NtUserCreateSystemThreads(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3073,6 +3384,7 @@ ZwUserCreateSystemThreads(
 
 // private // NtUserCallNoParam(SFI_DESTROYCARET) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3080,6 +3392,7 @@ NtUserDestroyCaret(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3089,6 +3402,7 @@ ZwUserDestroyCaret(
 
 // private // NtUserCallNoParam(SFI_DISABLEPROCESSWINDOWSGHOSTING) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3096,6 +3410,7 @@ NtUserDisableProcessWindowsGhosting(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3105,6 +3420,7 @@ ZwUserDisableProcessWindowsGhosting(
 
 // rev // NtUserCallNoParam(SFI_DRAINTHREADCOREMESSAGINGCOMPLETIONS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3112,6 +3428,7 @@ NtUserDrainThreadCoreMessagingCompletions(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3122,6 +3439,7 @@ ZwUserDrainThreadCoreMessagingCompletions(
 // private // NtUserCallNoParam(SFI_GETDEVICECHANGEINFO) before WIN11
 _Success_(return != 0)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3129,6 +3447,7 @@ NtUserGetDeviceChangeInfo(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3139,6 +3458,7 @@ ZwUserGetDeviceChangeInfo(
 // private // NtUserCallNoParam(SFI_GETIMESHOWSTATUS) before WIN11
 _Success_(return != 0)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3146,6 +3466,7 @@ NtUserGetIMEShowStatus(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3156,6 +3477,7 @@ ZwUserGetIMEShowStatus(
 // private // NtUserCallNoParam(SFI_GETINPUTDESKTOP) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -3163,6 +3485,7 @@ NtUserGetInputDesktop(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDESK
 NTAPI
@@ -3172,6 +3495,7 @@ ZwUserGetInputDesktop(
 
 // private // NtUserCallNoParam(SFI_GETMESSAGEPOS) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3179,6 +3503,7 @@ NtUserGetMessagePos(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3188,6 +3513,7 @@ ZwUserGetMessagePos(
 
 // rev // NtUserCallNoParam(SFI_GETQUEUEIOCP) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3195,6 +3521,7 @@ NtUserGetQueueIocp(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3204,6 +3531,7 @@ ZwUserGetQueueIocp(
 
 // private // NtUserCallNoParam(SFI_GETUNPREDICTEDMESSAGEPOS) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3211,6 +3539,7 @@ NtUserGetUnpredictedMessagePos(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3220,6 +3549,7 @@ ZwUserGetUnpredictedMessagePos(
 
 // private // NtUserCallNoParam(SFI_HANDLESYSTEMTHREADCREATIONFAILURE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3227,6 +3557,7 @@ NtUserHandleSystemThreadCreationFailure(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3235,6 +3566,7 @@ ZwUserHandleSystemThreadCreationFailure(
     );
 
 // private // NtUserCallNoParam(SFI_HIDECURSORNOCAPTURE) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3242,6 +3574,7 @@ NtUserHideCursorNoCapture(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3251,6 +3584,7 @@ ZwUserHideCursorNoCapture(
 
 // private // NtUserCallNoParam(SFI_ISQUEUEATTACHED) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3258,6 +3592,7 @@ NtUserIsQueueAttached(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3267,6 +3602,7 @@ ZwUserIsQueueAttached(
 
 // private // NtUserCallNoParam(SFI_LOADCURSORSANDICONS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3274,6 +3610,7 @@ NtUserLoadCursorsAndIcons(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3283,6 +3620,7 @@ ZwUserLoadCursorsAndIcons(
 
 // private // NtUserCallNoParam(SFI_LOADUSERAPIHOOK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3290,6 +3628,7 @@ NtUserLoadUserApiHook(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3299,6 +3638,7 @@ ZwUserLoadUserApiHook(
 
 // private // NtUserCallNoParam(SFI_PREPAREFORLOGOFF) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3306,6 +3646,7 @@ NtUserPrepareForLogoff(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3315,6 +3656,7 @@ ZwUserPrepareForLogoff(
 
 // rev // NtUserCallNoParam(SFI_REASSOCIATEQUEUEEVENTCOMPLETIONPACKET) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3322,6 +3664,7 @@ NtUserReassociateQueueEventCompletionPacket(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3331,6 +3674,7 @@ ZwUserReassociateQueueEventCompletionPacket(
 
 // private // NtUserCallNoParam(SFI_RELEASECAPTURE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3338,6 +3682,7 @@ NtUserReleaseCapture(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3347,6 +3692,7 @@ ZwUserReleaseCapture(
 
 // rev // NtUserCallNoParam(SFI_REMOVEQUEUECOMPLETION) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3354,6 +3700,7 @@ NtUserRemoveQueueCompletion(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3363,6 +3710,7 @@ ZwUserRemoveQueueCompletion(
 
 // private // NtUserCallNoParam(SFI_RESETDBLCLK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3370,6 +3718,7 @@ NtUserResetDblClk(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3379,6 +3728,7 @@ ZwUserResetDblClk(
 
 // private // NtUserCallNoParam(SFI_ZAPACTIVEANDFOCUS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3386,6 +3736,7 @@ NtUserZapActiveAndFocus(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3394,6 +3745,7 @@ ZwUserZapActiveAndFocus(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTECONSOLESHADOWSTOP) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3401,6 +3753,7 @@ NtUserRemoteConsoleShadowStop(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3409,6 +3762,7 @@ ZwUserRemoteConsoleShadowStop(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTEDISCONNECT) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3416,6 +3770,7 @@ NtUserRemoteDisconnect(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3424,6 +3779,7 @@ ZwUserRemoteDisconnect(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTESHADOWSETUP) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3431,6 +3787,7 @@ NtUserRemoteShadowSetup(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3439,6 +3796,7 @@ ZwUserRemoteShadowSetup(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTESHADOWSTOP) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3446,6 +3804,7 @@ NtUserRemoteShadowStop(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3454,6 +3813,7 @@ ZwUserRemoteShadowStop(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTEPASSTHRUENABLE) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3461,6 +3821,7 @@ NtUserRemotePassthruEnable(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3469,6 +3830,7 @@ ZwUserRemotePassthruEnable(
     );
 
 // private // NtUserCallNoParam(SFI_REMOTEPASSTHRUDISABLE) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3476,6 +3838,7 @@ NtUserRemotePassthruDisable(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3492,6 +3855,7 @@ ZwUserRemotePassthruDisable(
 
 // private // NtUserCallNoParam(SFI_REMOTECONNECTSTATE) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3499,6 +3863,7 @@ NtUserRemoteConnectState(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3508,6 +3873,7 @@ ZwUserRemoteConnectState(
 
 // private // NtUserCallNoParam(SFI_UPDATEPERUSERIMMENABLING) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3515,6 +3881,7 @@ NtUserUpdatePerUserImmEnabling(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3524,6 +3891,7 @@ ZwUserUpdatePerUserImmEnabling(
 
 // private // NtUserCallNoParam(SFI_USERPOWERCALLOUTWORKER) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3531,6 +3899,7 @@ NtUserUserPowerCalloutWorker(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3539,6 +3908,7 @@ ZwUserUserPowerCalloutWorker(
     );
 
 // private // NtUserCallNoParam(SFI_WAKERITFORSHUTDOWN) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3546,6 +3916,7 @@ NtUserWakeRITForShutdown(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -3555,6 +3926,7 @@ ZwUserWakeRITForShutdown(
 
 // private // NtUserCallNoParam(SFI_DOINITMESSAGEPUMPHOOK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3562,6 +3934,7 @@ NtUserDoInitMessagePumpHook(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3571,6 +3944,7 @@ ZwUserDoInitMessagePumpHook(
 
 // private // NtUserCallNoParam(SFI_DOUNINITMESSAGEPUMPHOOK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3578,6 +3952,7 @@ NtUserDoUninitMessagePumpHook(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3587,6 +3962,7 @@ ZwUserDoUninitMessagePumpHook(
 
 // rev // NtUserCallNoParam(SFI_ENABLEMOUSEINPOINTERFORTHREAD) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3594,6 +3970,7 @@ NtUserEnableMouseInPointerForThread(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3602,6 +3979,7 @@ ZwUserEnableMouseInPointerForThread(
     );
 
 // private // NtUserCallNoParam(SFI_DEFERREDDESKTOPROTATION) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3609,6 +3987,7 @@ NtUserDeferredDesktopRotation(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -3618,6 +3997,7 @@ ZwUserDeferredDesktopRotation(
 
 // private // NtUserCallNoParam(SFI_ENABLEPERMONITORMENUSCALING) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3625,6 +4005,7 @@ NtUserEnablePerMonitorMenuScaling(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3635,6 +4016,7 @@ ZwUserEnablePerMonitorMenuScaling(
 // private // NtUserCallOneParam(SFI_BEGINDEFERWINDOWPOS) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HDWP
 NTAPI
@@ -3642,6 +4024,7 @@ NtUserBeginDeferWindowPos(
     _In_ ULONG NumWindowsHint
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HDWP
 NTAPI
@@ -3652,6 +4035,7 @@ ZwUserBeginDeferWindowPos(
 // private // NtUserCallOneParam(SFI_GETSENDMESSAGERECEIVER) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -3659,6 +4043,7 @@ NtUserGetSendMessageReceiver(
     _In_ ULONG ThreadIdSender
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -3668,6 +4053,7 @@ ZwUserGetSendMessageReceiver(
 
 // private // NtUserCallOneParam(SFI_ALLOWSETFOREGROUNDWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3675,6 +4061,7 @@ NtUserAllowSetForegroundWindow(
     _In_ ULONG ProcessId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3684,6 +4071,7 @@ ZwUserAllowSetForegroundWindow(
 
 // private // NtUserCallOneParam(SFI_CSDDEUNINITIALIZE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3691,6 +4079,7 @@ NtUserCsDdeUninitialize(
     _In_ HANDLE hInst
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3701,6 +4090,7 @@ ZwUserCsDdeUninitialize(
 // private // NtUserCallOneParam(SFI_ENUMCLIPBOARDFORMATS) before WIN11
 _Success_(return != 0)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3708,6 +4098,7 @@ NtUserEnumClipboardFormats(
     _In_ ULONG Format
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3718,6 +4109,7 @@ ZwUserEnumClipboardFormats(
 // private // NtUserCallOneParam(SFI_GETINPUTEVENT) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -3725,6 +4117,7 @@ NtUserGetInputEvent(
     _In_ ULONG WakeMask // QS_* WinUser.h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
@@ -3739,6 +4132,7 @@ ZwUserGetInputEvent(
 
 // private // NtUserCallOneParam(SFI_GETKEYBOARDTYPE) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3746,6 +4140,7 @@ NtUserGetKeyboardType(
     _In_ ULONG TypeFlag // KEYBOARD_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3755,6 +4150,7 @@ ZwUserGetKeyboardType(
 
 // private // NtUserCallOneParam(SFI_GETPROCESSDEFAULTLAYOUT) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3762,6 +4158,7 @@ NtUserGetProcessDefaultLayout(
     _Out_ PULONG DefaultLayout
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3782,6 +4179,7 @@ typedef struct tagWSINFO
 
 // private // NtUserCallOneParam(SFI_GETWINSTATIONINFO) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3789,6 +4187,7 @@ NtUserGetWinStationInfo(
     _Out_ PWSINFO WsInfo
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3798,6 +4197,7 @@ ZwUserGetWinStationInfo(
 
 // private // NtUserCallOneParam(SFI_LOCKSETFOREGROUNDWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3805,6 +4205,7 @@ NtUserLockSetForegroundWindow(
     _In_ ULONG LockCode // LSFW_* WinUser.h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3814,6 +4215,7 @@ ZwUserLockSetForegroundWindow(
 
 // private // NtUserCallOneParam(SFI_LW_LOADFONTS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3821,6 +4223,7 @@ NtUserLW_LoadFonts(
     _In_ LOGICAL Remote
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3832,6 +4235,7 @@ ZwUserLW_LoadFonts(
 _Success_(return != NULL)
 _Must_inspect_result_
 _Ret_maybenull_
+_Kernel_entry_
 NTSYSCALLAPI
 PVOID
 NTAPI
@@ -3839,6 +4243,7 @@ NtUserMapDesktopObject(
     _In_ HANDLE h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 PVOID
 NTAPI
@@ -3848,6 +4253,7 @@ ZwUserMapDesktopObject(
 
 // private // NtUserCallOneParam(SFI_MESSAGEBEEP) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3855,6 +4261,7 @@ NtUserMessageBeep(
     _In_ ULONG Type // MB_* (MB_ICONMASK) WinUser.h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3880,6 +4287,7 @@ ZwUserMessageBeep(
 
 // private // NtUserCallOneParam(SFI_PLAYEVENTSOUND) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3887,6 +4295,7 @@ NtUserPlayEventSound(
     _In_ ULONG idSound // USER_SOUND_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3896,6 +4305,7 @@ ZwUserPlayEventSound(
 
 // private // NtUserCallOneParam(SFI_POSTQUITMESSAGE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3903,6 +4313,7 @@ NtUserPostQuitMessage(
     _In_ LONG ExitCode
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3911,6 +4322,7 @@ ZwUserPostQuitMessage(
     );
 
 // private // NtUserCallOneParam(SFI_REALIZEPALETTE) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3918,6 +4330,7 @@ NtUserRealizePalette(
     _In_ HDC hdc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -3939,6 +4352,7 @@ ZwUserRealizePalette(
 
 // private // NtUserCallOneParam(SFI_REGISTERLPK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3946,6 +4360,7 @@ NtUserRegisterLPK(
     _In_ ULONG LpkEntryPoints // LPK_FLAG_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3959,6 +4374,7 @@ ZwUserRegisterLPK(
 
 // private // NtUserCallOneParam(SFI_REGISTERSYSTEMTHREAD) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3966,6 +4382,7 @@ NtUserRegisterSystemThread(
     _In_ ULONG Flags // RST_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -3974,52 +4391,59 @@ ZwUserRegisterSystemThread(
     );
 
 // private // NtUserCallOneParam(SFI_REMOTERECONNECT) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtUserRemoteReconnect(
-    _In_ struct _DOCONNECTDATA* DoConnectData
+    _In_ PDOCONNECTDATA DoConnectData
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 ZwUserRemoteReconnect(
-    _In_ struct _DOCONNECTDATA* DoConnectData
+    _In_ PDOCONNECTDATA DoConnectData
     );
 
 // private // NtUserCallOneParam(SFI_REMOTETHINWIRESTATS) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtUserRemoteThinwireStats(
-    _Out_ struct CACHE_STATISTICS* Stats
+    _Out_ PCACHESTATISTICS Stats
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 ZwUserRemoteThinwireStats(
-    _Out_ struct CACHE_STATISTICS* Stats
+    _Out_ PCACHESTATISTICS Stats
     );
 
 // private // NtUserCallOneParam(SFI_REMOTENOTIFY) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtUserRemoteNotify(
-    _In_ struct _DONOTIFYDATA* DoNotifyData
+    _In_ PDONOTIFYDATA DoNotifyData
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 ZwUserRemoteNotify(
-    _In_ struct _DONOTIFYDATA* DoNotifyData
+    _In_ PDONOTIFYDATA DoNotifyData
     );
 
 // private // NtUserCallOneParam(SFI_REPLYMESSAGE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4027,6 +4451,7 @@ NtUserReplyMessage(
     _In_ LRESULT Result
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4036,6 +4461,7 @@ ZwUserReplyMessage(
 
 // private // NtUserCallOneParam(SFI_SETCARETBLINKTIME) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4043,6 +4469,7 @@ NtUserSetCaretBlinkTime(
     _In_ ULONG Milliseconds
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4052,6 +4479,7 @@ ZwUserSetCaretBlinkTime(
 
 // private // NtUserCallOneParam(SFI_SETDOUBLECLICKTIME) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4059,6 +4487,7 @@ NtUserSetDoubleClickTime(
     _In_ ULONG Milliseconds
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4067,6 +4496,7 @@ ZwUserSetDoubleClickTime(
     );
 
 // private // NtUserCallOneParam(SFI_SETMESSAGEEXTRAINFO) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 LPARAM
 NTAPI
@@ -4074,6 +4504,7 @@ NtUserSetMessageExtraInfo(
     _In_ LPARAM Param
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LPARAM
 NTAPI
@@ -4083,6 +4514,7 @@ ZwUserSetMessageExtraInfo(
 
 // private // NtUserCallOneParam(SFI_SETPROCESSDEFAULTLAYOUT) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4090,6 +4522,7 @@ NtUserSetProcessDefaultLayout(
     _In_ ULONG DefaultLayout // LAYOUT_* wingdi.h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4099,6 +4532,7 @@ ZwUserSetProcessDefaultLayout(
 
 // private // NtUserCallOneParam(SFI_SETWATERMARKSTRINGS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4106,6 +4540,7 @@ NtUserSetWatermarkStrings(
     _In_ PCUNICODE_STRING StringTable
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4115,6 +4550,7 @@ ZwUserSetWatermarkStrings(
 
 // private // NtUserCallOneParam(SFI_SHOWSTARTGLASS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4122,6 +4558,7 @@ NtUserShowStartGlass(
     _In_ ULONG Timeout
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4130,6 +4567,7 @@ ZwUserShowStartGlass(
     );
 
 // private // NtUserCallOneParam(SFI_SWAPMOUSEBUTTON) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4137,6 +4575,7 @@ NtUserSwapMouseButton(
     _In_ LOGICAL SwapButtons
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4146,6 +4585,7 @@ ZwUserSwapMouseButton(
 
 // private // NtUserCallOneParam(SFI_WOWMODULEUNLOAD) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4153,6 +4593,7 @@ NtUserWOWModuleUnload(
     _In_ HANDLE Module
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4161,6 +4602,7 @@ ZwUserWOWModuleUnload(
     );
 
 // private // NtUserCallOneParam(SFI_DWMLOCKSCREENUPDATES) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4168,6 +4610,7 @@ NtUserDwmLockScreenUpdates(
     _In_ LOGICAL LockUpdates
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4177,6 +4620,7 @@ ZwUserDwmLockScreenUpdates(
 
 // private // NtUserCallOneParam(SFI_ENABLESESSIONFORMMCSS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4184,6 +4628,7 @@ NtUserEnableSessionForMMCSS(
     _In_ LOGICAL Enable
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4192,6 +4637,7 @@ ZwUserEnableSessionForMMCSS(
     );
 
 // private // NtUserCallOneParam(SFI_SETWAITFORQUEUEATTACH) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4199,6 +4645,7 @@ NtUserSetWaitForQueueAttach(
     _In_ LOGICAL Waiting
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4208,6 +4655,7 @@ ZwUserSetWaitForQueueAttach(
 
 // private // NtUserCallOneParam(SFI_THREADMESSAGEQUEUEATTACHED) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4215,6 +4663,7 @@ NtUserThreadMessageQueueAttached(
     _In_opt_ ULONG ThreadId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4224,6 +4673,7 @@ ZwUserThreadMessageQueueAttached(
 
 // private // NtUserCallOneParam(SFI_ENSUREDPIDEPSYSMETCACHEFORPLATEAU) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4231,6 +4681,7 @@ NtUserEnsureDpiDepSysMetCacheForPlateau(
     _In_ ULONG Dpi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4239,6 +4690,7 @@ ZwUserEnsureDpiDepSysMetCacheForPlateau(
     );
 
 // private // NtUserCallOneParam(SFI_FORCEENABLENUMPADTRANSLATION) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 UINT_PTR
 NTAPI
@@ -4246,6 +4698,7 @@ NtUserForceEnableNumpadTranslation(
     _In_ LOGICAL ForceNumlockTranslation
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 UINT_PTR
 NTAPI
@@ -4255,6 +4708,7 @@ ZwUserForceEnableNumpadTranslation(
 
 // rev // NtUserCallOneParam(SFI_SETTSFEVENTSTATE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4262,6 +4716,7 @@ NtUserSetTSFEventState(
     _In_ ULONG StateFlags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4271,6 +4726,7 @@ ZwUserSetTSFEventState(
 
 // rev // NtUserCallOneParam(SFI_SETSHELLCHANGENOTIFYHWND) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4278,6 +4734,7 @@ NtUserSetShellChangeNotifyHWND(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4287,6 +4744,7 @@ ZwUserSetShellChangeNotifyHWND(
 
 // private // NtUserCallHwnd(SFI_DEREGISTERSHELLHOOKWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4294,6 +4752,7 @@ NtUserDeregisterShellHookWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4303,6 +4762,7 @@ ZwUserDeregisterShellHookWindow(
 
 // rev // NtUserCallHwnd(SFI_DWP_GETENABLEDPOPUPOFFSET) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4310,6 +4770,7 @@ NtUserDWP_GetEnabledPopupOffset(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4320,6 +4781,7 @@ ZwUserDWP_GetEnabledPopupOffset(
 // private // NtUserCallHwnd(SFI_GETMODERNAPPWINDOW) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -4327,6 +4789,7 @@ NtUserGetModernAppWindow(
     _In_ HWND ShellFrame
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HWND
 NTAPI
@@ -4336,6 +4799,7 @@ ZwUserGetModernAppWindow(
 
 // private // NtUserCallHwnd(SFI_GETWINDOWCONTEXTHELPID) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -4343,6 +4807,7 @@ NtUserGetWindowContextHelpId(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -4352,6 +4817,7 @@ ZwUserGetWindowContextHelpId(
 
 // private // NtUserCallHwnd(SFI_REGISTERSHELLHOOKWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4359,6 +4825,7 @@ NtUserRegisterShellHookWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4368,6 +4835,7 @@ ZwUserRegisterShellHookWindow(
 
 // private // NtUserCallHwnd(SFI_SETMSGBOX) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4375,6 +4843,7 @@ NtUserSetMsgBox(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4383,6 +4852,7 @@ ZwUserSetMsgBox(
     );
 
 // rev // NtUserCallHwnd[Safe](SFI_INITTHREADCOREMESSAGINGIOCP) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4390,6 +4860,7 @@ NtUserInitThreadCoreMessagingIocp(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4399,6 +4870,7 @@ ZwUserInitThreadCoreMessagingIocp(
 
 // private // NtUserCallHwnd[Safe](SFI_SCHEDULEDISPATCHNOTIFICATION) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4406,6 +4878,7 @@ NtUserScheduleDispatchNotification(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4415,6 +4888,7 @@ ZwUserScheduleDispatchNotification(
 
 // private // NtUserCallHwndOpt(SFI_SETPROGMANWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4422,6 +4896,7 @@ NtUserSetProgmanWindow(
     _In_opt_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4431,6 +4906,7 @@ ZwUserSetProgmanWindow(
 
 // private // NtUserCallHwndOpt(SFI_SETTASKMANWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4438,6 +4914,7 @@ NtUserSetTaskmanWindow(
     _In_opt_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4448,6 +4925,7 @@ ZwUserSetTaskmanWindow(
 // private // NtUserCallHwndParam(SFI_GETCLASSICOCUR) before WIN11
 _Success_(return != NULL)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 HCURSOR
 NTAPI
@@ -4456,6 +4934,7 @@ NtUserGetClassIcoCur(
     _In_ ULONG Index
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 HCURSOR
 NTAPI
@@ -4493,6 +4972,7 @@ ZwUserGetClassIcoCur(
 
 // private // NtUserCallHwndParam(SFI_CLEARWINDOWSTATE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4501,6 +4981,7 @@ NtUserClearWindowState(
     _In_ ULONG Flag // WF*, WEF*, BF*, DF*, CBF*, EF*, SF*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4511,6 +4992,7 @@ ZwUserClearWindowState(
 
 // private // NtUserCallHwndParam(SFI_SETWINDOWSTATE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4519,6 +5001,7 @@ NtUserSetWindowState(
     _In_ ULONG Flag // WF*, WEF*, BF*, DF*, CBF*, EF*, SF*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4529,6 +5012,7 @@ ZwUserSetWindowState(
 
 // private // NtUserCallHwndParam(SFI_KILLSYSTEMTIMER) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4537,6 +5021,7 @@ NtUserKillSystemTimer(
     _In_ UINT_PTR IDEvent
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4547,6 +5032,7 @@ ZwUserKillSystemTimer(
 
 // private // NtUserCallHwndParam(SFI_NOTIFYOVERLAYWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4555,6 +5041,7 @@ NtUserNotifyOverlayWindow(
     _In_ LOGICAL Enable
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4565,6 +5052,7 @@ ZwUserNotifyOverlayWindow(
 
 // private // NtUserCallHwndParam(SFI_SETDIALOGPOINTER) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4573,6 +5061,7 @@ NtUserSetDialogPointer(
     _In_ ULONG_PTR Ptr
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4591,6 +5080,7 @@ ZwUserSetDialogPointer(
 
 // private // NtUserCallHwndParam(SFI_SETVISIBLE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4599,6 +5089,7 @@ NtUserSetVisible(
     _In_ ULONG Flags // SV_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4609,6 +5100,7 @@ ZwUserSetVisible(
 
 // private // NtUserCallHwndParam(SFI_SETWINDOWCONTEXTHELPID) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4617,6 +5109,7 @@ NtUserSetWindowContextHelpId(
     _In_ ULONG ContextId
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4627,6 +5120,7 @@ ZwUserSetWindowContextHelpId(
 
 // private // NtUserCallHwndParam(SFI_REGISTERWINDOWARRANGEMENTCALLOUT) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4635,6 +5129,7 @@ NtUserRegisterWindowArrangementCallout(
     _In_ LOGICAL Register
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4645,6 +5140,7 @@ ZwUserRegisterWindowArrangementCallout(
 
 // private // NtUserCallHwndParam(SFI_ENABLEMODERNAPPWINDOWKEYBOARDINTERCEPT) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4653,6 +5149,7 @@ NtUserEnableModernAppWindowKeyboardIntercept(
     _In_ LOGICAL Enable
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4663,6 +5160,7 @@ ZwUserEnableModernAppWindowKeyboardIntercept(
 
 // private // NtUserCallHwndLock(SFI_ARRANGEICONICWINDOWS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -4670,6 +5168,7 @@ NtUserArrangeIconicWindows(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
@@ -4679,6 +5178,7 @@ ZwUserArrangeIconicWindows(
 
 // private // NtUserCallHwndLock(SFI_DRAWMENUBAR) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4686,6 +5186,7 @@ NtUserDrawMenuBar(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4695,6 +5196,7 @@ ZwUserDrawMenuBar(
 
 // private // NtUserCallHwndLock[Safe](SFI_CHECKIMESHOWSTATUSINTHREAD) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4702,6 +5204,7 @@ NtUserCheckImeShowStatusInThread(
     _In_ HWND Ime
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4712,6 +5215,7 @@ ZwUserCheckImeShowStatusInThread(
 // rev // NtUserCallHwndLock(SFI_GETSYSMENUOFFSET) before WIN11
 _Success_(return != 0)
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4719,6 +5223,7 @@ NtUserGetSysMenuOffset(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4728,6 +5233,7 @@ ZwUserGetSysMenuOffset(
 
 // private // NtUserCallHwndLock(SFI_REDRAWFRAME) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4735,6 +5241,7 @@ NtUserRedrawFrame(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4744,6 +5251,7 @@ ZwUserRedrawFrame(
 
 // private // NtUserCallHwndLock(SFI_REDRAWFRAMEANDHOOK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4751,6 +5259,7 @@ NtUserRedrawFrameAndHook(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4760,6 +5269,7 @@ ZwUserRedrawFrameAndHook(
 
 // private // NtUserCallHwndLock(SFI_SETDIALOGSYSTEMMENU) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4767,6 +5277,7 @@ NtUserSetDialogSystemMenu(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4776,6 +5287,7 @@ ZwUserSetDialogSystemMenu(
 
 // private // NtUserCallHwndLock(SFI_SETFOREGROUNDWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4783,6 +5295,7 @@ NtUserSetForegroundWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4792,6 +5305,7 @@ ZwUserSetForegroundWindow(
 
 // private // NtUserCallHwndLock(SFI_SETSYSMENU) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4799,6 +5313,7 @@ NtUserSetSysMenu(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4808,6 +5323,7 @@ ZwUserSetSysMenu(
 
 // private // NtUserCallHwndLock(SFI_UPDATECLIENTRECT) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4815,6 +5331,7 @@ NtUserUpdateClientRect(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4824,6 +5341,7 @@ ZwUserUpdateClientRect(
 
 // private // NtUserCallHwndLock(SFI_UPDATEWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4831,6 +5349,7 @@ NtUserUpdateWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4840,6 +5359,7 @@ ZwUserUpdateWindow(
 
 // private // NtUserCallHwndLock(SFI_SETCANCELROTATIONDELAYHINTWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4847,6 +5367,7 @@ NtUserSetCancelRotationDelayHintWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4856,6 +5377,7 @@ ZwUserSetCancelRotationDelayHintWindow(
 
 // private // NtUserCallHwndLock(SFI_GETWINDOWTRACKINFOASYNC) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4863,6 +5385,7 @@ NtUserGetWindowTrackInfoAsync(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -4872,6 +5395,7 @@ ZwUserGetWindowTrackInfoAsync(
 
 // private // NtUserCallHwndParamLock(SFI_BROADCASTIMESHOWSTATUSCHANGE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4880,6 +5404,7 @@ NtUserBroadcastImeShowStatusChange(
     _In_ LOGICAL Show
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4890,6 +5415,7 @@ ZwUserBroadcastImeShowStatusChange(
 
 // private // NtUserCallHwndParamLock(SFI_SETMODERNAPPWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4898,6 +5424,7 @@ NtUserSetModernAppWindow(
     _In_ HWND App
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4922,6 +5449,7 @@ ZwUserSetModernAppWindow(
 
 // private // NtUserCallHwndParamLock(SFI_REDRAWTITLE) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4930,6 +5458,7 @@ NtUserRedrawTitle(
     _In_ ULONG Flags // DC_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4940,6 +5469,7 @@ ZwUserRedrawTitle(
 
 // private // NtUserCallHwndParamLock(SFI_SHOWOWNEDPOPUPS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4948,6 +5478,7 @@ NtUserShowOwnedPopups(
     _In_ LOGICAL Show
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4958,6 +5489,7 @@ ZwUserShowOwnedPopups(
 
 // private // NtUserCallHwndParamLock(SFI_SWITCHTOTHISWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4966,6 +5498,7 @@ NtUserSwitchToThisWindow(
     _In_ LOGICAL AltTab
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4976,6 +5509,7 @@ ZwUserSwitchToThisWindow(
 
 // private // NtUserCallHwndParamLock(SFI_UPDATEWINDOWS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4984,6 +5518,7 @@ NtUserUpdateWindows(
     _In_ HRGN hrgn
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -4994,6 +5529,7 @@ ZwUserUpdateWindows(
 
 // private // NtUserCallHwndParamLock(SFI_VALIDATERGN) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5002,6 +5538,7 @@ NtUserValidateRgn(
     _In_ HRGN hrgn
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5012,6 +5549,7 @@ ZwUserValidateRgn(
 
 // private // NtUserCallHwndParamLock[Safe](SFI_ENABLEWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5020,6 +5558,7 @@ NtUserEnableWindow(
     _In_ LOGICAL Enable
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5030,6 +5569,7 @@ ZwUserEnableWindow(
 
 // private // NtUserCallTwoParam(SFI_CHANGEWINDOWMESSAGEFILTER) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5038,6 +5578,7 @@ NtUserChangeWindowMessageFilter(
     _In_ ULONG Flag // MSGFLT_* WinUser.h
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5052,6 +5593,7 @@ ZwUserChangeWindowMessageFilter(
 
 // private // NtUserCallTwoParam(SFI_GETCURSORPOS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5060,6 +5602,7 @@ NtUserGetCursorPos(
     _In_ ULONG CursorPosType // CURSOR_POS_TYPE_*
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5070,6 +5613,7 @@ ZwUserGetCursorPos(
 
 // private // NtUserCallTwoParam(SFI_INITANSIOEM) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5078,6 +5622,7 @@ NtUserInitAnsiOem(
     _In_reads_(256) PCHAR AnsiToOem
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5088,6 +5633,7 @@ ZwUserInitAnsiOem(
 
 // private // NtUserCallTwoParam(SFI_NLSKBDSENDIMENOTIFICATION) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5096,6 +5642,7 @@ NtUserNlsKbdSendIMENotification(
     _In_ ULONG ImeConversion
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5106,6 +5653,7 @@ ZwUserNlsKbdSendIMENotification(
 
 // private // NtUserCallTwoParam(SFI_REGISTERGHOSTWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5114,6 +5662,7 @@ NtUserRegisterGhostWindow(
     _In_ HWND Hung
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5124,6 +5673,7 @@ ZwUserRegisterGhostWindow(
 
 // private // NtUserCallTwoParam(SFI_REGISTERLOGONPROCESS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5132,6 +5682,7 @@ NtUserRegisterLogonProcess(
     _In_ PLUID LuidConnect
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5142,6 +5693,7 @@ ZwUserRegisterLogonProcess(
 
 // private // NtUserCallTwoParam(SFI_REGISTERSIBLINGFROSTWINDOW) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5150,6 +5702,7 @@ NtUserRegisterSiblingFrostWindow(
     _In_ HWND hwnd
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5165,6 +5718,7 @@ typedef FNW32ET* PFNW32ET;
 
 // private // NtUserCallTwoParam(SFI_REGISTERUSERHUNGAPPHANDLERS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5173,6 +5727,7 @@ NtUserRegisterUserHungAppHandlers(
     _In_ HANDLE EventWowExec
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5182,6 +5737,7 @@ ZwUserRegisterUserHungAppHandlers(
     );
 
 // private // NtUserCallTwoParam(SFI_REMOTESHADOWCLEANUP) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5190,6 +5746,7 @@ NtUserRemoteShadowCleanup(
     _In_ ULONG ThinwireDataLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5199,6 +5756,7 @@ ZwUserRemoteShadowCleanup(
     );
 
 // private // NtUserCallTwoParam(SFI_REMOTESHADOWSTART) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5207,6 +5765,7 @@ NtUserRemoteShadowStart(
     _In_ ULONG ThinwireDataLength
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5217,6 +5776,7 @@ ZwUserRemoteShadowStart(
 
 // private // NtUserCallTwoParam(SFI_SETCARETPOS) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5225,6 +5785,7 @@ NtUserSetCaretPos(
     _In_ LONG y
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5235,6 +5796,7 @@ ZwUserSetCaretPos(
 
 // private // NtUserCallTwoParam(SFI_SETTHREADQUEUEMERGESETTING) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5243,6 +5805,7 @@ NtUserSetThreadQueueMergeSetting(
     _In_ ULONG Flags
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5253,6 +5816,7 @@ ZwUserSetThreadQueueMergeSetting(
 
 // private // NtUserCallTwoParam(SFI_UNHOOKWINDOWSHOOK) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5261,6 +5825,7 @@ NtUserUnhookWindowsHook(
     _In_ HOOKPROC FilterProc
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5271,6 +5836,7 @@ ZwUserUnhookWindowsHook(
 
 // private // NtUserCallTwoParam(SFI_ENABLESHELLWINDOWMANAGEMENTBEHAVIOR) before WIN11
 _Success_(return != 0)
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5279,6 +5845,7 @@ NtUserEnableShellWindowManagementBehavior(
     _In_ ULONG_PTR Param2
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 LOGICAL
 NTAPI
@@ -5288,6 +5855,7 @@ ZwUserEnableShellWindowManagementBehavior(
     );
 
 // private // NtUserCallTwoParam(SFI_CITSETINFO) before WIN11
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5296,6 +5864,7 @@ NtUserCitSetInfo(
     _In_ ULONG_PTR Info
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -5306,6 +5875,7 @@ ZwUserCitSetInfo(
 
 // private // NtUserCallTwoParam(SFI_SCALESYSTEMMETRICFORDPIWITHOUTCACHE) before WIN11
 _Must_inspect_result_
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI
@@ -5314,6 +5884,7 @@ NtUserScaleSystemMetricForDPIWithoutCache(
     _In_ ULONG ToDpi
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 ULONG_PTR
 NTAPI

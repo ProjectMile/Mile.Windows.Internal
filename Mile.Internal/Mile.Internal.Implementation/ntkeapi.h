@@ -130,6 +130,7 @@ typedef enum _KPROFILE_SOURCE
 
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -139,6 +140,7 @@ NtCallbackReturn(
     _In_ NTSTATUS Status
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -148,6 +150,7 @@ ZwCallbackReturn(
     _In_ NTSTATUS Status
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -156,6 +159,7 @@ NtQueryDebugFilterState(
     _In_ ULONG Level
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -164,6 +168,7 @@ ZwQueryDebugFilterState(
     _In_ ULONG Level
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -173,6 +178,7 @@ NtSetDebugFilterState(
     _In_ BOOLEAN State
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -182,6 +188,7 @@ ZwSetDebugFilterState(
     _In_ BOOLEAN State
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
@@ -189,6 +196,7 @@ NtYieldExecution(
     VOID
     );
 
+_Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
 NTAPI

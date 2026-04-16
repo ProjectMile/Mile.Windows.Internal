@@ -34,7 +34,7 @@ typedef struct _QUAD
     {
         __int64 UseThisFieldToCopy;
         double DoNotUseThisField;
-    };
+    } DUMMYUNIONNAME;
 } QUAD, *PQUAD;
 
 /**
@@ -751,7 +751,7 @@ typedef struct _KSYSTEM_TIME
  * \return A pointer at or below @p Address aligned down to @p Alignment.
  * \remarks The pointer is treated as an integer (`ULONG_PTR`) for masking.
  */
-#define ALIGN_DOWN_POINTER_BY(Address, Alignment) ((PVOID)((ULONG_PTR)(Address) & ~((ULONG_PTR)(Alignment) - 1)))
+#define ALIGN_DOWN_POINTER_BY(Address, Alignment) ((PVOID)ALIGN_DOWN_BY(Address, Alignment))
 #endif
 
 #ifndef ALIGN_UP_POINTER_BY
@@ -761,9 +761,9 @@ typedef struct _KSYSTEM_TIME
  * \param Address   The pointer to align.
  * \param Alignment The alignment boundary in bytes (typically a power of two).
  * \return A pointer at or above @p Address aligned up to @p Alignment.
- * \remarks This uses ALIGN_DOWN_POINTER_BY after adding (@p Alignment - 1).
+ * \remarks This is a pointer wrapper over ALIGN_UP_BY.
  */
-#define ALIGN_UP_POINTER_BY(Address, Alignment) (ALIGN_DOWN_POINTER_BY(((ULONG_PTR)(Address) + (Alignment) - 1), Alignment))
+#define ALIGN_UP_POINTER_BY(Address, Alignment) ((PVOID)ALIGN_UP_BY(Address, Alignment))
 #endif
 
 #ifndef ALIGN_DOWN
@@ -900,6 +900,48 @@ typedef struct _KSYSTEM_TIME
 #define PAGE_TAILSIZE(p) (PAGE_SIZE - PAGE_OFFSET(p))
 #endif
 
+#ifndef ADDRESS_AND_SIZE_TO_SPAN_PAGES
+/**
+ * Calculates the number of pages spanned by a virtual address and size.
+ *
+ * @param Address The starting virtual address.
+ * @param Size The size of the memory region in bytes.
+ * @return The number of pages spanned by the specified region.
+ */
+#define ADDRESS_AND_SIZE_TO_SPAN_PAGES(Address, Size) ((BYTE_OFFSET(Address) + ((SIZE_T)(Size)) + PAGE_MASK) >> PAGE_SHIFT)
+#endif
+
+#ifndef ROUND_TO_SIZE
+/**
+ * Rounds a value up to the nearest multiple of a specified alignment.
+ *
+ * @param Size The value to round.
+ * @param Alignment The alignment boundary. This must be a power of two.
+ * @return The rounded value.
+ */
+#define ROUND_TO_SIZE(Size, Alignment) ((((ULONG_PTR)(Size)) + ((Alignment) - 1)) & ~(ULONG_PTR)((Alignment) - 1))
+#endif
+
+#ifndef ROUND_TO_PAGES
+/**
+ * Rounds a size in bytes up to the nearest page boundary.
+ *
+ * @param Size The size in bytes to round.
+ * @return The size rounded up to the nearest multiple of the system page size.
+ */
+#define ROUND_TO_PAGES(Size) (((ULONG_PTR)(Size) + PAGE_MASK) & ~PAGE_MASK)
+#endif
+
+#ifndef BYTES_TO_PAGES
+/**
+ * Calculates the number of pages required to hold a specified number of bytes.
+ *
+ * @param Size The size in bytes.
+ * @return The number of pages, rounded up if the size is not page-aligned.
+ */
+#define BYTES_TO_PAGES(Size) (((Size) >> PAGE_SHIFT) + (((Size) & PAGE_MASK) != 0))
+#endif
+
 #else
 
 #ifndef AFFINITY_MASK
@@ -933,10 +975,10 @@ typedef struct _KSYSTEM_TIME
 #define ALIGN_UP_BY(Length, Alignment) (ALIGN_DOWN_BY(((ULONG_PTR)(Length) + (Alignment) - 1), Alignment))
 #endif
 #ifndef ALIGN_DOWN_POINTER_BY
-#define ALIGN_DOWN_POINTER_BY(Address, Alignment) ((PVOID)((ULONG_PTR)(Address) & ~((ULONG_PTR)(Alignment) - 1)))
+#define ALIGN_DOWN_POINTER_BY(Address, Alignment) ((PVOID)ALIGN_DOWN_BY(Address, Alignment))
 #endif
 #ifndef ALIGN_UP_POINTER_BY
-#define ALIGN_UP_POINTER_BY(Address, Alignment) (ALIGN_DOWN_POINTER_BY(((ULONG_PTR)(Address) + (Alignment) - 1), Alignment))
+#define ALIGN_UP_POINTER_BY(Address, Alignment) ((PVOID)ALIGN_UP_BY(Address, Alignment))
 #endif
 #ifndef ALIGN_DOWN
 #define ALIGN_DOWN(Length, Type) ALIGN_DOWN_BY(Length, sizeof(Type))
