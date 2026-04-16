@@ -6,11 +6,11 @@ namespace Mile.Internal.ZwGen
     internal class Program
     {
         private static readonly Regex NtApiRegex = new Regex(
-            @"NTSYSCALLAPI[\w\s_]*NTAPI\s*(Nt(\w)*)\(.*?\);",
+            @"_Kernel_entry_[\w\s_]*NTSYSCALLAPI[\w\s_]*NTAPI\s*(Nt(\w)*)\(.*?\);",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
         private static readonly Regex ZwApiRegex = new Regex(
-            @"NTSYSCALLAPI[\w\s_]*NTAPI\s*(Zw(\w)*)\(.*?\);",
+            @"_Kernel_entry_[\w\s_]*NTSYSCALLAPI[\w\s_]*NTAPI\s*(Zw(\w)*)\(.*?\);",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
         private static string RepositoryRoot = GitRepository.GetRootPath();
