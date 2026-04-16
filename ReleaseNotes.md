@@ -1,5 +1,13 @@
 ﻿# Mile.Windows.Internal Release Notes
 
+**Mile.Windows.Internal 1.0.3581.0**
+
+- Update PHNT from System Informer to
+  https://github.com/winsiderss/systeminformer/tree/2c3a3e8985c4a1ef1e4dcea3591d0abeb0316990.
+- Adapt KUSER_SHARED_DATA structure for Windows 11 Build 28000. (Thank to
+  MiroKaku.)
+- Update Mile.Internal.ZwGen.
+
 **Mile.Windows.Internal 1.0.3550.0**
 
 - Update PHNT from System Informer to
