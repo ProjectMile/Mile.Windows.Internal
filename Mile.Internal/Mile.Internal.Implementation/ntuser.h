@@ -7,10 +7,28 @@
 #ifndef _NTUSER_H
 #define _NTUSER_H
 
-typedef enum _USERTHREADINFOCLASS USERTHREADINFOCLASS;
 typedef struct _DOCONNECTDATA* PDOCONNECTDATA;
 typedef struct _CACHESTATISTICS* PCACHESTATISTICS;
 typedef struct _DONOTIFYDATA* PDONOTIFYDATA;
+
+FORCEINLINE
+BOOLEAN
+NTAPI
+IsPseudoWindowHandle(
+    _In_ HWND WindowHandle
+    )
+{
+    ULONG_PTR value = (ULONG_PTR)WindowHandle;
+
+    if (value == 0xFFFF || // HWND_BROADCAST
+        value <= 1 || // NULL, HWND_TOP, HWND_BOTTOM
+        value >= (ULONG_PTR)-3) // HWND_MESSAGE, HWND_NOTOPMOST, HWND_TOPMOST
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
 
 _Kernel_entry_
 NTSYSCALLAPI
@@ -94,6 +112,29 @@ ZwUserFindWindowEx(
     _In_ ULONG Type // FW_*
     );
 
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserBuildHimcList(
+    _In_ ULONG ThreadId,
+    _In_ ULONG HimcListInformationLength,
+    _Out_writes_bytes_(HimcListInformationLength) PVOID HimcListInformation,
+    _Out_ PULONG ReturnLength
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserBuildHimcList(
+    _In_ ULONG ThreadId,
+    _In_ ULONG HimcListInformationLength,
+    _Out_writes_bytes_(HimcListInformationLength) PVOID HimcListInformation,
+    _Out_ PULONG ReturnLength
+    );
+
 _Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
@@ -166,6 +207,27 @@ ZwUserBuildPropList(
     _In_ ULONG PropListInformationLength,
     _Out_writes_bytes_(PropListInformationLength) PVOID PropListInformation,
     _Out_opt_ PULONG ReturnLength
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserAlterWindowStyle(
+    _In_ HWND WindowHandle,
+    _In_ ULONG SetFlags,
+    _In_ ULONG ClearFlags
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserAlterWindowStyle(
+    _In_ HWND WindowHandle,
+    _In_ ULONG SetFlags,
+    _In_ ULONG ClearFlags
     );
 
 _Kernel_entry_
@@ -355,16 +417,18 @@ ZwUserCreateWindowStation(
 
 typedef enum _CONSOLECONTROL
 {
-    ConsoleSetVDMCursorBounds = 0, // RECT
-    ConsoleNotifyConsoleApplication = 1, // CONSOLE_PROCESS_INFO
-    ConsoleFullscreenSwitch = 2,
-    ConsoleSetCaretInfo = 3, // CONSOLE_CARET_INFO
-    ConsoleSetReserveKeys = 4,
-    ConsoleSetForeground = 5, // CONSOLESETFOREGROUND
-    ConsoleSetWindowOwner = 6, // CONSOLEWINDOWOWNER
-    ConsoleEndTask = 7, // CONSOLEENDTASK
+    ConsoleSetVDMCursorBounds = 0,          // RECT
+    ConsoleNotifyConsoleApplication = 1,    // CONSOLE_PROCESS_INFO
+    ConsoleFullscreenSwitch = 2,            // CONSOLE_FULLSCREEN_SWITCH
+    ConsoleSetCaretInfo = 3,                // CONSOLE_CARET_INFO
+    ConsoleSetReserveKeys = 4,              // CONSOLE_SET_RESERVE_KEYS
+    ConsoleSetForeground = 5,               // CONSOLE_SET_FOREGROUND
+    ConsoleSetWindowOwner = 6,              // CONSOLE_WINDOW_OWNER
+    ConsoleEndTask = 7,                     // CONSOLE_END_TASK
 } CONSOLECONTROL;
 
+// If set, apply foreground policy and launch in new window
+// If NOT set, reuse existing window context
 #define CPI_NEWPROCESSWINDOW 0x0001
 
 typedef struct _CONSOLE_PROCESS_INFO
@@ -379,26 +443,37 @@ typedef struct _CONSOLE_CARET_INFO
     RECT Rect;
 } CONSOLE_CARET_INFO, *PCONSOLE_CARET_INFO;
 
-typedef struct _CONSOLESETFOREGROUND
+typedef struct _CONSOLE_FULLSCREEN_SWITCH
+{
+    BYTE Reserved[24];
+} CONSOLE_FULLSCREEN_SWITCH, *PCONSOLE_FULLSCREEN_SWITCH;
+
+typedef struct _CONSOLE_SET_RESERVE_KEYS
+{
+    HWND WindowHandle;
+    ULONG Reserved[2];
+} CONSOLE_SET_RESERVE_KEYS, *PCONSOLE_SET_RESERVE_KEYS;
+
+typedef struct _CONSOLE_SET_FOREGROUND
 {
     HANDLE ProcessHandle;
     BOOL Foreground;
-} CONSOLESETFOREGROUND, *PCONSOLESETFOREGROUND;
+} CONSOLE_SET_FOREGROUND, *PCONSOLE_SET_FOREGROUND;
 
-typedef struct _CONSOLEWINDOWOWNER
+typedef struct _CONSOLE_WINDOW_OWNER
 {
     HWND WindowHandle;
-    ULONG ProcessId;
-    ULONG ThreadId;
-} CONSOLEWINDOWOWNER, *PCONSOLEWINDOWOWNER;
+    ULONG OwnerProcessId;
+    ULONG OwnerThreadId;
+} CONSOLE_WINDOW_OWNER, *PCONSOLE_WINDOW_OWNER;
 
-typedef struct _CONSOLEENDTASK
+typedef struct _CONSOLE_END_TASK
 {
     HANDLE ProcessId;
     HWND WindowHandle;
     ULONG ConsoleEventCode;
     ULONG ConsoleFlags;
-} CONSOLEENDTASK, *PCONSOLEENDTASK;
+} CONSOLE_END_TASK, *PCONSOLE_END_TASK;
 
 /**
  * Performs special kernel operations for console host applications. (win32u.dll)
@@ -768,16 +843,16 @@ ZwUserOpenWindowStation(
 
 typedef enum _WINDOWINFOCLASS
 {
-    WindowProcess = 0, // q: ULONG (Process ID)
-    WindowRealProcess = 1, // q: ULONG (Process ID)
-    WindowThread = 2, // q: ULONG (Thread ID)
-    WindowActiveWindow = 3, // q: HWND
-    WindowFocusWindow = 4, // q: HWND
-    WindowIsHung = 5, // q: BOOLEAN
-    WindowClientBase = 6, // q: PVOID
-    WindowIsForegroundThread = 7, // q: BOOLEAN
-    WindowDefaultImeWindow = 8, // q: HWND
-    WindowDefaultInputContext = 9, // q: HIMC
+    WindowProcess = 0,              // q: ULONG (Process ID)
+    WindowRealProcess = 1,          // q: ULONG (Process ID)
+    WindowThread = 2,               // q: ULONG (Thread ID)
+    WindowActiveWindow = 3,         // q: HWND
+    WindowFocusWindow = 4,          // q: HWND
+    WindowIsHung = 5,               // q: BOOLEAN
+    WindowClientBase = 6,           // q: PVOID
+    WindowIsForegroundThread = 7,   // q: BOOLEAN
+    WindowDefaultImeWindow = 8,     // q: HWND
+    WindowDefaultInputContext = 9,  // q: HIMC
 } WINDOWINFOCLASS, *PWINDOWINFOCLASS;
 
 _Kernel_entry_
@@ -856,28 +931,6 @@ SetChildWindowNoActivate(
 
 _Kernel_entry_
 NTSYSCALLAPI
-NTSTATUS
-NTAPI
-NtUserSetInformationThread(
-    _In_ HANDLE ThreadHandle,
-    _In_ USERTHREADINFOCLASS ThreadInformationClass,
-    _In_reads_bytes_(ThreadInformationLength) PVOID ThreadInformation,
-    _In_ ULONG ThreadInformationLength
-    );
-
-_Kernel_entry_
-NTSYSCALLAPI
-NTSTATUS
-NTAPI
-ZwUserSetInformationThread(
-    _In_ HANDLE ThreadHandle,
-    _In_ USERTHREADINFOCLASS ThreadInformationClass,
-    _In_reads_bytes_(ThreadInformationLength) PVOID ThreadInformation,
-    _In_ ULONG ThreadInformationLength
-    );
-
-_Kernel_entry_
-NTSYSCALLAPI
 BOOL
 NTAPI
 NtUserSetProcessWindowStation(
@@ -892,22 +945,72 @@ ZwUserSetProcessWindowStation(
     _In_ HWINSTA WindowStationHandle
     );
 
+// rev
+typedef struct _IAM_ACCESS_KEY_INPUT
+{
+    ULONG_PTR IamDesktopKey;
+} IAM_ACCESS_KEY_INPUT, *PIAM_ACCESS_KEY_INPUT;
+
+// rev
+_Success_(return != 0)
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserAcquireIAMKey(
+    _Out_ PIAM_ACCESS_KEY_INPUT IamDesktopKey
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserAcquireIAMKey(
+    _Out_ PIAM_ACCESS_KEY_INPUT IamDesktopKey
+    );
+
+// rev
+_Success_(return != 0)
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserEnableIAMAccess(
+    _In_ const IAM_ACCESS_KEY_INPUT* AccessInput,
+    _In_ LOGICAL Enable
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserEnableIAMAccess(
+    _In_ const IAM_ACCESS_KEY_INPUT* AccessInput,
+    _In_ LOGICAL Enable
+    );
+
 // rev // Valid bit masks enforced by NtUserSetProcessWin32Capabilities
 #define PROC_CAP_FLAGS1_VALID_MASK     0x00000007u    // bits 0-2
 #define PROC_CAP_FLAGS2_VALID_MASK     0x00000007u    // bits 0-2
 #define PROC_CAP_ENABLE_VALID_MASK     0x00000001u    // bit 0
 #define PROC_CAP_DISABLE_VALID_MASK    0x00000001u    // bit 0
 
-#define PROC_CAP_FLAGS1_BIT0           0x00000001u
-#define PROC_CAP_FLAGS1_BIT1           0x00000002u
-#define PROC_CAP_FLAGS1_BIT2           0x00000004u
+// rev // Capability values accepted by Win32ProcessCapability::CheckAccess
+#define PROC_CAP_VALUE_UNKNOWN0                0x00000001u // accepted; no stable callsite name yet
+#define PROC_CAP_VALUE_CAPTURE_SURFACE         0x00000002u // PrintWindow and magnifier capture paths
+#define PROC_CAP_VALUE_ZBID_SYSTEM_BAND        0x00000004u // band validation for privileged/system bands
 
-#define PROC_CAP_FLAGS2_BIT0           0x00000001u
-#define PROC_CAP_FLAGS2_BIT1           0x00000002u
-#define PROC_CAP_FLAGS2_BIT2           0x00000004u
+// rev // Lane-specific aliases for NtUserSetProcessWin32Capabilities
+#define PROC_CAP_FLAGS1_UNKNOWN0               PROC_CAP_VALUE_UNKNOWN0
+#define PROC_CAP_FLAGS1_CAPTURE_SURFACE        PROC_CAP_VALUE_CAPTURE_SURFACE
+#define PROC_CAP_FLAGS1_ZBID_SYSTEM_BAND       PROC_CAP_VALUE_ZBID_SYSTEM_BAND
 
-#define PROC_CAP_ENABLE_BIT0           0x00000001u
-#define PROC_CAP_DISABLE_BIT0          0x00000001u
+#define PROC_CAP_FLAGS2_UNKNOWN0               PROC_CAP_VALUE_UNKNOWN0
+#define PROC_CAP_FLAGS2_CAPTURE_SURFACE        PROC_CAP_VALUE_CAPTURE_SURFACE
+#define PROC_CAP_FLAGS2_ZBID_SYSTEM_BAND       PROC_CAP_VALUE_ZBID_SYSTEM_BAND
+
+#define PROC_CAP_ENABLE_APPLY_BIT0             0x00000001u
+#define PROC_CAP_DISABLE_APPLY_BIT0            0x00000001u
 
 #define PROC_CAP_FLAGS1_INVALID(x)     (((x) & ~PROC_CAP_FLAGS1_VALID_MASK) != 0)
 #define PROC_CAP_FLAGS2_INVALID(x)     (((x) & ~PROC_CAP_FLAGS2_VALID_MASK) != 0)
@@ -998,6 +1101,67 @@ NTSTATUS
 NTAPI
 ZwUserSetProcessUIAccessZorder(
     VOID
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserGrantJobUIRestrictionException(
+    _In_ HANDLE JobHandle,
+    _In_opt_ HANDLE ProcessHandle,
+    _In_ ULONG Flags
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserGrantJobUIRestrictionException(
+    _In_ HANDLE JobHandle,
+    _In_opt_ HANDLE ProcessHandle,
+    _In_ ULONG Flags
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserModifyUserStartupInfoFlags(
+    _In_ ULONG SetFlags,
+    _In_ ULONG ClearFlags
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserModifyUserStartupInfoFlags(
+    _In_ ULONG SetFlags,
+    _In_ ULONG ClearFlags
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserSetProcessInteractionFlags(
+    _In_ BOOL EnableForegroundBoost,
+    _In_ BOOL EnableEnergyTracking,
+    _In_ BOOL EnableInputRouting
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserSetProcessInteractionFlags(
+    _In_ BOOL EnableForegroundBoost,
+    _In_ BOOL EnableEnergyTracking,
+    _In_ BOOL EnableInputRouting
     );
 
 _Kernel_entry_
@@ -1939,6 +2103,14 @@ _Kernel_entry_
 NTSYSCALLAPI
 HANDLE
 NTAPI
+GetRealWindowOwner(
+    _In_ HWND WindowHandle
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+HANDLE
+NTAPI
 NtUserGetWindowProcessHandle(
     _In_ HWND WindowHandle,
     _In_ ACCESS_MASK DesiredAccess
@@ -2189,6 +2361,53 @@ ZwUserPrintWindow(
     _In_ ULONG Flags
     );
 
+// rev
+typedef struct _USERTHREAD_DESKTOP_CONTEXT
+{
+    PVOID DesktopObject; // referenced desktop object
+    HANDLE DesktopHandle; // opened handle for the desktop
+} USERTHREAD_DESKTOP_CONTEXT, *PUSERTHREAD_DESKTOP_CONTEXT;
+
+// rev
+typedef struct _USERTHREAD_CSRSS_DESKTOP_INFO
+{
+    ULONG_PTR InputValue; // window-like value returned from desktop state query path
+    ULONG DesktopState; // 0/1/2 observed
+    ULONG Flags; // bit 0x1 output; bit 0x800 input
+    USERTHREAD_DESKTOP_CONTEXT DesktopContext; // used with xxxRestore/xxxSetCsrssThreadDesktop
+} USERTHREAD_CSRSS_DESKTOP_INFO, *PUSERTHREAD_CSRSS_DESKTOP_INFO;
+
+// rev
+typedef struct _USERTHREAD_RESTORE_DESKTOP_INFO
+{
+    USERTHREAD_DESKTOP_CONTEXT DesktopContext;
+    ULONG Flags; // optional; read when input size is 0x20
+    ULONG Reserved;
+} USERTHREAD_RESTORE_DESKTOP_INFO, *PUSERTHREAD_RESTORE_DESKTOP_INFO;
+
+// rev
+typedef enum _USERTHREADINFOCLASS
+{
+    UserThreadCsrssDesktopInfo = 0,             // q: USERTHREAD_CSRSS_DESKTOP_INFO
+    UserThreadFlags = 1,                        // q: ULONG; s: ULONGLONG
+    UserThreadTaskName = 2,                     // q: PWSTR (UTF-16 task/process name buffer)
+    UserThreadInformation3 = 3,                 // q:
+    UserThreadHungStatus = 4,                   // q: ULONG timeout in milliseconds; output ULONG boolean
+    UserThreadInitiateShutdown = 5,             // s: ULONG flags (InitiateShutdown); IsPrivileged(...,19) when flag bit0 set
+    UserThreadSetShutdownDesktop = 6,           // s: ignored (current session shutdown desktop)
+    UserThreadSetCsrssDesktop = 7,              // s: USERTHREAD_DESKTOP_CONTEXT
+    UserThreadSetCsrssDesktopFromThread = 8,    // s: HANDLE
+    UserThreadRestoreCsrssDesktop = 9,          // s: USERTHREAD_RESTORE_DESKTOP_INFO
+    UserThreadSetCsrApiPort = 10,               // s: HANDLE
+    UserThreadShutdownThreadList = 11,          // q: HANDLE[]
+    UserThreadSetShutdownWindow = 12,           // s: HWND
+    UserThreadQueueShutdownRequest = 13,        // s: ULONG_PTR
+    UserThreadClearShutdownRequest = 14,        // s: ULONG_PTR
+    UserThreadSetConvertibleState = 15,         // s: ULONG
+    UserThreadSetDockState = 16,                // s: ULONG
+    UserThreadRefreshShellState = 17,           // s: ignored; internally sequences class 7 and 9; access: CSRSS only; priv: follows class 7/9 checks
+} USERTHREADINFOCLASS, *PUSERTHREADINFOCLASS;
+
 _Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
@@ -2196,8 +2415,8 @@ NTAPI
 NtUserQueryInformationThread(
     _In_ HANDLE ThreadHandle,
     _In_ USERTHREADINFOCLASS ThreadInformationClass,
-    _Out_writes_bytes_(*ReturnLength) PVOID ThreadInformation,
-    _Out_opt_ PULONG ReturnLength
+    _Inout_updates_bytes_(ThreadInformationLength) PVOID ThreadInformation,
+    _In_ ULONG ThreadInformationLength
     );
 
 _Kernel_entry_
@@ -2207,8 +2426,8 @@ NTAPI
 ZwUserQueryInformationThread(
     _In_ HANDLE ThreadHandle,
     _In_ USERTHREADINFOCLASS ThreadInformationClass,
-    _Out_writes_bytes_(*ReturnLength) PVOID ThreadInformation,
-    _Out_opt_ PULONG ReturnLength
+    _Inout_updates_bytes_(ThreadInformationLength) PVOID ThreadInformation,
+    _In_ ULONG ThreadInformationLength
     );
 
 _Kernel_entry_
@@ -2436,6 +2655,25 @@ ZwUserSetClassWord(
     _In_ USHORT NewWord
     );
 
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserApplyWindowAction(
+    _Inout_updates_bytes_(0x60) PVOID WindowActions,
+    _In_reads_bytes_(0x60) PVOID Source
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserApplyWindowAction(
+    _Inout_updates_bytes_(0x60) PVOID WindowActions,
+    _In_reads_bytes_(0x60) PVOID Source
+    );
+
 _Kernel_entry_
 NTSYSCALLAPI
 BOOL
@@ -2490,6 +2728,29 @@ ZwUserSetLayeredWindowAttributes(
     _In_ COLORREF Key,
     _In_ BYTE Alpha,
     _In_ ULONG Flags
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserGetWindowCompositionAttribute(
+    _In_ HWND WindowHandle,
+    _In_ ULONG Attribute,
+    _Out_writes_bytes_(AttributeDataLength) PVOID AttributeData,
+    _In_ ULONG AttributeDataLength
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserGetWindowCompositionAttribute(
+    _In_ HWND WindowHandle,
+    _In_ ULONG Attribute,
+    _Out_writes_bytes_(AttributeDataLength) PVOID AttributeData,
+    _In_ ULONG AttributeDataLength
     );
 
 _Kernel_entry_
@@ -3846,6 +4107,23 @@ ZwUserRemotePassthruDisable(
     VOID
     );
 
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserRemoteRedrawScreen(
+    VOID
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserRemoteRedrawScreen(
+    VOID
+    );
+
 // private
 #define CTX_W32_CONNECT_STATE_CONSOLE           0
 #define CTX_W32_CONNECT_STATE_IDLE              1
@@ -3957,6 +4235,75 @@ NTSYSCALLAPI
 LOGICAL
 NTAPI
 ZwUserDoUninitMessagePumpHook(
+    VOID
+    );
+
+typedef ULONG (NTAPI *PFNGETQUEUESTATUS)(
+    _In_ ULONG WakeMask
+    );
+
+typedef LOGICAL (NTAPI *PFNINITMPH)(
+    _In_ ULONG MessagePumpHookFlags,
+    _In_opt_ PVOID Context
+    );
+
+typedef LONG (NTAPI *PFNGETMESSAGE)(
+    _Out_ PMSG Message,
+    _In_opt_ HWND WindowHandle,
+    _In_ UINT FilterMin,
+    _In_ UINT FilterMax
+    );
+
+typedef LONG (NTAPI *PFNWAITMESSAGEEX)(
+    _In_ ULONG WakeMask,
+    _In_ ULONG TimeoutMilliseconds
+    );
+
+typedef ULONG (NTAPI *PFNMSGWAITFORMULTIPLEOBJECTSEX)(
+    _In_ ULONG Count,
+    _In_reads_opt_(Count) const HANDLE* Handles,
+    _In_ ULONG TimeoutMilliseconds,
+    _In_ ULONG WakeMask,
+    _In_ ULONG Flags
+    );
+
+typedef struct _MESSAGEPUMPHOOK
+{
+    ULONG Size;
+    ULONG Reserved;
+    PFNGETMESSAGE GetMessageCallback;
+    PFNWAITMESSAGEEX WaitMessageExCallback;
+    PFNGETQUEUESTATUS GetQueueStatusCallback;
+    PFNMSGWAITFORMULTIPLEOBJECTSEX MsgWaitForMultipleObjectsExCallback;
+} MESSAGEPUMPHOOK, *PMESSAGEPUMPHOOK;
+
+typedef struct _MPH_STATE
+{
+    LONG LoadCount;
+    LONG MessagePumpHookEnabled;
+    PFNINITMPH InitializeMessagePumpHook;
+    MESSAGEPUMPHOOK MessagePumpHook;
+} MPH_STATE, *PMPH_STATE;
+
+typedef BOOL (NTAPI *PFNREGISTERMESSAGEPUMPHOOK)(
+    _In_ PFNINITMPH InitializeMessagePumpHook
+    );
+
+typedef BOOL (NTAPI *PFNUNREGISTERMESSAGEPUMPHOOK)(
+    VOID
+    );
+
+NTSYSAPI
+BOOL
+NTAPI
+RegisterMessagePumpHook(
+    _In_ PFNINITMPH InitializeMessagePumpHook
+    );
+
+NTSYSAPI
+BOOL
+NTAPI
+UnregisterMessagePumpHook(
     VOID
     );
 
@@ -4171,11 +4518,15 @@ ZwUserGetProcessDefaultLayout(
 #define WAUDIONAME_LENGTH       10
 
 // private
-typedef struct tagWSINFO
+typedef struct _WINSTATIONINFO
 {
     WCHAR ProtocolName[WPROTOCOLNAME_LENGTH];
     WCHAR AudioDriverName[WAUDIONAME_LENGTH];
-} WSINFO, *PWSINFO;
+} WINSTATIONINFO, *PWINSTATIONINFO;
+
+// private // compatibility aliases
+typedef WINSTATIONINFO WSINFO;
+typedef PWINSTATIONINFO PWSINFO;
 
 // private // NtUserCallOneParam(SFI_GETWINSTATIONINFO) before WIN11
 _Success_(return != 0)
@@ -4405,6 +4756,23 @@ NTSTATUS
 NTAPI
 ZwUserRemoteReconnect(
     _In_ PDOCONNECTDATA DoConnectData
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserRemoteConnect(
+    _In_reads_bytes_(0x140) PVOID DoConnectData
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserRemoteConnect(
+    _In_reads_bytes_(0x140) PVOID DoConnectData
     );
 
 // private // NtUserCallOneParam(SFI_REMOTETHINWIRESTATS) before WIN11
@@ -4669,6 +5037,23 @@ LOGICAL
 NTAPI
 ZwUserThreadMessageQueueAttached(
     _In_opt_ ULONG ThreadId
+    );
+
+typedef enum _LOW_LATENCY_PROFILE_REQUEST_REASON
+{
+    LowLatencyProfileReasonUnknown = 0,
+    LowLatencyProfileReasonGaming = 1,
+    LowLatencyProfileReasonMedia = 2,
+    LowLatencyProfileReasonAudio = 3,
+    LowLatencyProfileReasonMax
+} LOW_LATENCY_PROFILE_REQUEST_REASON;
+
+NTSYSAPI
+LOGICAL
+NTAPI
+RequestLowLatencyProfile(
+    _In_ LUID Luid,
+    _In_ LOW_LATENCY_PROFILE_REQUEST_REASON Reason
     );
 
 // private // NtUserCallOneParam(SFI_ENSUREDPIDEPSYSMETCACHEFORPLATEAU) before WIN11
@@ -5774,6 +6159,29 @@ ZwUserRemoteShadowStart(
     _In_ ULONG ThinwireDataLength
     );
 
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserRemoteRedrawRectangle(
+    _In_ ULONG Left,
+    _In_ ULONG Top,
+    _In_ ULONG Right,
+    _In_ ULONG Bottom
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserRemoteRedrawRectangle(
+    _In_ ULONG Left,
+    _In_ ULONG Top,
+    _In_ ULONG Right,
+    _In_ ULONG Bottom
+    );
+
 // private // NtUserCallTwoParam(SFI_SETCARETPOS) before WIN11
 _Success_(return != 0)
 _Kernel_entry_
@@ -5794,6 +6202,65 @@ ZwUserSetCaretPos(
     _In_ LONG y
     );
 
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUserSetUserObjectCapability(
+    _In_ HANDLE UserObjectHandle,
+    _In_ ULONG CapabilityType,
+    _In_reads_bytes_(CapabilityDataLength) PVOID CapabilityData,
+    _In_ ULONG CapabilityDataLength
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwUserSetUserObjectCapability(
+    _In_ HANDLE UserObjectHandle,
+    _In_ ULONG CapabilityType,
+    _In_reads_bytes_(CapabilityDataLength) PVOID CapabilityData,
+    _In_ ULONG CapabilityDataLength
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserIsInterceptWindow(
+    _In_ HWND WindowHandle,
+    _Out_ PBOOL IsIntercept
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserIsInterceptWindow(
+    _In_ HWND WindowHandle,
+    _Out_ PBOOL IsIntercept
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserLayoutCompleted(
+    _In_ HWND WindowHandle
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserLayoutCompleted(
+    _In_ HWND WindowHandle
+    );
+
 // private // NtUserCallTwoParam(SFI_SETTHREADQUEUEMERGESETTING) before WIN11
 _Success_(return != 0)
 _Kernel_entry_
@@ -5812,6 +6279,25 @@ NTAPI
 ZwUserSetThreadQueueMergeSetting(
     _In_ ULONG ThreadId,
     _In_ ULONG Flags
+    );
+
+// rev
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+NtUserSetThreadInputBlocked(
+    _In_ ULONG ThreadId,
+    _In_ BOOL InputBlocked
+    );
+
+_Kernel_entry_
+NTSYSCALLAPI
+LOGICAL
+NTAPI
+ZwUserSetThreadInputBlocked(
+    _In_ ULONG ThreadId,
+    _In_ BOOL InputBlocked
     );
 
 // private // NtUserCallTwoParam(SFI_UNHOOKWINDOWSHOOK) before WIN11
@@ -5897,9 +6383,35 @@ ZwUserScaleSystemMetricForDPIWithoutCache(
 
 typedef _Function_class_(FN_DISPATCH)
 NTSTATUS NTAPI FN_DISPATCH(
-    _In_opt_ PVOID Context
+    _Inout_ PVOID Arguments
     );
 typedef FN_DISPATCH* PFN_DISPATCH;
+
+typedef struct _CAPTUREBUF
+{
+    ULONG Count;
+    ULONG Offset;
+} CAPTUREBUF, *PCAPTUREBUF;
+
+FORCEINLINE
+VOID
+FixupCallbackPointers(
+    _Inout_ PCAPTUREBUF CaptureBuffer
+    )
+{
+    PULONG relativeOffsets;
+    ULONG index;
+
+    relativeOffsets = (PULONG)((PCHAR)CaptureBuffer + CaptureBuffer->Offset);
+
+    for (index = 0; index < CaptureBuffer->Count; index++)
+    {
+        PULONG pointerToFixup;
+
+        pointerToFixup = (PULONG)((PCHAR)CaptureBuffer + relativeOffsets[index]);
+        *pointerToFixup += (ULONG)(ULONG_PTR)CaptureBuffer;
+    }
+}
 
 // Peb!KernelCallbackTable = user32.dll!apfnDispatch
 typedef struct _KERNEL_CALLBACK_TABLE
