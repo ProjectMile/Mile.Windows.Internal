@@ -3520,8 +3520,8 @@ typedef enum _SYSTEM_INFORMATION_CLASS
     SystemWin32WerStartCallout,                             // s: SYSTEM_WIN32_WER_START_CALLOUT (optional; 0-length uses current process)
     SystemSecureKernelProfileInformation,                   // q: SYSTEM_SECURE_KERNEL_HYPERGUARD_PROFILE_INFORMATION
     SystemCodeIntegrityPlatformManifestInformation,         // q: SYSTEM_SECUREBOOT_PLATFORM_MANIFEST_INFORMATION // NtQuerySystemInformationEx // since REDSTONE
-    SystemInterruptSteeringInformation,                     // q: in: SYSTEM_INTERRUPT_STEERING_INFORMATION_INPUT, out: SYSTEM_INTERRUPT_STEERING_INFORMATION_OUTPUT // NtQuerySystemInformationEx
-    SystemSupportedProcessorArchitectures,                  // p: in opt: HANDLE, out: SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION[] // NtQuerySystemInformationEx // 180
+    SystemInterruptSteeringInformation,                     // q: in: SYSTEM_INTERRUPT_STEERING_INFORMATION_INPUT, out: SYSTEM_INTERRUPT_STEERING_INFORMATION_OUTPUT // NtQuerySystemInformationEx // 180
+    SystemSupportedProcessorArchitectures,                  // p: in opt: HANDLE, out: SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION[] // NtQuerySystemInformationEx
     SystemMemoryUsageInformation,                           // q: SYSTEM_MEMORY_USAGE_INFORMATION
     SystemCodeIntegrityCertificateInformation,              // q: SYSTEM_CODEINTEGRITY_CERTIFICATE_INFORMATION
     SystemPhysicalMemoryInformation,                        // q: SYSTEM_PHYSICAL_MEMORY_INFORMATION // since REDSTONE2
@@ -9737,8 +9737,6 @@ typedef enum _HARDERROR_RESPONSE
  * \param[out] Response Receives the user's response to the error dialog.
  * \return NTSTATUS Successful or errant status.
  */
-_Analysis_noreturn_
-DECLSPEC_NORETURN
 _Kernel_entry_
 NTSYSCALLAPI
 NTSTATUS
@@ -10982,8 +10980,7 @@ NTAPI
 NtInitializeNlsFiles(
     _Out_ PVOID *BaseAddress,
     _Out_ PLCID DefaultLocaleId,
-    _Out_ PLARGE_INTEGER DefaultCasingTableSize,
-    _Out_opt_ PULONG CurrentNLSVersion
+    _Out_opt_ PLARGE_INTEGER DefaultCasingTableSize
     );
 
 _Kernel_entry_
@@ -10993,8 +10990,7 @@ NTAPI
 ZwInitializeNlsFiles(
     _Out_ PVOID *BaseAddress,
     _Out_ PLCID DefaultLocaleId,
-    _Out_ PLARGE_INTEGER DefaultCasingTableSize,
-    _Out_opt_ PULONG CurrentNLSVersion
+    _Out_opt_ PLARGE_INTEGER DefaultCasingTableSize
     );
 
 _Kernel_entry_
@@ -11004,9 +11000,9 @@ NTAPI
 NtGetNlsSectionPtr(
     _In_ ULONG SectionType,
     _In_ ULONG SectionData,
-    _In_ PVOID ContextData,
-    _Out_ PVOID *SectionPointer,
-    _Out_ PULONG SectionSize
+    _Out_opt_ PVOID *ContextData, // Must be NULL for user-mode callers.
+    _When_(ContextData == NULL, _Out_) _When_(ContextData != NULL, _Out_opt_) PVOID *SectionPointer,
+    _Out_opt_ PSIZE_T SectionSize
     );
 
 _Kernel_entry_
@@ -11016,9 +11012,9 @@ NTAPI
 ZwGetNlsSectionPtr(
     _In_ ULONG SectionType,
     _In_ ULONG SectionData,
-    _In_ PVOID ContextData,
-    _Out_ PVOID *SectionPointer,
-    _Out_ PULONG SectionSize
+    _Out_opt_ PVOID *ContextData, // Must be NULL for user-mode callers.
+    _When_(ContextData == NULL, _Out_) _When_(ContextData != NULL, _Out_opt_) PVOID *SectionPointer,
+    _Out_opt_ PSIZE_T SectionSize
     );
 
 #if (PHNT_VERSION < PHNT_WINDOWS_7)

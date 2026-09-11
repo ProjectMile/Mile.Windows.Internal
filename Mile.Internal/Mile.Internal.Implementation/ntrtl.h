@@ -154,7 +154,7 @@ typedef enum _RTL_RESOURCE_POLICY_CLASS
 /**
  * The RtlFailFast routine brings down the caller immediately in the event that critical corruption has been detected. No exception handlers are invoked.
  *
- * \param Code A FAST_FAIL_<description> symbolic constant from winnt.h or wdm.h that indicates the reason for process termination.
+ * \param Code A FAST_FAIL_* symbolic constant from winnt.h or wdm.h that indicates the reason for process termination.
  * \return None. There is no return from this routine.
  * \remarks The routine is shared with user mode and kernel mode. In user mode, the process is terminated, whereas in kernel mode, a KERNEL_SECURITY_CHECK_FAILURE bug check is raised.
  */
@@ -4180,8 +4180,7 @@ NTAPI
 RtlGetLocaleFileMappingAddress(
     _Out_ PVOID *BaseAddress,
     _Out_ PLCID DefaultLocaleId,
-    _Out_ PLARGE_INTEGER DefaultCasingTableSize,
-    _Out_opt_ PULONG CurrentNLSVersion
+    _Out_opt_ PLARGE_INTEGER DefaultCasingTableSize
     );
 
 //
@@ -6012,6 +6011,46 @@ RtlIsZeroMemory(
     _In_ SIZE_T Length
     );
 #endif // PHNT_VERSION >= PHNT_WINDOWS_10_19H2
+
+FORCEINLINE
+BOOLEAN 
+NTAPI 
+RtlIsZeroMemory(
+    _In_ PVOID Buffer,
+    _In_ SIZE_T Length
+    )
+{
+    PCHAR buffer = (PCHAR)Buffer;
+
+    while (((ULONG_PTR)buffer & 7) != 0 && Length != 0)
+    {
+        if (*buffer != 0)
+            return FALSE;
+
+        buffer++;
+        Length--;
+    }
+
+    while (Length >= sizeof(ULONG64))
+    {
+        if (*(PULONG64)buffer != 0)
+            return FALSE;
+
+        buffer += sizeof(ULONG64);
+        Length -= sizeof(ULONG64);
+    }
+
+    while (Length != 0)
+    {
+        if (*buffer != 0)
+            return FALSE;
+
+        buffer++;
+        Length--;
+    }
+
+    return TRUE;
+}
 
 NTSYSAPI
 ULONG
@@ -8115,7 +8154,7 @@ typedef struct _RTL_DEBUG_INFORMATION
     ULONG_PTR ViewBaseDelta;                            // Offset between client and target view bases
     HANDLE EventPairClient;                             // Event pair for synchronization (client)
     HANDLE EventPairTarget;                             // Event pair for synchronization (target)
-    HANDLE TargetProcessId;                             // Target process ID or current process if RTL_QUERY_PROCESS_USE_CURRENT_PROCESS set)
+    HANDLE TargetProcessId;                             // Target process ID or current process (if RTL_QUERY_PROCESS_USE_CURRENT_PROCESS set)
     HANDLE TargetThreadHandle;                          // Target thread handle
     ULONG Flags;                                        // Query flags (RTL_QUERY_PROCESS_* flags)
     SIZE_T OffsetFree;                                  // Offset of free space in debug buffer
