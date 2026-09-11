@@ -1,5 +1,12 @@
 ﻿# Mile.Windows.Internal Release Notes
 
+**Mile.Windows.Internal 1.0.3729.0**
+
+- Update PHNT from System Informer to
+  https://github.com/winsiderss/systeminformer/tree/v4.0.26241.138.
+- Use global.json to simplify the MSBuild Project SDK version resolving.
+- Update Mile.Project.Configurations to 1.1.2116.
+
 **Mile.Windows.Internal 1.0.3648.0**
 
 - Update PHNT from System Informer to 
