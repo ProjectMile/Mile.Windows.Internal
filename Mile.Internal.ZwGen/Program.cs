@@ -1,4 +1,4 @@
-﻿using Mile.Project.Helpers;
+﻿using Mile.DotNet.Helpers;
 using System.Text.RegularExpressions;
 
 namespace Mile.Internal.ZwGen
@@ -13,7 +13,7 @@ namespace Mile.Internal.ZwGen
             @"_Kernel_entry_[\w\s_]*NTSYSCALLAPI[\w\s_]*NTAPI\s*(Zw(\w)*)\(.*?\);",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static string RepositoryRoot = GitRepository.GetRootPath();
+        private static string RepositoryRoot = Git.GetRootPath();
 
         static void Main(string[] args)
         {
@@ -58,7 +58,7 @@ namespace Mile.Internal.ZwGen
                     }
                 }
 
-                FileUtilities.SaveTextToFileAsUtf8Bom(FileItem.FullName, Content);
+                Text.SaveTextToFileAsUtf8WithBom(FileItem.FullName, Content);
             }
 
             Console.WriteLine("Mile.Internal.ZwGen task has been completed.");
