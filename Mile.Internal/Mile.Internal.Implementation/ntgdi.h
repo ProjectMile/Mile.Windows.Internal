@@ -33,7 +33,7 @@
 #define GDI_HANDLE_INDEX(Handle) ((ULONG)(Handle) & GDI_HANDLE_INDEX_MASK)
 #define GDI_HANDLE_TYPE(Handle) (((ULONG)(Handle) >> GDI_HANDLE_TYPE_SHIFT) & GDI_HANDLE_TYPE_MASK)
 #define GDI_HANDLE_ALTTYPE(Handle) (((ULONG)(Handle) >> GDI_HANDLE_ALTTYPE_SHIFT) & GDI_HANDLE_ALTTYPE_MASK)
-#define GDI_HANDLE_STOCK(Handle) (((ULONG)(Handle) >> GDI_HANDLE_STOCK_SHIFT)) & GDI_HANDLE_STOCK_MASK)
+#define GDI_HANDLE_STOCK(Handle) (((ULONG)(Handle) >> GDI_HANDLE_STOCK_SHIFT) & GDI_HANDLE_STOCK_MASK)
 
 #define GDI_MAKE_HANDLE(Index, Unique) ((ULONG)(((ULONG)(Unique) << GDI_HANDLE_INDEX_BITS) | (ULONG)(Index)))
 
@@ -396,6 +396,12 @@ ZwGdiGetGlyphIndicesWInternal(
 // sizeof(LOGPALETTE) - sizeof(PALETTEENTRY) + sizeof(PALETTEENTRY) * cEntries.
 //
 
+/**
+ * NtGdiCreatePaletteInternal contract notes.
+ *
+ * Creates an owned palette from a LOGPALETTE header and cEntries four-byte PALETTEENTRY records. The caller
+ * retains ownership of the input buffer.
+ */
 _Kernel_entry_
 NTSYSCALLAPI
 HPALETTE
@@ -450,7 +456,6 @@ ZwGdiArcInternal(
 
 _Kernel_entry_
 NTSYSCALLAPI
-
 LONG
 NTAPI
 NtGdiStretchDIBitsInternal(
@@ -474,7 +479,6 @@ NtGdiStretchDIBitsInternal(
 
 _Kernel_entry_
 NTSYSCALLAPI
-
 LONG
 NTAPI
 ZwGdiStretchDIBitsInternal(
@@ -498,7 +502,6 @@ ZwGdiStretchDIBitsInternal(
 
 _Kernel_entry_
 NTSYSCALLAPI
-
 ULONG
 NTAPI
 NtGdiGetOutlineTextMetricsInternalW(
@@ -510,7 +513,6 @@ NtGdiGetOutlineTextMetricsInternalW(
 
 _Kernel_entry_
 NTSYSCALLAPI
-
 ULONG
 NTAPI
 ZwGdiGetOutlineTextMetricsInternalW(
@@ -520,6 +522,12 @@ ZwGdiGetOutlineTextMetricsInternalW(
     _Out_ TMDIFF *ptmd
     );
 
+/**
+ * NtGdiGetAndSetDCULONG contract notes.
+ *
+ * Historical declaration: this name was not located in either win32u export table or matching
+ * WIN32KBASE/WIN32KFULL names. Do not assume it is callable merely because the prototype is available.
+ */
 _Kernel_entry_
 NTSYSCALLAPI
 BOOL
@@ -863,11 +871,18 @@ ZwGdiGetEmbUFI(
     _Out_ KERNEL_PVOID *embFontID
     );
 
+/**
+ * NtGdiGetEmbedFonts contract notes.
+ *
+ * Queries the session font table's embedded-font count without taking arguments. The result is a count and
+ * can legitimately be zero.
+ */
 _Kernel_entry_
 NTSYSCALLAPI
 ULONG
 NTAPI
 NtGdiGetEmbedFonts(
+    VOID
     );
 
 _Kernel_entry_
@@ -875,6 +890,7 @@ NTSYSCALLAPI
 ULONG
 NTAPI
 ZwGdiGetEmbedFonts(
+    VOID
     );
 
 _Kernel_entry_
@@ -953,6 +969,13 @@ ZwGdiPolyPolyDraw(
     _In_ LONG iFunc
     );
 
+/**
+ * NtGdiDoPalette contract notes.
+ *
+ * Dispatches palette operations by iFunc: 0 AnimatePalette, 1 SetPaletteEntries, 2 GetPaletteEntries, 3
+ * GetSystemPaletteEntries, 4 GetDIBColorTable, 5 SetDIBColorTable. Selectors 0/1/5 consume entries; 2/3/4
+ * produce entries. The first handle is interpreted according to the selector. Values above 5 return zero; bUnused is not consumed by the native worker.
+ */
 _Kernel_entry_
 NTSYSCALLAPI
 LONG
@@ -961,7 +984,9 @@ NtGdiDoPalette(
     _In_ HPALETTE hpal,
     _In_ WORD iStart,
     _In_ WORD cEntries,
-    _In_reads_opt_(cEntries) PALETTEENTRY *pPalEntries,
+    _When_(iFunc == 0 || iFunc == 1 || iFunc == 5, _In_reads_opt_(cEntries))
+    _When_(iFunc >= 2 && iFunc <= 4, _Out_writes_opt_(cEntries))
+    PALETTEENTRY *pPalEntries,
     _In_ ULONG iFunc,
     _In_ BOOL bUnused
     );
@@ -974,7 +999,9 @@ ZwGdiDoPalette(
     _In_ HPALETTE hpal,
     _In_ WORD iStart,
     _In_ WORD cEntries,
-    _In_reads_opt_(cEntries) PALETTEENTRY *pPalEntries,
+    _When_(iFunc == 0 || iFunc == 1 || iFunc == 5, _In_reads_opt_(cEntries))
+    _When_(iFunc >= 2 && iFunc <= 4, _Out_writes_opt_(cEntries))
+    PALETTEENTRY *pPalEntries,
     _In_ ULONG iFunc,
     _In_ BOOL bUnused
     );
@@ -1023,6 +1050,13 @@ ZwGdiGetWidthTable(
     _Out_ FLONG *pflInfo
     );
 
+/**
+ * NtGdiDescribePixelFormat contract notes.
+ *
+ * With cjpfd=0, permits ppfd=NULL for a format-count query. On the native entry output copying is
+ * capped at the 40-byte PIXELFORMATDESCRIPTOR; the return value is a format count, not bytes copied.
+ * Availability depends on the DC/device.
+ */
 _Kernel_entry_
 NTSYSCALLAPI
 _Success_(return > 0) 
@@ -1032,7 +1066,7 @@ NtGdiDescribePixelFormat(
     _In_ HDC hdc,
     _In_ LONG ipfd,
     _In_ ULONG cjpfd,
-    _Out_writes_bytes_(cjpfd) PPIXELFORMATDESCRIPTOR ppfd
+    _Out_writes_bytes_opt_(cjpfd) PPIXELFORMATDESCRIPTOR ppfd
     );
 
 _Kernel_entry_
@@ -1387,6 +1421,12 @@ typedef enum _ICM_DIB_INFO_CMD
     IcmSetBrush
 } ICM_DIB_INFO, *PICM_DIB_INFO;
 
+/**
+ * NtGdiFlush contract notes.
+ *
+ * Runs the current GDI flush callbacks and returns STATUS_SUCCESS (zero). This return
+ * must not be tested as a BOOL; it does not establish that every possible device operation succeeded.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 NTSTATUS
@@ -1469,6 +1509,12 @@ ZwGdiDeleteClientObj(
     _In_ HANDLE h
     );
 
+/**
+ * NtGdiGetBitmapBits contract notes.
+ *
+ * Reads packed device-dependent bitmap bits. NULL output returns the required byte count; a non-NULL output
+ * is bounded by cjMax and the bitmap extent. The return is bytes copied, not a Boolean success flag.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -1489,6 +1535,13 @@ ZwGdiGetBitmapBits(
     _Out_writes_bytes_opt_(cjMax) PBYTE pjOut
     );
 
+/**
+ * NtGdiDeleteObjectApp contract notes.
+ *
+ * Deletes a GDI object through its object-kind dispatch, including owned memory DCs. Restore selected objects
+ * before deleting caller-owned resources. Do not use NtClose for GDI handles or delete borrowed stock
+ * objects.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -1505,6 +1558,13 @@ ZwGdiDeleteObjectApp(
     _In_ HANDLE hobj
     );
 
+/**
+ * NtGdiGetPath contract notes.
+ *
+ * Queries a completed DC path as POINTs and one-byte type codes. CptBuf=0 is a point-count query. A nonzero
+ * buffer must accommodate the complete path; short capacity returns -1 rather than a successfully truncated
+ * path. Both arrays are probed with 4-byte alignment on the native entry.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -1527,6 +1587,12 @@ ZwGdiGetPath(
     _In_ LONG cptBuf
     );
 
+/**
+ * NtGdiCreateCompatibleDC contract notes.
+ *
+ * Creates an owned memory DC, optionally using an existing DC as the compatibility source. NULL selects the
+ * default compatible device. This does not create a window or authorize drawing into another process.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HDC
@@ -1579,6 +1645,14 @@ ZwGdiCreateDIBitmapInternal(
     _In_ HANDLE hcmXform
     );
 
+/**
+ * NtGdiCreateDIBSection contract notes.
+ *
+ * Creates a bitmap with process-accessible pixel storage. NULL section handle requests private allocation;
+ * otherwise the supplied section and offset back the bits. On success ppvBits receives the pixel address;
+ * deleting the bitmap releases its associated mapping. Bitmap header size and pixel layout are distinct
+ * capacities.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBITMAP
@@ -1611,6 +1685,13 @@ ZwGdiCreateDIBSection(
     _Outptr_ PVOID *ppvBits
     );
 
+/**
+ * NtGdiCreateSolidBrush contract notes.
+ *
+ * Creates a solid-color GDI brush; the optional brush parameter participates in the client allocation
+ * protocol. Use NULL for ordinary creation, restore any selected previous brush before deletion, and do not
+ * NtClose it.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBRUSH
@@ -1655,6 +1736,12 @@ ZwGdiCreateDIBBrush(
     _In_ PVOID pClient
     );
 
+/**
+ * NtGdiCreatePatternBrushInternal contract notes.
+ *
+ * Creates a brush from a bitmap pattern with internal pen/8-by-8 controls. The brush and source bitmap are
+ * distinct handles with independently managed lifetimes.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBRUSH
@@ -1675,6 +1762,12 @@ ZwGdiCreatePatternBrushInternal(
     _In_ BOOL b8X8
     );
 
+/**
+ * NtGdiCreateHatchBrushInternal contract notes.
+ *
+ * Creates an owned hatch brush with a color and an internal pen-use selector. Ordinary brush creation uses
+ * bPen=FALSE. The style is a hatch selector, not arbitrary pixel data.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBRUSH
@@ -1731,6 +1824,12 @@ ZwGdiExtCreatePen(
     _In_opt_ HBRUSH hbrush
     );
 
+/**
+ * NtGdiCreateEllipticRgn contract notes.
+ *
+ * Creates an owned region describing an ellipse for clipping and membership queries. The result is a GDI
+ * handle, not an NtClose handle. Delete it when no longer needed.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HRGN
@@ -1753,6 +1852,13 @@ ZwGdiCreateEllipticRgn(
     _In_ LONG yBottom
     );
 
+/**
+ * NtGdiCreateRoundRectRgn contract notes.
+ *
+ * Creates an owned region from a rounded rectangle; zero corner dimensions still follow this constructor's
+ * coordinate convention, not necessarily CreateRectRgn bounds. Use NtGdiSetRectRgn when exact rectangular
+ * bounds are needed. Release the resulting region through the GDI deletion path.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HRGN
@@ -1805,6 +1911,12 @@ ZwGdiCreateServerMetaFile(
     _In_ ULONG yExt
     );
 
+/**
+ * NtGdiExtCreateRegion contract notes.
+ *
+ * Builds an owned region from a counted RGNDATA buffer, optionally transforming the supplied rectangles. The
+ * byte count covers the header and rectangle array; the source storage remains caller-owned.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HRGN
@@ -1921,6 +2033,12 @@ ZwGdiGetServerMetaFileBits(
     _Out_ PULONG pyExt
     );
 
+/**
+ * NtGdiEqualRgn contract notes.
+ *
+ * Compares region geometry rather than handle identity. Both arguments must refer to initialized regions;
+ * distinct handles can compare equal.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -1939,6 +2057,12 @@ ZwGdiEqualRgn(
     _In_ HRGN hrgn2
     );
 
+/**
+ * NtGdiGetBitmapDimension contract notes.
+ *
+ * Retrieves the bitmap's stored logical dimensions in a SIZE record. These dimensions are not necessarily
+ * the pixel width/height returned in BITMAP metadata.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -1957,6 +2081,12 @@ ZwGdiGetBitmapDimension(
     _Out_ PSIZE psize
     );
 
+/**
+ * NtGdiGetNearestPaletteIndex contract notes.
+ *
+ * Returns the index of the closest logical-palette color. Index zero can be a valid result; do not test it
+ * as a generic BOOL success value.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
@@ -1975,6 +2105,12 @@ ZwGdiGetNearestPaletteIndex(
     _In_ COLORREF crColor
     );
 
+/**
+ * NtGdiPtVisible contract notes.
+ *
+ * Tests whether a point lies in the effective visible/clipping area of a DC. This is a BOOL property query;
+ * FALSE is not necessarily an invalid handle error.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2039,6 +2175,12 @@ ZwGdiRemoveFontResourceW(
     _In_opt_ DESIGNVECTOR *pdv
     );
 
+/**
+ * NtGdiResizePalette contract notes.
+ *
+ * Changes the entry capacity of an existing logical palette without returning a new handle. This is a
+ * mutation of that palette, not a request to alter the system palette mode.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2057,6 +2199,12 @@ ZwGdiResizePalette(
     _In_ ULONG cEntry
     );
 
+/**
+ * NtGdiSetBitmapDimension contract notes.
+ *
+ * Updates the bitmap's logical dimensions and optionally returns the previous SIZE. This does not resize or
+ * reallocate its pixel buffer.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2135,6 +2283,12 @@ ZwGdiSetTextJustification(
     _In_ LONG cBreak
     );
 
+/**
+ * NtGdiGetAppClipBox contract notes.
+ *
+ * Returns the application clipping bounds and a region-complexity code, not an NTSTATUS. The RECT output is
+ * meaningful only when the returned code is not ERROR.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -2261,6 +2415,12 @@ ZwGdiAngleArc(
     _In_ ULONG dwSweepAngle
     );
 
+/**
+ * NtGdiBeginPath contract notes.
+ *
+ * Begins a path bracket in a DC; subsequent supported drawing operations record path geometry. Finish with
+ * NtGdiEndPath or cancel with NtGdiAbortPath before consuming the path.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2295,6 +2455,12 @@ ZwGdiSelectClipPath(
     _In_ LONG iMode
     );
 
+/**
+ * NtGdiCloseFigure contract notes.
+ *
+ * Closes the current path figure back to its start. It is a path operation, not an EndPath replacement; the
+ * path bracket still requires completion.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2311,6 +2477,12 @@ ZwGdiCloseFigure(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiEndPath contract notes.
+ *
+ * Closes the path bracket, making the accumulated geometry available to path queries and
+ * rendering/conversion operations.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2327,6 +2499,12 @@ ZwGdiEndPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiAbortPath contract notes.
+ *
+ * Discards the DC's current path state. Use it to cancel an unfinished or unneeded path rather than deleting
+ * the DC merely for cleanup.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2343,6 +2521,12 @@ ZwGdiAbortPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiFillPath contract notes.
+ *
+ * Fills the completed path using the selected brush and consumes that path. Begin a new path bracket before
+ * another independent fill/stroke operation.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2359,6 +2543,11 @@ ZwGdiFillPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiStrokeAndFillPath contract notes.
+ *
+ * Strokes and fills the completed path using the selected pen/brush and consumes its stored geometry.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2375,6 +2564,12 @@ ZwGdiStrokeAndFillPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiStrokePath contract notes.
+ *
+ * Strokes the completed path using the selected pen and consumes it. The drawing target and pen must remain
+ * valid throughout the call.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2407,6 +2602,12 @@ ZwGdiWidenPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiFlattenPath contract notes.
+ *
+ * Converts curves in a completed DC path to line segments in place. The entry changes stored path geometry;
+ * it does not return a newly allocated path handle.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2423,6 +2624,12 @@ ZwGdiFlattenPath(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiPathToRegion contract notes.
+ *
+ * Converts the completed DC path into an owned region and consumes the path. The result must be deleted
+ * separately from the DC.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HRGN
@@ -2439,6 +2646,13 @@ ZwGdiPathToRegion(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiSetMiterLimit contract notes.
+ *
+ * Sets the miter limit using IEEE-754 single-precision bits carried in ULONG, not an integer-valued limit or
+ * a floating-point ABI argument. The optional old-limit output is write-only. Values below 1.0 fail without
+ * changing that output.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2446,7 +2660,7 @@ NTAPI
 NtGdiSetMiterLimit(
     _In_ HDC hdc,
     _In_ ULONG dwNew,
-    _Inout_opt_ PULONG pdwOut
+    _Out_opt_ PULONG pdwOut
     );
 
 _Kernel_entry_ 
@@ -2456,7 +2670,7 @@ NTAPI
 ZwGdiSetMiterLimit(
     _In_ HDC hdc,
     _In_ ULONG dwNew,
-    _Inout_opt_ PULONG pdwOut
+    _Out_opt_ PULONG pdwOut
     );
 
 _Kernel_entry_ 
@@ -2479,6 +2693,12 @@ ZwGdiSetFontXform(
     _In_ ULONG dwyScale
     );
 
+/**
+ * NtGdiGetMiterLimit contract notes.
+ *
+ * Returns the DC miter limit as IEEE-754 single-precision bits in the ULONG output. Reinterpret the bits as
+ * FLOAT rather than numerically converting the ULONG value.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -2717,6 +2937,12 @@ ZwGdiFrameRgn(
     _In_ LONG yHeight
     );
 
+/**
+ * NtGdiSetPixel contract notes.
+ *
+ * Writes a pixel in the specified DC using a COLORREF and returns the resulting color or CLR_INVALID. Use a
+ * caller-owned memory bitmap for off-screen work rather than assuming this entry is side-effect-free.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 COLORREF
@@ -2739,6 +2965,12 @@ ZwGdiSetPixel(
     _In_ COLORREF crColor
     );
 
+/**
+ * NtGdiGetPixel contract notes.
+ *
+ * Reads a COLORREF from the selected surface. CLR_INVALID is failure; it is not an NTSTATUS. DC clipping,
+ * transforms and device capabilities affect the coordinate interpretation.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
@@ -2982,6 +3214,13 @@ ZwGdiGetFontData(
     _In_ ULONG cjBuf
     );
 
+/**
+ * NtGdiGetFontFileData contract notes.
+ *
+ * Copies bytes from a font file selected by collection ID and file index. The return is a Win32 error code:
+ * zero on success, ERROR_INVALID_PARAMETER (87) for an invalid selection/range. It is neither BOOL nor a byte
+ * count.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
@@ -3006,6 +3245,13 @@ ZwGdiGetFontFileData(
     _In_ SIZE_T cbSize
     );
 
+/**
+ * NtGdiGetFontFileInfo contract notes.
+ *
+ * Returns file metadata and its path, with optional SIZE_T required-size output. A NULL/short metadata
+ * buffer returns ERROR_INSUFFICIENT_BUFFER (122) for a valid selection; invalid collection/index returns
+ * ERROR_INVALID_PARAMETER (87). Zero is success, not FALSE.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
@@ -3013,7 +3259,7 @@ NTAPI
 NtGdiGetFontFileInfo(
     _In_ ULONG uFileCollectionID,
     _In_ ULONG uFileIndex,
-    _Out_writes_bytes_(cbSize) FONT_FILE_INFO * pfi,
+    _Out_writes_bytes_opt_(cbSize) FONT_FILE_INFO * pfi,
     _In_ SIZE_T cbSize,
     _Out_opt_ PSIZE_T pcbActualSize
     );
@@ -3025,7 +3271,7 @@ NTAPI
 ZwGdiGetFontFileInfo(
     _In_ ULONG uFileCollectionID,
     _In_ ULONG uFileIndex,
-    _Out_writes_bytes_(cbSize) FONT_FILE_INFO * pfi,
+    _Out_writes_bytes_opt_(cbSize) FONT_FILE_INFO * pfi,
     _In_ SIZE_T cbSize,
     _Out_opt_ PSIZE_T pcbActualSize
     );
@@ -3108,6 +3354,12 @@ ZwGdiGetKerningPairs(
     _Out_writes_to_opt_(cPairs, return) KERNINGPAIR *pkpDst
     );
 
+/**
+ * NtGdiMonoBitmap contract notes.
+ *
+ * Checks whether a bitmap is monochrome. The BOOL result is a property query, not a byte size or an owning
+ * reference.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -3305,6 +3557,12 @@ ZwGdiOpenDCW(
     _At_((PUMDHPDEV *)pUMdhpdev, _Out_) VOID *pUMdhpdev
     );
 
+/**
+ * NtGdiGetDCULONG contract notes.
+ *
+ * Historical declaration: not found in the x64/x86 win32u exports or matching WIN32KBASE/WIN32KFULL names.
+ * Availability varies by Windows version and exporting module.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -3481,6 +3739,12 @@ ZwGdiModifyWorldTransform(
     _In_ ULONG iXform
     );
 
+/**
+ * NtGdiCombineTransform contract notes.
+ *
+ * Combines two affine transforms into caller-owned output storage. The XFORM members are floating-point data
+ * in memory; this entry does not modify a DC or retain the source pointers.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -3653,6 +3917,12 @@ ZwGdiSetMagicColors(
     _In_ ULONG Index
     );
 
+/**
+ * NtGdiSelectBrush contract notes.
+ *
+ * Selects a brush into a DC and returns the previously selected brush. Save that borrowed handle and restore
+ * it before deleting the brush created by the caller.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBRUSH
@@ -3671,6 +3941,12 @@ ZwGdiSelectBrush(
     _In_ HBRUSH hbrush
     );
 
+/**
+ * NtGdiSelectPen contract notes.
+ *
+ * Selects a pen into a DC and returns the previous selection for later restoration. Selection does not
+ * transfer caller ownership of the new pen.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HPEN
@@ -3689,6 +3965,13 @@ ZwGdiSelectPen(
     _In_ HPEN hpen
     );
 
+/**
+ * NtGdiSelectBitmap contract notes.
+ *
+ * Selects a bitmap into a memory DC and returns the previous bitmap. Restore the old selection before
+ * deleting an owned bitmap. The returned previous bitmap can be a stock/default object and must not be
+ * deleted as caller-owned.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBITMAP
@@ -3745,6 +4028,12 @@ ZwGdiExtSelectClipRgn(
     _In_     LONG iMode
     );
 
+/**
+ * NtGdiCreatePen contract notes.
+ *
+ * Creates a logical pen from style, width and color. The returned GDI handle must be deselected before
+ * deletion; an optional client brush is not required for ordinary creation.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HPEN
@@ -3863,6 +4152,11 @@ ZwGdiGetTextExtent(
     _In_ ULONG flOpts
     );
 
+/**
+ * NtGdiGetTextMetricsW contract notes.
+ *
+ * Retrieves the selected font metrics using the internal record, not just TEXTMETRICW. Cj must be at least 68; success copies exactly 68 bytes and leaves any larger buffer tail unchanged.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -3957,6 +4251,12 @@ ZwGdiExtTextOutW(
     _In_ ULONG dwCodePage
     );
 
+/**
+ * NtGdiIntersectClipRect contract notes.
+ *
+ * Intersects the DC clipping region with the supplied rectangle and returns a region-complexity code or
+ * ERROR. Use SaveDC/RestoreDC to scope temporary clipping changes.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -3981,6 +4281,15 @@ ZwGdiIntersectClipRect(
     _In_ LONG yBottom
     );
 
+/**
+ * NtGdiCreateRectRgn contract notes.
+ *
+ * Low-level region creation is not the complete GDI32 CreateRectRgn protocol. The kernel allocates
+ * a user attribute block without the GDI32 initialization; direct use of the returned handle in region
+ * queries can fail until the client state is initialized. GDI32 initializes the 24-byte attribute record
+ * (flags 0x30, complexity, rectangle). Coordinates are restricted to -134217728..134217727. Prefer the
+ * supported Win32 constructor unless implementing the complete client protocol.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HRGN
@@ -4003,6 +4312,12 @@ ZwGdiCreateRectRgn(
     _In_ LONG yBottom
     );
 
+/**
+ * NtGdiPatBlt contract notes.
+ *
+ * Fills a rectangle using the selected brush and a raster-operation code. Source-independent operations such
+ * as PATCOPY require no source DC; the destination remains a mutable drawing surface.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4069,6 +4384,12 @@ ZwGdiUnrealizeObject(
     _In_ HANDLE h
     );
 
+/**
+ * NtGdiCreateCompatibleBitmap contract notes.
+ *
+ * Creates an owned bitmap compatible with a DC. Compatibility depends on the bitmap/device currently
+ * associated with that DC, not just the requested dimensions.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBITMAP
@@ -4183,6 +4504,12 @@ ZwGdiEndGdiRendering(
     _In_ PVOID KernelModeDeviceHandle
     );
 
+/**
+ * NtGdiLineTo contract notes.
+ *
+ * Adds or draws a line from the current position to the specified endpoint and updates the position. Whether
+ * it records a path or renders depends on the DC path-bracket state.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4203,6 +4530,12 @@ ZwGdiLineTo(
     _In_ LONG y
     );
 
+/**
+ * NtGdiMoveTo contract notes.
+ *
+ * Changes the current DC position and optionally returns the previous POINT. In a path bracket it
+ * establishes the next figure start without drawing a line.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4225,6 +4558,13 @@ ZwGdiMoveTo(
     _Out_opt_ PPOINT pptOut
     );
 
+/**
+ * NtGdiExtGetObjectW contract notes.
+ *
+ * Copies object-specific GDI metadata into caller storage and returns the byte count. The record type
+ * depends on the handle kind; bitmap metadata can contain a borrowed pixel pointer rather than an allocation
+ * to free.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4310,6 +4650,12 @@ ZwGdiStretchBlt(
     _In_ ULONG dwBackColor
     );
 
+/**
+ * NtGdiSetBrushOrg contract notes.
+ *
+ * Changes the DC brush origin and optionally returns its previous POINT. NULL pptOut is supported; non-NULL
+ * output is written only after a successful update.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4318,7 +4664,7 @@ NtGdiSetBrushOrg(
     _In_ HDC hdc,
     _In_ LONG x,
     _In_ LONG y,
-    _Out_ PPOINT pptOut
+    _Out_opt_ PPOINT pptOut
     );
 
 _Kernel_entry_ 
@@ -4329,9 +4675,16 @@ ZwGdiSetBrushOrg(
     _In_ HDC hdc,
     _In_ LONG x,
     _In_ LONG y,
-    _Out_ PPOINT pptOut
+    _Out_opt_ PPOINT pptOut
     );
 
+/**
+ * NtGdiCreateBitmap contract notes.
+ *
+ * Creates a device-dependent bitmap from optional packed source bits. The input extent is bytes: each scan
+ * line is padded to a 16-bit boundary and the padded bit count is divided by 8 before multiplication by
+ * height. For example a 3 by 2, 1-plane, 1-bpp bitmap consumes 4 bytes, not 32.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 HBITMAP
@@ -4341,7 +4694,7 @@ NtGdiCreateBitmap(
     _In_ LONG cy,
     _In_ ULONG cPlanes,
     _In_ ULONG cBPP,
-    _In_reads_opt_((((cx * cPlanes * cBPP) + 0xf) & ~0xf) * cy) PBYTE pjInit
+    _In_reads_bytes_opt_(((((ULONG64)cx * cPlanes * cBPP + 15) & ~15ull) / 8) * cy) PBYTE pjInit
     );
 
 _Kernel_entry_ 
@@ -4353,7 +4706,7 @@ ZwGdiCreateBitmap(
     _In_ LONG cy,
     _In_ ULONG cPlanes,
     _In_ ULONG cBPP,
-    _In_reads_opt_((((cx * cPlanes * cBPP) + 0xf) & ~0xf) * cy) PBYTE pjInit
+    _In_reads_bytes_opt_(((((ULONG64)cx * cPlanes * cBPP + 15) & ~15ull) / 8) * cy) PBYTE pjInit
     );
 
 _Kernel_entry_ 
@@ -4372,6 +4725,12 @@ ZwGdiCreateHalftonePalette(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiRestoreDC contract notes.
+ *
+ * Restores a saved DC state by level, including selected objects and clipping state. Restoring state does
+ * not delete caller-owned brushes, pens or bitmaps.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4414,6 +4773,12 @@ ZwGdiExcludeClipRect(
     _In_ LONG yBottom
     );
 
+/**
+ * NtGdiSaveDC contract notes.
+ *
+ * Pushes DC drawing state and returns a positive saved-state level on success. Pair it with NtGdiRestoreDC;
+ * this is not a kernel synchronization or object handle.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4430,6 +4795,13 @@ ZwGdiSaveDC(
     _In_ HDC hdc
     );
 
+/**
+ * NtGdiCombineRgn contract notes.
+ *
+ * Combines source geometry into an existing destination using the RGN_* mode. The return is the resulting
+ * complexity or ERROR, not BOOL/NTSTATUS. Keep all required source/destination handles valid for the
+ * operation.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4452,6 +4824,13 @@ ZwGdiCombineRgn(
     _In_ LONG iMode
     );
 
+/**
+ * NtGdiSetRectRgn contract notes.
+ *
+ * Replaces the geometry of a valid region with a rectangle. This is a mutation of the referenced GDI object;
+ * it does not allocate a new region. It is not a substitute for missing user-attribute initialization after
+ * bare NtGdiCreateRectRgn.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4476,6 +4855,13 @@ ZwGdiSetRectRgn(
     _In_ LONG yBottom
     );
 
+/**
+ * NtGdiSetBitmapBits contract notes.
+ *
+ * Copies counted packed source bytes into a bitmap and returns the number transferred. The storage is
+ * caller-owned and not retained by this entry. Use the bitmap's scan-line layout rather than assuming DIB
+ * ULONG padding.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4528,6 +4914,12 @@ ZwGdiGetDIBitsInternal(
     _In_ ULONG cjMaxInfo
     );
 
+/**
+ * NtGdiOffsetRgn contract notes.
+ *
+ * Translates an existing region and returns its resulting complexity or ERROR. The offsets are signed
+ * coordinates and the handle remains the same object.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4548,6 +4940,13 @@ ZwGdiOffsetRgn(
     _In_ LONG cy
     );
 
+/**
+ * NtGdiGetRgnBox contract notes.
+ *
+ * Returns a region-complexity code and copies a 16-byte bounding RECT on success. ERROR (zero) is failure;
+ * NULLREGION, SIMPLEREGION and COMPLEXREGION are not NTSTATUS values. A valid initialized region is
+ * required.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 LONG
@@ -4566,6 +4965,13 @@ ZwGdiGetRgnBox(
     _Out_ PRECT prcOut
     );
 
+/**
+ * NtGdiRectInRegion contract notes.
+ *
+ * Tests rectangle intersection and, on a TRUE result, copies the normalized rectangle back to the caller.
+ * The RECT is deliberately input/output, not const input. A nonintersecting rectangle can remain unchanged,
+ * including reversed coordinates.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4604,6 +5010,12 @@ ZwGdiGetBoundsRect(
     _In_ ULONG f
     );
 
+/**
+ * NtGdiPtInRegion contract notes.
+ *
+ * Tests point membership in a region. Ordinary rectangular membership excludes the right and bottom
+ * boundaries. The result is BOOL, not a region-complexity code.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
@@ -4676,6 +5088,13 @@ ZwGdiSetSystemPaletteUse(
     _In_ ULONG ui
     );
 
+/**
+ * NtGdiGetRegionData contract notes.
+ *
+ * Serializes a region as RGNDATAHEADER followed by rectangles. NULL output performs a byte-size query. With
+ * output storage, the successful byte count controls initialized data; do not infer that the entire supplied
+ * capacity was written.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
@@ -4841,7 +5260,16 @@ ZwGdiQueryFonts(
 _Kernel_entry_ 
 NTSYSCALLAPI
 ULONG
+NTAPI
 NtGdiGetCharSet(
+    _In_ HDC hdc
+    );
+
+_Kernel_entry_ 
+NTSYSCALLAPI
+ULONG
+NTAPI
+ZwGdiGetCharSet(
     _In_ HDC hdc
     );
 
@@ -4967,13 +5395,20 @@ ZwGdiGetFontUnicodeRanges(
     _Out_writes_bytes_opt_(return) LPGLYPHSET pgs
     );
 
+/**
+ * NtGdiGetRealizationInfo contract notes.
+ *
+ * Reads the caller's size field before producing font-realization metadata, so pri is input/output. The
+ * native entry accepts record sizes 16, 24 and 812 bytes and copies the selected extent on
+ * success. Do not advertise a larger size than the actual backing allocation.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
 NTAPI
 NtGdiGetRealizationInfo(
     _In_ HDC hdc,
-    _Out_ PFONT_REALIZATION_INFO2 pri
+    _Inout_ PFONT_REALIZATION_INFO2 pri
     );
 
 _Kernel_entry_ 
@@ -4982,7 +5417,7 @@ BOOL
 NTAPI
 ZwGdiGetRealizationInfo(
     _In_ HDC hdc,
-    _Out_ PFONT_REALIZATION_INFO2 pri
+    _Inout_ PFONT_REALIZATION_INFO2 pri
     );
 
 typedef struct tagDOWNLOADDESIGNVECTOR 
@@ -6410,13 +6845,23 @@ ZwGdiGetDeviceWidth(
 _Kernel_entry_ 
 NTSYSCALLAPI
 NTSTATUS
+NTAPI
 NtGdiSetUMPDSandboxState(
     _In_ BOOL bEnabled
     );
 
 _Kernel_entry_ 
 NTSYSCALLAPI
+NTSTATUS
+NTAPI
+ZwGdiSetUMPDSandboxState(
+    _In_ BOOL bEnabled
+    );
+
+_Kernel_entry_ 
+NTSYSCALLAPI
 BOOL
+NTAPI
 NtGdiSetPUMPDOBJ(
     _In_opt_ HUMPD humpd,
     _In_ BOOL bStoreID,
@@ -6427,6 +6872,18 @@ NtGdiSetPUMPDOBJ(
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
+NTAPI
+ZwGdiSetPUMPDOBJ(
+    _In_opt_ HUMPD humpd,
+    _In_ BOOL bStoreID,
+    _Inout_opt_ HUMPD *phumpd,
+    _Out_opt_ BOOL *pbWOW64
+    );
+
+_Kernel_entry_ 
+NTSYSCALLAPI
+BOOL
+NTAPI
 NtGdiBRUSHOBJ_DeleteRbrush(
     _In_opt_ BRUSHOBJ *pbo,
     _In_opt_ BRUSHOBJ *pboB
@@ -6435,7 +6892,25 @@ NtGdiBRUSHOBJ_DeleteRbrush(
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
+NTAPI
+ZwGdiBRUSHOBJ_DeleteRbrush(
+    _In_opt_ BRUSHOBJ *pbo,
+    _In_opt_ BRUSHOBJ *pboB
+    );
+
+_Kernel_entry_ 
+NTSYSCALLAPI
+BOOL
+NTAPI
 NtGdiUMPDEngFreeUserMem(
+    _In_ KERNEL_PVOID *ppv
+    );
+
+_Kernel_entry_ 
+NTSYSCALLAPI
+BOOL
+NTAPI
+ZwGdiUMPDEngFreeUserMem(
     _In_ KERNEL_PVOID *ppv
     );
 
@@ -6810,13 +7285,20 @@ ZwGdiScaleRgn(
     _In_ HRGN hrgn
     );
 
+/**
+ * NtGdiScaleValues contract notes.
+ *
+ * Applies the DC DPI scaling to a writable array of signed LONGs. The entry copies cl*4 input
+ * bytes into temporary storage and copies the transformed values back on success, so pl is input/output. A
+ * scale factor of one leaves the values unchanged.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 BOOL
 NTAPI
 NtGdiScaleValues(
     _In_ HDC hdc,
-    _In_reads_(cl) LPLONG pl,
+    _Inout_updates_(cl) LPLONG pl,
     _In_ ULONG cl
     );
 
@@ -6826,7 +7308,7 @@ BOOL
 NTAPI
 ZwGdiScaleValues(
     _In_ HDC hdc,
-    _In_reads_(cl) LPLONG pl,
+    _Inout_updates_(cl) LPLONG pl,
     _In_ ULONG cl
     );
 
@@ -6910,6 +7392,12 @@ ZwGdiDisableUMPDSandboxing(
     VOID
     );
 
+/**
+ * NtGdiIsDcInXfer contract notes.
+ *
+ * This declaration was not located in the x64/x86 win32u exports or matching WIN32KBASE/WIN32KFULL
+ * names; do not treat that bounded absence as proof about every Windows version.
+ */
 _Kernel_entry_ 
 NTSYSCALLAPI
 NTSTATUS

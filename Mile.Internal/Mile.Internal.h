@@ -40,7 +40,7 @@
 #if (NTDDI_VERSION >= NTDDI_WIN11_BR)
 #define PHNT_VERSION PHNT_WINDOWS_11_26H1
 #elif (NTDDI_VERSION >= NTDDI_WIN11_GE)
-#define PHNT_VERSION PHNT_WINDOWS_11_25H2
+#define PHNT_VERSION PHNT_WINDOWS_11_26H2
 #elif (NTDDI_VERSION >= NTDDI_WIN10_NI)
 #define PHNT_VERSION PHNT_WINDOWS_11_23H2
 #elif (NTDDI_VERSION >= NTDDI_WIN10_CO)
@@ -89,10 +89,12 @@ extern "C" {
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
 
 #include "Mile.Internal.Implementation/ntafd.h"
+#include "Mile.Internal.Implementation/ntd3dkmt.h"
+#include "Mile.Internal.Implementation/ntfve.h"
 #include "Mile.Internal.Implementation/ntgdi.h"
-#include "Mile.Internal.Implementation/ntintsafe.h"
 #include "Mile.Internal.Implementation/ntsmss.h"
 #include "Mile.Internal.Implementation/ntstrsafe.h"
+#include "Mile.Internal.Implementation/ntsxs.h"
 #include "Mile.Internal.Implementation/smbios.h"
 #include "Mile.Internal.Implementation/subprocesstag.h"
 #include "Mile.Internal.Implementation/usermgr.h"

@@ -56,8 +56,9 @@
 #define PHNT_WINDOWS_11_23H2 116 // October, 2023    // Build 22631
 #define PHNT_WINDOWS_11_24H2 117 // October, 2024    // Build 26100
 #define PHNT_WINDOWS_11_25H2 118 // October, 2025    // Build 26200
-#define PHNT_WINDOWS_11_26H1 119                     // Build 28000
-#define PHNT_WINDOWS_11_27H2 120                     // Build 29500
+#define PHNT_WINDOWS_11_26H2 119                     // Build 26300
+#define PHNT_WINDOWS_11_26H1 120                     // Build 28000
+#define PHNT_WINDOWS_11_27H2 121                     // Build 29500
 #define PHNT_WINDOWS_NEW ULONG_MAX
 
 #ifndef PHNT_MODE
@@ -109,6 +110,7 @@ EXTERN_C_START
 #include "ntpsapi.h"
 
 #if (PHNT_MODE != PHNT_MODE_KERNEL)
+#include "ntxcapi.h"
 #include "ntbcd.h"
 #include "ntdbg.h"
 #include "ntimage.h"
@@ -119,6 +121,7 @@ EXTERN_C_START
 #include "ntpnpapi.h"
 #include "ntpoapi.h"
 #include "ntregapi.h"
+#include "ntnsi.h"
 #include "ntrtl.h"
 #include "ntmisc.h"
 #include "ntsam.h"
@@ -128,7 +131,6 @@ EXTERN_C_START
 #include "ntuser.h"
 #include "ntwmi.h"
 #include "ntwow64.h"
-#include "ntxcapi.h"
 #endif // (PHNT_MODE != PHNT_MODE_KERNEL)
 
 EXTERN_C_END
